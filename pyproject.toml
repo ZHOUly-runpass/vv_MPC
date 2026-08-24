@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "r680-safety-planner"
+version = "0.1.0"
+description = "R680 C16 frozen-LiDAR planner with deterministic D-CBF safety"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+solver = ["casadi>=3.6"]
+ml = ["torch>=2.1"]
+test = ["pytest>=7.4,<8", "pytest-cov>=4.1"]
+
+[project.scripts]
+r680-validate-config = "r680_safety_planner.cli:validate_config_main"
+r680-synthetic-smoke = "r680_safety_planner.cli:synthetic_smoke_main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.coverage.run]
+source = ["r680_safety_planner"]

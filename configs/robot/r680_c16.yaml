@@ -1,0 +1,499 @@
+schema_version: "1.0"
+config_name: r680_c16_commissioning
+description: >-
+  WHEELTEC R680 with LSLiDAR C16 configuration. Motion remains locked until
+  every required commissioning gate is confirmed from the physical robot.
+
+provenance:
+  generated_on: "2026-08-24"
+  algorithm_document: "D:/E2Eproject_MPC/05/算法完整流程.md"
+  requirements_document: "D:/E2Eproject_MPC/read/需求文档.md"
+  retrieval_report: "D:/E2Eproject_MPC/read/R680算法适配资料检索报告.md"
+  values_policy: >-
+    Confirmed values come from supplied product information or inspected
+    source material. Null values must be measured or read from the physical
+    robot and shall never be replaced by template defaults.
+
+commissioning:
+  mode: perception_only
+  allow_nonzero_command: false
+  require_manual_arm: true
+  operator_present: true
+  wheels_off_ground_for_direction_test: true
+  notes:
+    - "R680 may move forward about 0.15 m after an approximately 10 s startup self-test."
+    - "C50C generic firmware may keep the last command when command input is lost."
+    - "Keep the physical emergency stop reachable during every commissioning test."
+
+identity:
+  manufacturer: WHEELTEC
+  product_family: R680
+  former_product_name: R550_PLUS
+  full_product_model: null              # REQUIRED_FROM_ORDER_OR_NAMEPLATE
+  oled_type: null                       # REQUIRED_FROM_PHYSICAL_ROBOT
+  car_mode: null                        # REQUIRED_FROM_ACTIVE_WHEELTEC_CONFIG
+  urdf_file: null                       # REQUIRED_AFTER_CAR_MODE_IS_KNOWN
+  has_robot_arm: null
+
+controller_board:
+  family: C50C
+  hardware_version: null                # REQUIRED_FROM_BOARD_SILKSCREEN
+  firmware_image: null                  # REQUIRED_FROM_FLASHED_FIRMWARE
+  firmware_source_candidate: WHEELTEC_C50X_2026.05.29
+  control_loop_hz_candidate: 100.0
+  command_loss_security_level: null     # REQUIRED_FROM_FLASHED_FIRMWARE
+  unsafe_generic_default_observed: 1
+  serial:
+    enabled: true
+    device: /dev/wheeltec_controller
+    baud: 115200
+    control_frame_bytes: 11
+    velocity_x_scale: 1000.0            # m/s -> mm/s
+    velocity_y_scale: 1000.0            # m/s -> mm/s
+    yaw_rate_scale: 1000.0              # rad/s -> integer
+  can:
+    enabled: false
+    bitrate: 1000000
+    command_id: "0x181"
+    feedback_ids: ["0x101", "0x102", "0x103"]
+
+frames:
+  map: map
+  odom: odom_combined
+  base_footprint: base_footprint
+  base_link: base_link
+  lidar: laser
+  imu: gyro_link
+  canonical_planning_frame: base_footprint
+  axes:
+    x: forward
+    y: left
+    z: up
+    yaw_positive: counter_clockwise
+  direction_sign_verified: false        # REQUIRED_BY_LOW_SPEED_TEST
+  lidar_to_base:
+    translation_xyz_m: null             # REQUIRED_FROM_ACTIVE_TF/CALIBRATION
+    rotation_rpy_rad: null              # REQUIRED_FROM_ACTIVE_TF/CALIBRATION
+    verified: false
+
+ros2:
+  distribution: humble                 # SOURCE_PACKAGE; VERIFY_ON_ROBOT
+  namespace: ""
+  qos:
+    sensor_data: sensor_data
+    command_reliability: reliable
+    command_depth: 1
+  topics:
+    command_velocity:
+      name: /cmd_vel
+      type: geometry_msgs/msg/Twist
+      semantics:
+        linear_x: forward_velocity_mps
+        linear_y: lateral_velocity_mps_for_holonomic_only
+        angular_z: body_yaw_rate_radps
+    odometry:
+      name: /odom
+      type: nav_msgs/msg/Odometry
+    imu_raw:
+      name: /imu/data_raw
+      type: sensor_msgs/msg/Imu
+    point_cloud:
+      name: /point_cloud_raw
+      type: sensor_msgs/msg/PointCloud2
+    laser_scan_fallback:
+      name: /scan
+      type: sensor_msgs/msg/LaserScan
+      enabled: false
+    global_path:
+      name: /plan
+      type: nav_msgs/msg/Path
+      verify_name_on_robot: true
+    local_costmap:
+      name: /local_costmap/costmap
+      type: nav_msgs/msg/OccupancyGrid
+      verify_name_on_robot: true
+    power_voltage:
+      name: /PowerVoltage
+      type: null                        # REQUIRED_FROM_ROS2_TOPIC_LIST
+    emergency_stop:
+      name: null                        # REQUIRED_IF_EXPOSED_BY_FIRMWARE
+      type: null
+
+lidar:
+  manufacturer: LSLiDAR
+  model_family: C16
+  exact_model: null                     # REQUIRED_FROM_NAMEPLATE
+  type: mechanical_multibeam_3d
+  channels: 16
+  protocol_or_driver_version: null      # REQUIRED_FROM_ACTIVE_DRIVER
+  connection: ethernet
+  official_driver_repository: https://github.com/Lslidar/Lslidar_ROS2_driver.git
+  official_driver_branch_candidate: C16_V4.0
+  wheeltec_driver_type_candidate: lscx
+  published_frame_expected: laser
+  scan:
+    horizontal_fov_deg: 360.0
+    vertical_fov_deg: null              # EXACT_SUBMODEL_REQUIRED
+    frequency_hz: null                  # REQUIRED_FROM_TOPIC_OR_CONFIG
+    return_mode: null                   # single_or_dual
+    minimum_range_m: null
+    maximum_range_m: null
+    nominal_single_return_points_per_second: 320000
+  point_fields:
+    required: [x, y, z]
+    expected: [x, y, z, intensity, ring, time]
+    verified: false
+  preprocessing:
+    reject_nan_inf: true
+    reject_zero_points: true
+    self_filter_enabled: true
+    self_filter_polygon_xy_m: null       # GENERATED_FROM_MEASURED_FOOTPRINT
+    planning_roi_m:
+      x: [-10.0, 30.0]
+      y: [-20.0, 20.0]
+      z: [-2.0, 3.0]
+    intensity_normalization: per_sensor_calibration
+    use_ring: true
+    use_relative_time: true
+    deskew:
+      enabled: true
+      odometry_topic: /odom
+      imu_topic: /imu/data_raw
+      disable_if_timestamps_unverified: true
+  freshness:
+    maximum_age_s: 0.15
+    minimum_frequency_hz: 5.0
+    maximum_consecutive_drops: 2
+
+state_estimation:
+  ekf:
+    enabled: true
+    frequency_hz_candidate: 10.0
+    output_frame: odom_combined
+    base_frame: base_footprint
+    odometry_input: /odom
+    imu_input: /imu/data_raw
+    publish_tf: true
+  validation:
+    timestamp_monotonic: true
+    maximum_odometry_age_s: 0.10
+    maximum_imu_age_s: 0.10
+    maximum_tf_age_s: 0.10
+    stationary_bias_calibrated: false
+    covariance_verified: false
+
+vehicle:
+  variant: unresolved                   # differential|skid_steer|mecanum|omni|ackermann
+  reference_point: unresolved           # axle_center|rear_axle_center|base_center
+  geometry:
+    length_m: null                      # REQUIRED_MEASUREMENT
+    width_m: null                       # REQUIRED_MEASUREMENT
+    height_m: null
+    mass_kg: null
+    wheel_diameter_m: null
+    wheel_track_m: null
+    wheelbase_m: null
+    turn_radius_m: null
+    footprint_polygon_xy_m: null        # REQUIRED_MEASUREMENT
+  actuator:
+    motor_model: null
+    encoder_type: null
+    command_deadband: null
+    command_delay_s: null
+  physical_limits:
+    forward_velocity_max_mps: null      # REQUIRED_MEASUREMENT
+    reverse_velocity_max_mps: null
+    lateral_velocity_max_mps: null
+    yaw_rate_max_radps: null
+    acceleration_max_mps2: null
+    braking_deceleration_max_mps2: null
+    lateral_acceleration_max_mps2: null
+    yaw_acceleration_max_radps2: null
+    steering_angle_max_rad: null
+    steering_rate_max_radps: null
+    minimum_turn_radius_m: null
+  commissioning_limits:
+    forward_velocity_max_mps: 0.10
+    reverse_velocity_max_mps: 0.0
+    lateral_velocity_max_mps: 0.0
+    yaw_rate_max_radps: 0.30
+    acceleration_max_mps2: 0.20
+    braking_deceleration_max_mps2: 0.30
+    note: "These are project commissioning caps, not claimed R680 hardware limits."
+
+vehicle_models:
+  differential:
+    state: [x, y, yaw, linear_velocity, yaw_rate]
+    control: [linear_acceleration, yaw_acceleration]
+    ros_command: [linear_x, angular_z]
+    allow_rotate_in_place: true
+    required_parameters: [wheel_track_m, wheel_diameter_m]
+  skid_steer:
+    state: [x, y, yaw, linear_velocity, yaw_rate]
+    control: [linear_acceleration, yaw_acceleration]
+    ros_command: [linear_x, angular_z]
+    allow_rotate_in_place: true
+    slip_model: calibrated_effective_track
+    required_parameters: [wheel_track_m, wheelbase_m, wheel_diameter_m]
+  mecanum:
+    state: [x, y, yaw, velocity_x, velocity_y, yaw_rate]
+    control: [acceleration_x, acceleration_y, yaw_acceleration]
+    ros_command: [linear_x, linear_y, angular_z]
+    allow_rotate_in_place: true
+    required_parameters: [wheel_track_m, wheelbase_m, wheel_diameter_m]
+  omni:
+    state: [x, y, yaw, velocity_x, velocity_y, yaw_rate]
+    control: [acceleration_x, acceleration_y, yaw_acceleration]
+    ros_command: [linear_x, linear_y, angular_z]
+    allow_rotate_in_place: true
+    required_parameters: [turn_radius_m, wheel_diameter_m]
+  ackermann:
+    state: [x, y, yaw, velocity]
+    control: [acceleration, steering_angle]
+    ros_command_conversion: "angular_z = velocity / wheelbase * tan(steering_angle)"
+    ros_command: [linear_x, angular_z]
+    allow_rotate_in_place: false
+    required_parameters: [wheelbase_m, wheel_track_m, minimum_turn_radius_m]
+
+route_and_map:
+  route_source: nav2_global_path
+  costmap_source: nav2_local_costmap
+  route_frame: map
+  route_local_length_m: 15.0
+  route_sample_spacing_m: 0.20
+  reject_unknown_costmap: true
+  allow_reverse: false
+  goal_position_tolerance_m: 0.10
+  goal_yaw_tolerance_rad: 0.15
+
+frozen_backbone:
+  primary: unilion_temporal_lidar
+  fallback: centerpoint
+  primary_enabled_after_validation: false
+  requirements:
+    pure_lidar_checkpoint_verified: false
+    c16_forward_100_frames_verified: false
+    no_nan_inf_verified: false
+    latency_verified: false
+    feature_variance_verified: false
+  freeze:
+    voxel_or_pillar_encoder: true
+    lidar_backbone_early: true
+    lidar_backbone_middle: true
+    bev_backbone: true
+    temporal_encoder: true
+    batch_norm_statistics: true
+    detection_head: true
+    map_head: true
+    motion_head: true
+  reuse_policy:
+    detection_head: optional_semantic_context_only
+    map_head: disabled_replace_with_nav2
+    motion_head: optional_after_local_validation
+  optional_unfreeze:
+    enabled: false
+    modules: [last_bev_block, last_temporal_block]
+    learning_rate_ratio_to_heads: 0.02
+  feature_contract:
+    schema_version: "1.0"
+    storage_dtype: float16
+    coordinate_dtype: float32
+    solver_dtype: float64
+    validate_finite: true
+    include_input_quality: true
+
+geometric_perception:
+  always_enabled: true
+  ground_filter:
+    enabled: true
+    method: configurable
+  clustering:
+    enabled: true
+    method: euclidean
+    tolerance_m: 0.20
+    minimum_points: 3
+    maximum_points: 50000
+  occupancy:
+    enabled: true
+    resolution_m: 0.10
+    size_x_m: 40.0
+    size_y_m: 40.0
+    unknown_is_occupied: true
+  tracking:
+    enabled: true
+    model: constant_velocity_kalman
+    maximum_missed_frames: 3
+    covariance_growth_per_second_m2: 0.05
+
+planning:
+  update_rate_hz: 5.0
+  horizon_s: 2.0
+  candidate_dt_s: 0.20
+  number_of_future_points: 10
+  number_of_candidates: 7
+  top_k_for_mpc: 3
+  candidate_generation: control_knots_then_vehicle_rollout
+  required_candidate_roles:
+    - nominal_route_following
+    - left_or_counterclockwise_bias
+    - right_or_clockwise_bias
+    - reduced_speed
+    - controlled_stop
+    - model_specific_escape_1
+    - model_specific_escape_2
+  analytical_filter:
+    require_complete_horizon: true
+    enforce_vehicle_dynamics: true
+    enforce_costmap_corridor: true
+    enforce_braking_distance: true
+    reject_stale_inputs: true
+
+obstacle_prediction:
+  horizon_s: 2.0
+  dt_s: 0.10
+  fusion_priority: [geometric, tracked, learned]
+  maximum_obstacles: 32
+  uncertainty:
+    sigma_multiplier: 3.0
+    latency_margin_enabled: true
+    missed_detection_margin_m: 0.10
+    confidence_is_not_covariance: true
+
+mpc:
+  enabled_after_vehicle_validation: false
+  model_from_vehicle_variant: true
+  horizon_s: 2.0
+  dt_s: 0.10
+  intervals: 20
+  solver:
+    backend: casadi_ipopt
+    hard_deadline_ms: 80
+    max_iterations: 100
+    warm_start: true
+    accept_solution_after_deadline: false
+  dcbf:
+    continuous_alpha: 1.0
+    gamma_formula: "1-exp(-continuous_alpha*dt_s)"
+    allow_slack: true
+    maximum_slack: 1.0
+    slack_penalty: 10000.0
+    footprint_model: unresolved        # circle|capsule|multi_circle|polygon|distance_field
+    fixed_margin_m: null               # REQUIRED_FROM_BRAKING_AND_LOCALIZATION_TESTS
+    sigma_multiplier: 3.0
+    add_relative_speed_latency_margin: true
+    add_braking_margin: true
+  weights:
+    position: 10.0
+    yaw: 2.0
+    velocity: 2.0
+    control: 0.2
+    smoothness: 2.0
+    obstacle_slack: 10000.0
+    route_slack: 10000.0
+
+command_adapter:
+  output_topic: /cmd_vel
+  output_type: geometry_msgs/msg/Twist
+  use_vehicle_variant: true
+  saturate_to_commissioning_limits: true
+  saturate_to_physical_limits_after_validation: true
+  enforce_rate_limits: true
+  publish_zero_when_disarmed: true
+  publish_zero_repetitions_on_stop: 10
+  zero_publish_rate_hz: 20.0
+
+safety_supervisor:
+  run_on_vehicle: true
+  update_rate_hz: 50.0
+  planner_command_timeout_s: 0.20
+  planner_heartbeat_timeout_s: 0.30
+  point_cloud_timeout_s: 0.15
+  odometry_timeout_s: 0.10
+  imu_timeout_s: 0.10
+  tf_timeout_s: 0.10
+  stop_on_network_loss: true
+  stop_on_solver_timeout: true
+  stop_on_nonfinite_command: true
+  stop_on_unverified_direction_sign: true
+  stop_on_unresolved_vehicle_variant: true
+  stop_on_missing_footprint: true
+  emergency_distance_m: null            # REQUIRED_FROM_FOOTPRINT_AND_BRAKING_TEST
+  braking_distance_formula: "v*total_delay + v*v/(2*max_braking_deceleration) + margin"
+  physical_emergency_stop_verified: false
+  software_stop_verified: false
+  command_loss_stop_verified: false
+
+fallback:
+  order:
+    - next_ranked_candidate
+    - conservative_low_speed_candidate
+    - controlled_stop
+    - repeated_zero_velocity
+  allow_blind_motion: false
+  allow_last_command_hold: false
+  use_previous_mpc_solution_only_if_fresh: true
+  previous_solution_max_age_s: 0.10
+
+training:
+  feature_cache:
+    enabled: true
+    include_checkpoint_hash: true
+    include_config_hash: true
+    include_timestamps_and_frames: true
+  stages:
+    planning_heads:
+      trainable: [c16_feature_adapter, route_encoder, costmap_encoder, ego_encoder, candidate_head]
+      frozen: [lidar_backbone]
+    safety_heads:
+      trainable: [safety_heads, candidate_ranker]
+      frozen: [lidar_backbone, candidate_head]
+    optional_joint_finetune:
+      enabled: false
+      trainable: [candidate_head, last_bev_or_temporal_block]
+  pseudo_labels:
+    regenerate_for_confirmed_r680_variant: true
+    reject_old_nuplan_vehicle_labels: true
+    distinguish_timeout_numeric_failure_infeasible: true
+
+logging:
+  record_rosbag: true
+  record_raw_point_cloud: true
+  record_candidate_trajectories: true
+  record_obstacles_and_covariances: true
+  record_mpc_request_and_result: true
+  record_watchdog_events: true
+  record_final_command_and_feedback: true
+  record_latency_breakdown: true
+  record_model_and_config_hashes: true
+
+validation_gates:
+  product_model_confirmed: false
+  oled_type_confirmed: false
+  car_mode_confirmed: false
+  urdf_confirmed: false
+  vehicle_variant_confirmed: false
+  footprint_measured: false
+  reference_point_confirmed: false
+  physical_limits_measured: false
+  braking_distance_measured: false
+  command_delay_measured: false
+  lidar_exact_model_confirmed: false
+  lidar_topic_and_fields_verified: false
+  lidar_frequency_verified: false
+  lidar_extrinsics_verified: false
+  time_synchronization_verified: false
+  tf_tree_verified: false
+  direction_sign_verified: false
+  command_loss_stop_verified: false
+  physical_emergency_stop_verified: false
+  software_stop_verified: false
+  frozen_backbone_verified_on_c16: false
+  mpc_deadline_verified: false
+  fault_injection_verified: false
+
+motion_unlock_policy:
+  require_all_validation_gates: true
+  require_commissioning_allow_nonzero_command: true
+  require_manual_arm: true
+  default_action_if_any_gate_fails: publish_repeated_zero_velocity
+
