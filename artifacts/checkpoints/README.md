@@ -13,8 +13,8 @@
 
 抽取的确定性 LiDAR 初始化子集：`unilion_lidar_backbone_init.safetensors`
 
-- 包含 797 个参数/缓冲区：voxel encoder 12、backbone 767、neck 18。
-- SHA-256：`89ab91f6d33ae209331a8dbc4f1a58fe392beca790f21086e87a2bf9195b3a29`
-- 大小：`42975912` 字节
+- 包含 911 个参数/缓冲区：voxel encoder 12、LiDAR backbone 767、BEV backbone 114、neck 18。
+- SHA-256：`9ba65cfead901ea08db3664108838d4c85bd6621592cc08cca0dfe61af4eb262`
+- 大小：`62833816` 字节
 - 来源与统计保存在同名 `.json` sidecar；SafeTensors 本体不写 metadata，以保证跨机器确定性。
 - 仅作为初始化候选，未通过 C16 验证。

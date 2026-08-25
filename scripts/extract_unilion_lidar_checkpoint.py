@@ -10,7 +10,13 @@ import torch
 from safetensors.torch import save_file
 
 
-DEFAULT_PREFIXES = ("pts_voxel_encoder.", "pts_middle_encoder.", "pts_backbone.", "pts_neck.")
+DEFAULT_PREFIXES = (
+    "pts_voxel_encoder.",
+    "pts_middle_encoder.",
+    "pts_backbone.",
+    "bev_backbone.",
+    "pts_neck.",
+)
 
 
 def file_hash(path: Path) -> str:
@@ -40,7 +46,7 @@ def main() -> int:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     tensors = {key: value.detach().cpu().contiguous() for key, value in selected.items()}
     metadata = {
-        "schema_version": "1.0",
+        "schema_version": "1.1",
         "source_checkpoint_sha256": file_hash(args.source),
         "source_modality": "official_unilion_lct",
         "selected_prefixes": ",".join(DEFAULT_PREFIXES),

@@ -22,7 +22,7 @@ C16 适配必须验证：
 
 1. 将 `x,y,z,intensity,ring,time` 映射为官方点输入，缺少语义字段不得填伪值。
 2. 局部导航范围裁剪到约 `x∈[-2,8], y∈[-5,5]`，重新确定体素大小。
-3. 用 C16 点云跑至少 100 帧，检查有限值、空体素率、特征方差和延迟。
+3. 用真实 C16 点云跑至少 100 帧，检查有限值、空体素率、特征方差和延迟。
 4. 冻结 voxel encoder/backbone，训练本项目 feature adapter；必要时只解冻末端块。
 5. 抽取权重只能标为 `initialization_candidate`，不能关闭 `frozen_backbone_verified_on_c16`。
 
@@ -41,4 +41,12 @@ C16 适配必须验证：
 
 官方 `requirement.txt` 同时包含 CUDA 11.6 的 `spconv/cumm` 与 CUDA 12.4 说明，因此未整文件盲装；当前使用 `spconv-cu120 2.3.6` 与 Torch/CUDA ABI 对应的 `torch-scatter` wheel。Conda 的 `cuda-version/cuda-cccl` 已固定为 12.4，避免求解出 13.x 头文件导致 nvcc 12.4 编译失败。
 
-当前通过的是环境、CUDA 扩展和完整插件导入，不等于 C16 推理验收。仍需官方 nuScenes 样例前向、LiDAR 子网严格加载、C16 点字段适配及 100 帧验证。
+## 阶段1前向结果
+
+已实现 `UniLionFrozenBackbone`，从官方 `unilion_swin_384_seq_e2e.py` 构建单帧 LiDAR 路径：DynamicPillarVFE3D → Lion3DBackbone → HeightCompression → ResSECOND → SECONDFPN。抽取权重扩展为911项并完成严格的参数/缓冲区名称、形状检查，无 missing 或 unexpected keys；所有模块为 eval 且 `requires_grad=False`。
+
+开发机 RTX 4090 使用12000个确定性合成C16格式点的结果：输出 `[1,384,180,180]`，全部有限，方差约 `0.002262`；3次模型前向中位数约56.64 ms，包含GPU到CPU特征复制约70.75 ms，峰值显存约491.5 MB。重复前向最大绝对差约 `3.72e-4`，满足当前 `1e-3` 数值一致性阈值。
+
+已固化 `x,y,z,intensity,ring` 五字段契约。`time` 可用于上游去畸变，但不作为官方五维模型输入；pillar encoder 的11维来自5维原始输入、3维聚类偏移和3维体素中心偏移。
+
+上述结果证明官方配置的冻结 LiDAR 子网能够在开发机执行，但输入是明确标记的合成C16格式数据，不是准确率证据。开发机不存在 nuScenes `samples/LIDAR_TOP` 原始数据，因此官方真实样例前向仍需在合法取得 nuScenes mini/sample 后补跑；真实C16 100帧验证门继续关闭。

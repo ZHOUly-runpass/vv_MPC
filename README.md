@@ -24,3 +24,21 @@ python scripts/run_synthetic_smoke.py --config configs/robot/r680_c16.yaml
 
 ROS 2 development-machine setup and the fail-closed adapter are described in
 `integration/README.md`.
+
+UniLION stage-1 CUDA validation on the development machine:
+
+```bash
+cd /home/zhou/E2Eproject_MPC/github_pull/05
+PYTHONDONTWRITEBYTECODE=1 \
+CUDA_HOME="$PWD/.tools/envs/unilion" \
+PATH="$PWD/.tools/envs/unilion/bin:$PATH" \
+LD_LIBRARY_PATH="$PWD/.tools/envs/unilion/lib:${LD_LIBRARY_PATH:-}" \
+PYTHONPATH="$PWD/src:$PWD/third_party/UniLION" \
+.tools/envs/unilion/bin/python scripts/run_unilion_lidar_forward.py \
+  --points 12000 --runs 3 --output reports/unilion_stage1_forward.json
+```
+
+The default input is deterministic synthetic C16-format data for plumbing and
+performance validation, not accuracy evidence. Pass `--nuscenes-sample PATH`
+after legally obtaining a five-float nuScenes LiDAR sample. See
+`reports/UniLION阶段1执行报告.md` for the measured result and remaining gates.

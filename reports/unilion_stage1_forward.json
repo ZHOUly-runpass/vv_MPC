@@ -1,0 +1,197 @@
+{
+  "status": "passed",
+  "input_kind": "deterministic_synthetic_c16_format_not_accuracy_evidence",
+  "official_config": "/home/zhou/E2Eproject_MPC/github_pull/05/third_party/UniLION/projects/configs/unilion_swin_384_seq_e2e.py",
+  "official_config_sha256": "5ebea3991a61298dd9df62911c4dec50f2c5ec4b2e0b981f1746c2d445ab6dd9",
+  "lidar_checkpoint_sha256": "9ba65cfead901ea08db3664108838d4c85bd6621592cc08cca0dfe61af4eb262",
+  "build_time_s": 5.489878747612238,
+  "feature_shape": [
+    1,
+    384,
+    180,
+    180
+  ],
+  "feature_finite": true,
+  "feature_variance": 0.0022619646042585373,
+  "repeat_max_abs_difference": 0.00037151575088500977,
+  "repeat_tolerance": 0.001,
+  "repeat_within_tolerance": true,
+  "runs": [
+    {
+      "model_time_ms": 57.01412307098508,
+      "total_time_ms": 71.5486160479486
+    },
+    {
+      "model_time_ms": 56.641468312591314,
+      "total_time_ms": 70.75200695544481
+    },
+    {
+      "model_time_ms": 55.62418792396784,
+      "total_time_ms": 69.67229396104813
+    }
+  ],
+  "model_time_ms_median": 56.641468312591314,
+  "total_time_ms_median": 70.75200695544481,
+  "health": {
+    "healthy": true,
+    "backend": "unilion_lct_single_frame_lidar_initialization_candidate",
+    "device": "cuda:0",
+    "weights_strict": true,
+    "modules_frozen": true,
+    "weight_report": [
+      {
+        "module": "pts_voxel_encoder",
+        "tensor_count": 12,
+        "missing_keys": [],
+        "unexpected_keys": [],
+        "layout_converted_keys": [],
+        "load_method": "strict_named_parameter_buffer_copy"
+      },
+      {
+        "module": "pts_backbone",
+        "tensor_count": 767,
+        "missing_keys": [],
+        "unexpected_keys": [],
+        "layout_converted_keys": [],
+        "load_method": "strict_named_parameter_buffer_copy"
+      },
+      {
+        "module": "bev_backbone",
+        "tensor_count": 114,
+        "missing_keys": [],
+        "unexpected_keys": [],
+        "layout_converted_keys": [],
+        "load_method": "strict_named_parameter_buffer_copy"
+      },
+      {
+        "module": "pts_neck",
+        "tensor_count": 18,
+        "missing_keys": [],
+        "unexpected_keys": [],
+        "layout_converted_keys": [],
+        "load_method": "strict_named_parameter_buffer_copy"
+      }
+    ],
+    "point_contract": {
+      "model_fields": [
+        "x",
+        "y",
+        "z",
+        "intensity",
+        "ring"
+      ],
+      "ignored_but_supported_fields": [
+        "time"
+      ],
+      "expected_ring_count": 16,
+      "output_dtype": "float32",
+      "pillar_feature_dimension": 11,
+      "pillar_feature_explanation": "5 raw + 3 cluster offsets + 3 voxel-center offsets"
+    },
+    "last_inference": {
+      "input_points": 12000,
+      "voxel_count": 7792,
+      "output_shape": [
+        1,
+        384,
+        180,
+        180
+      ],
+      "model_time_ms": 55.62418792396784,
+      "total_time_ms": 69.67229396104813,
+      "peak_memory_bytes": 491505152,
+      "maximum_repeat_difference": 0.00037151575088500977,
+      "hook_statistics": {
+        "sparse_lidar_backbone": {
+          "shapes": [
+            [
+              30156,
+              128
+            ]
+          ],
+          "finite": true,
+          "means": [
+            0.006890971679240465
+          ],
+          "variances": [
+            0.01811794377863407
+          ]
+        },
+        "height_compressed_bev": {
+          "shapes": [
+            [
+              1,
+              256,
+              360,
+              360
+            ]
+          ],
+          "finite": true,
+          "means": [
+            0.000801713380496949
+          ],
+          "variances": [
+            0.002112769987434149
+          ]
+        },
+        "bev_backbone": {
+          "shapes": [
+            [
+              1,
+              128,
+              360,
+              360
+            ],
+            [
+              1,
+              128,
+              180,
+              180
+            ],
+            [
+              1,
+              256,
+              90,
+              90
+            ]
+          ],
+          "finite": true,
+          "means": [
+            0.10386630147695541,
+            0.09304136782884598,
+            0.03677014261484146
+          ],
+          "variances": [
+            0.01374615915119648,
+            0.012451528571546078,
+            0.004712720867246389
+          ]
+        },
+        "bev_neck": {
+          "shapes": [
+            [
+              1,
+              384,
+              180,
+              180
+            ]
+          ],
+          "finite": true,
+          "means": [
+            0.021542787551879883
+          ],
+          "variances": [
+            0.0022619664669036865
+          ]
+        }
+      }
+    },
+    "validation_status": "initialization_candidate_not_c16_verified"
+  },
+  "official_nuscenes_sample": {
+    "available": false,
+    "sample_root": "/home/zhou/E2Eproject_MPC/github_pull/05/third_party/UniLION/data/nuscenes/samples/LIDAR_TOP",
+    "sample_count": 0,
+    "reason": "nuScenes sample data is not present on the development machine"
+  }
+}
