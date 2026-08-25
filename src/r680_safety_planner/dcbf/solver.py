@@ -157,6 +157,34 @@ class CasadiDcbfSolver:
         elif self.model.variant == "ackermann":
             opti.subject_to(opti.bounded(-self.model.limits.steering_angle, control[1, :], self.model.limits.steering_angle))
 
+    def select_reachable_obstacles(self, request: MpcRequest) -> tuple:
+        """Conservatively remove obstacles outside the horizon reachable disk.
+
+        The disk assumes the vehicle can instantly move at its maximum speed in
+        any direction, so it over-approximates every supported vehicle model.
+        Obstacles with invalid masks remain active (fail-closed).
+        """
+        timestamps = request.reference.timestamps_s - request.reference.timestamps_s[0]
+        limits = self.model.limits
+        longitudinal = max(limits.forward_velocity, limits.reverse_velocity)
+        speed_bound = (float(np.hypot(longitudinal, limits.lateral_velocity))
+                       if self.model.variant in {"mecanum", "omni"} else longitudinal)
+        reachable_radius = speed_bound * timestamps
+        initial_xy = request.initial_state[:2]
+        active = []
+        for obstacle in request.obstacles:
+            if not np.all(obstacle.valid_mask):
+                active.append(obstacle)
+                continue
+            covariance_radius = self.sigma_multiplier * np.sqrt(np.maximum(
+                0.0, np.linalg.eigvalsh(obstacle.covariance)[:, -1]))
+            obstacle_radius = 0.5 * np.hypot(obstacle.lengths, obstacle.widths)
+            safe_radius = self.ego_radius_m + obstacle_radius + self.fixed_margin_m + covariance_radius
+            center_distance = np.linalg.norm(obstacle.states[:, :2] - initial_xy, axis=1)
+            if np.any(center_distance <= reachable_radius + safe_radius):
+                active.append(obstacle)
+        return tuple(active)
+
     def solve(self, request: MpcRequest) -> MpcResult:
         started = perf_counter()
         request.validate()
@@ -170,7 +198,8 @@ class CasadiDcbfSolver:
         opti = ca.Opti()
         states = opti.variable(self.model.state_size, intervals + 1)
         controls = opti.variable(self.model.control_size, intervals)
-        obstacle_count = len(request.obstacles)
+        active_obstacles = self.select_reachable_obstacles(request)
+        obstacle_count = len(active_obstacles)
         slack = opti.variable(obstacle_count, intervals) if obstacle_count else None
         opti.subject_to(states[:, 0] == request.initial_state)
         for index in range(intervals):
@@ -190,7 +219,7 @@ class CasadiDcbfSolver:
         if slack is not None:
             opti.subject_to(opti.bounded(0.0, slack, self.maximum_slack))
             objective += self.weights["obstacle_slack"] * ca.sumsqr(slack)
-            for obstacle_index, obstacle in enumerate(request.obstacles):
+            for obstacle_index, obstacle in enumerate(active_obstacles):
                 h_values = []
                 for index in range(intervals + 1):
                     covariance_radius = self.sigma_multiplier * np.sqrt(max(

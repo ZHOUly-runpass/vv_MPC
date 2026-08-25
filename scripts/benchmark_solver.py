@@ -18,6 +18,7 @@ def main() -> int:
     parser.add_argument("--repeats", type=int, default=10)
     parser.add_argument("--deadline-ms", type=float, default=80.0)
     parser.add_argument("--obstacles", type=int, default=0)
+    parser.add_argument("--placement", choices=("far", "near"), default="far")
     args = parser.parse_args()
     limits = VehicleLimits(0.5, 0.1, 0.0, 1.0, 0.5, 0.8, 0.0, 1.0)
     model = DifferentialModel(limits)
@@ -27,8 +28,12 @@ def main() -> int:
     obstacles = []
     for index in range(args.obstacles):
         states = np.zeros((horizon_points, 6), dtype=np.float64)
-        states[:, 0] = 4.0 + 0.25 * index
-        states[:, 1] = 1.5 if index % 2 else -1.5
+        if args.placement == "far":
+            states[:, 0] = 4.0 + 0.25 * index
+            states[:, 1] = 1.5 if index % 2 else -1.5
+        else:
+            states[:, 0] = 1.2 + 0.02 * index
+            states[:, 1] = 0.8 if index % 2 else -0.8
         states[:, 5] = 1.0
         obstacles.append(PredictedObstacle(
             states=states,
@@ -39,14 +44,19 @@ def main() -> int:
         ))
     times = []
     statuses = []
+    active_obstacles = None
     for _ in range(args.repeats):
         solver = CasadiDcbfSolver(model, 0.3, hard_deadline_ms=10000.0)
-        result = solver.solve(MpcRequest(initial, reference, tuple(obstacles)))
+        request = MpcRequest(initial, reference, tuple(obstacles))
+        active_obstacles = len(solver.select_reachable_obstacles(request))
+        result = solver.solve(request)
         times.append(result.solve_time_ms)
         statuses.append(result.status)
     warm = times[1:] if len(times) > 1 else times
     report = {
-        "repeats": len(times), "obstacles": args.obstacles, "cold_ms": times[0],
+        "repeats": len(times), "obstacles": args.obstacles,
+        "active_obstacles": active_obstacles, "placement": args.placement,
+        "cold_ms": times[0],
         "warm_min_ms": min(warm), "warm_median_ms": statistics.median(warm),
         "warm_p95_ms": float(np.percentile(warm, 95)), "deadline_ms": args.deadline_ms,
         "deadline_pass": max(warm) <= args.deadline_ms,
