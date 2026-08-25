@@ -9,6 +9,12 @@ dependencies:
   - pytorch=2.5.0
   - torchvision=0.20.0
   - pytorch-cuda=12.4
+  # Keep CUDA headers aligned with nvcc. Without these pins Conda may solve
+  # cuda-cccl/cuda-version to a newer major release (observed: 13.3), which
+  # makes nvcc 12.4 fail while parsing cuda_fp16.h.
+  - cuda-version=12.4
+  - cuda-cccl=12.4
+  - cuda-cccl_linux-64=12.4
   - cuda-nvcc=12.4
   - cuda-cudart-dev=12.4
   - ninja
