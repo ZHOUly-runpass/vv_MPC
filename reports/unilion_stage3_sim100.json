@@ -1,0 +1,33 @@
+{
+  "cache_path": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/feature_bridge/latest_frozen_scene_features.npz",
+  "cache_sha256": "28a0a8534fc99d933eba0e233e7980ad3f8e7f6902be7d425d52e8bb21489abd",
+  "checkpoint_sha256": "9ba65cfead901ea08db3664108838d4c85bd6621592cc08cca0dfe61af4eb262",
+  "config_sha256": "5ebea3991a61298dd9df62911c4dec50f2c5ec4b2e0b981f1746c2d445ab6dd9",
+  "feature_finite": true,
+  "feature_shape": [
+    1,
+    384,
+    180,
+    180
+  ],
+  "feature_variance_median": 0.0010457808384671807,
+  "feature_variance_min": 0.0010423744097352028,
+  "fields": [
+    "x",
+    "y",
+    "z",
+    "intensity",
+    "ring",
+    "time"
+  ],
+  "frames": 100,
+  "healthy": true,
+  "input_kind": "gazebo_classic_c16_100_frame_capture",
+  "model_time_ms_median": 46.94260889664292,
+  "peak_memory_bytes_max": 474784256,
+  "schema_version": "1.0",
+  "status": "passed",
+  "total_time_ms_median": 61.16934842430055,
+  "total_time_ms_p95": 61.718433210626245,
+  "updated_wall_time_s": 1787651143.127966
+}

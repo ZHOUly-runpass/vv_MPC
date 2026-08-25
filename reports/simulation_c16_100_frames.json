@@ -1,0 +1,22 @@
+{
+  "empty_voxel_ratio_mean": 0.9995360435956787,
+  "errors": [],
+  "fields": [
+    "x",
+    "y",
+    "z",
+    "intensity",
+    "ring",
+    "time"
+  ],
+  "finite": true,
+  "frame_id": "base_footprint",
+  "frames": 100,
+  "frequency_hz": 9.999999999997726,
+  "points_per_frame_max": 7200,
+  "points_per_frame_min": 7200,
+  "points_total": 720000,
+  "status": "passed",
+  "timestamp_monotonic": true,
+  "transport_latency_ms_median": 0.0
+}

@@ -26,7 +26,8 @@ for _ in $(seq 1 40); do
   sleep 1
 done
 ros2 run r680_sim_bringup pointcloud_100_frame_audit --ros-args \
-  -p capture_output:="$capture" -p report_output:="$capture_report" -p frames:=100
+  -p capture_output:="$capture" -p report_output:="$capture_report" -p frames:=100 \
+  -p use_sim_time:=true
 cleanup
 trap - EXIT
 

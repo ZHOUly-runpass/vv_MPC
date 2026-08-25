@@ -124,7 +124,7 @@ C16 / 仿真16线点云
 
 目标：先建立可重复的确定性闭环，不升级开发机宿主系统。
 
-1. `[部分完成]` 开发机已有 Gazebo Classic 11.10.2 和 Gazebo ROS 插件；Nav2 与 ros2_control 尚未安装。为避免越过 `05` 目录修改宿主系统，当前底盘使用 `gazebo_ros_diff_drive`，Nav2 留作明确授权后的依赖补充。
+1. `[安装待 sudo，工程配置已完成]` 已获得安装授权并确认 apt 候选版本：Navigation2/Nav2 Bringup 1.1.20、ros2_control 2.54.0、ros2_controllers 2.53.1、gazebo_ros2_control 0.4.10。开发机 `sudo` 要求交互密码，用户执行安装命令后进行最终实启；项目已具备 ros2_control URDF、控制器 YAML、速度中继、Nav2 DWB 参数与一键 launch。
 2. `[已完成]` 建立 R680 近似差速 URDF/Xacro、惯导、720 线束 2D 雷达和 16 线 3D LiDAR；近似尺寸仅供仿真，不能替代实车标定。
 3. `[已完成]` 开发机实测 `/cmd_vel → /odom → /tf`、`/scan`、`/points_raw → /points`、`/imu/data_raw` 和 `/plan` 链路在线；点云严格输出 `x/y/z/intensity/ring`。
 4. `[已完成]` 实现并实启 Empty、Static Sparse、Static Dense、Narrow Passage、Crossing、Head-on、Multi Dynamic、Local Minimum Trap 八类场景。
@@ -139,10 +139,12 @@ C16 / 仿真16线点云
 
 目标：让仿真点云与未来 C16 数据使用同一适配接口。
 
-1. 实现 `x/y/z/intensity/ring/time` 字段映射、外参变换和时间同步。
-2. 先运行100帧仿真16线点云，检查空体素率、特征方差、有限值、显存和端到端时延。
-3. 将 UniLION 作为独立进程，只发布版本化的 FrozenSceneFeatures 和健康状态。
-4. 保留 `/scan` 或几何点云障碍通路作为 D-CBF 的确定性输入。
+1. `[已完成（仿真）]` 实现 `x/y/z/intensity/ring/time` 字段映射、仿真已知外参变换和时间同步；真实 C16 外参与原生时间字段仍必须实车标定。
+2. `[已完成]` 运行 100 帧真实 Gazebo 16 线点云：720000 点、10 Hz、字段完整、有限值通过；空体素率、特征方差、显存和延迟均已记录。
+3. `[已完成]` UniLION 在独立 Python 3.9/CUDA 进程运行，通过 schema 1.0、缓存 SHA-256、FrozenSceneFeatures 引用和健康状态与 ROS 进程隔离桥接。
+4. `[已完成]` `/scan` 与几何 `/points` 通路保持独立；UniLION 退出、超时、缓存损坏或非有限输出会触发 feature stop 和零速。
+
+阶段 3 仿真验收结果：100 帧全部输出 `[1,384,180,180]`，特征方差中位数 `0.00104578`，总耗时中位数 `61.17 ms`、P95 `61.72 ms`，最大显存 `474784256` 字节。报告位于 `reports/阶段3执行报告.md`、`reports/simulation_c16_100_frames.json` 和 `reports/unilion_stage3_sim100.json`。真实 C16 仍未验收，因此 `frozen_backbone_verified_on_c16` 保持关闭。
 
 完成标准：UniLION 进程退出、超时或输出异常时车辆必停；正常情况下特征能够稳定进入候选生成模块。
 

@@ -37,7 +37,8 @@ class PointCloud100FrameAudit(Node):
         if not set(FIELDS).issubset(names):
             self.errors.append(f"missing fields: {sorted(set(FIELDS) - names)}")
             return
-        values = np.asarray(list(point_cloud2.read_points(message, field_names=FIELDS, skip_nans=False)), dtype=np.float32).reshape(-1, 6)
+        raw = point_cloud2.read_points(message, field_names=FIELDS, skip_nans=False)
+        values = np.column_stack([raw[name] for name in FIELDS]).astype(np.float32, copy=False)
         if values.size == 0 or not np.all(np.isfinite(values)):
             self.errors.append("empty or non-finite frame")
             return

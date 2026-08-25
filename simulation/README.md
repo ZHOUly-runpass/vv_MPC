@@ -28,3 +28,16 @@ bash simulation/scripts/record_scenario.sh "$PWD" crossing_pedestrian 60
 `/simulation/reset_benchmark` clears metrics and requests Gazebo's
 `/reset_simulation` service. DWB and MPPI are intentionally not started until
 the missing Nav2 packages are installed or provided inside the project scope.
+
+Run the Stage-3 100-frame capture and isolated UniLION validation with:
+
+```bash
+bash simulation/scripts/run_stage3_validation.sh "$PWD"
+```
+
+After the system Nav2 and ros2_control packages are installed, the configured
+DWB/ros2_control stack starts with:
+
+```bash
+ros2 launch r680_sim_bringup nav2_sim.launch.py scenario:=empty controller:=dwb
+```
