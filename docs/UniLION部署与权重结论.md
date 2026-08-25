@@ -28,13 +28,17 @@ C16 适配必须验证：
 
 ## 开发机环境
 
-官方要求 Python 3.9、PyTorch 2.5.0+cu124、CUDA 12.4，并编译其修改版 MMCV、MMDetection3D、Mamba 和项目 CUDA 扩展。开发机当前为 Python 3.10、系统 nvcc 11.5，不能在现有 ROS 环境内直接编译。
+官方要求 Python 3.9、PyTorch 2.5.0+cu124、CUDA 12.4，并编译其修改版 MMCV、MMDetection3D、Mamba 和项目 CUDA 扩展。开发机宿主仍为 Python 3.10、系统 nvcc 11.5，因此没有污染 ROS 环境，而是在项目 `.tools/envs/unilion` 建立了隔离环境。
 
-`environments/unilion_environment.yml` 定义了隔离环境基础。后续需安装 Miniforge/Conda，再依次编译：
+截至 2026-08-25，开发机 RTX 4090 上已经完成：Python 3.9、PyTorch 2.5.0+cu124、环境内 nvcc 12.4.131、MMCV 1.7.0 CUDA ops、MMDetection3D 1.0.0rc6、Mamba 1.1.1、`causal-conv1d` 1.5.0.post8 和 UniLION 项目扩展。`scripts/smoke_unilion_dev.py` 的 CUDA/导入检查全部通过。
+
+`environments/unilion_environment.yml` 与 `scripts/setup_unilion_dev.sh` 固化了环境和以下编译顺序：
 
 1. `third_party/UniLION/mmcv`
 2. `third_party/UniLION/mmdetection3d`
 3. `third_party/UniLION/projects/mmdet3d_plugin/models/ops/mamba`
 4. `third_party/UniLION/projects`
 
-官方 `requirement.txt` 同时包含 CUDA 11.6 的 `spconv/cumm` 与 CUDA 12.4 说明，不应整文件盲装；必须先做最小前向依赖闭包。
+官方 `requirement.txt` 同时包含 CUDA 11.6 的 `spconv/cumm` 与 CUDA 12.4 说明，因此未整文件盲装；当前使用 `spconv-cu120 2.3.6` 与 Torch/CUDA ABI 对应的 `torch-scatter` wheel。Conda 的 `cuda-version/cuda-cccl` 已固定为 12.4，避免求解出 13.x 头文件导致 nvcc 12.4 编译失败。
+
+当前通过的是环境、CUDA 扩展和完整插件导入，不等于 C16 推理验收。仍需官方 nuScenes 样例前向、LiDAR 子网严格加载、C16 点字段适配及 100 帧验证。

@@ -5,12 +5,20 @@ from __future__ import annotations
 
 import importlib
 import json
+import os
+from pathlib import Path
+import sys
 
 import torch
 
 
 def main() -> int:
-    modules = ("mmcv", "mmcv._ext", "mmdet3d", "mamba_ssm", "mmdet3d_plugin")
+    sys.dont_write_bytecode = True
+    # Some upstream evaluation modules load CUDA sources through paths relative
+    # to the UniLION repository root (for example lib/dvr/dvr.cpp).
+    project_dir = Path(__file__).resolve().parents[1]
+    os.chdir(project_dir / "third_party" / "UniLION")
+    modules = ("mmcv", "mmcv._ext", "mmdet3d", "mamba_ssm", "projects.mmdet3d_plugin")
     imported: dict[str, str] = {}
     errors: dict[str, str] = {}
     for name in modules:
