@@ -17,3 +17,14 @@ Available scenarios are listed in `config/scenarios.yaml`. The launch provides
 adapted `/points`, `/plan`, `/cmd_vel`, ground-truth obstacle poses and benchmark
 status. Nav2 is not installed on the current machine, so `/plan` is initially
 provided by the deterministic route publisher.
+
+Every launch uses Gazebo seed `42`. Record a repeatable run into the ignored
+project-local `.tools/rosbags` directory with:
+
+```bash
+bash simulation/scripts/record_scenario.sh "$PWD" crossing_pedestrian 60
+```
+
+`/simulation/reset_benchmark` clears metrics and requests Gazebo's
+`/reset_simulation` service. DWB and MPPI are intentionally not started until
+the missing Nav2 packages are installed or provided inside the project scope.

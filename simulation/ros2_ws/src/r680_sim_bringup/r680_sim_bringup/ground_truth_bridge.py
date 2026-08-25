@@ -6,6 +6,7 @@ import rclpy
 from gazebo_msgs.msg import ModelStates
 from geometry_msgs.msg import PoseArray
 from rclpy.node import Node
+from rclpy.qos import qos_profile_sensor_data
 from std_msgs.msg import String
 
 from .scenario import load_scenario, obstacle_catalog
@@ -20,7 +21,7 @@ class GroundTruthBridge(Node):
         self.catalog = {item["name"]: item for item in obstacle_catalog(scenario)}
         self.pose_pub = self.create_publisher(PoseArray, "/simulation/ground_truth_obstacle_poses", 10)
         self.json_pub = self.create_publisher(String, "/simulation/ground_truth_obstacles", 10)
-        self.create_subscription(ModelStates, "/gazebo/model_states", self.callback, 10)
+        self.create_subscription(ModelStates, "/model_states", self.callback, qos_profile_sensor_data)
 
     def callback(self, message: ModelStates) -> None:
         poses = PoseArray()
@@ -47,6 +48,9 @@ def main(args=None) -> None:
     node = GroundTruthBridge()
     try:
         rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
     finally:
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()

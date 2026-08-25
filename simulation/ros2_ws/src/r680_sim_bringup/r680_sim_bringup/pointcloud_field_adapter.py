@@ -44,5 +44,11 @@ class PointCloudFieldAdapter(Node):
 
 def main(args=None) -> None:
     rclpy.init(args=args); node = PointCloudFieldAdapter()
-    try: rclpy.spin(node)
-    finally: node.destroy_node(); rclpy.shutdown()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        if rclpy.ok():
+            rclpy.shutdown()

@@ -124,12 +124,14 @@ C16 / 仿真16线点云
 
 目标：先建立可重复的确定性闭环，不升级开发机宿主系统。
 
-1. 安装 Nav2 和 Gazebo ROS 控制依赖。
-2. 建立 R680 近似差速 URDF/Xacro、惯导、2D 雷达和 16 线 3D LiDAR。
-3. 验证 `/cmd_vel → odom → tf`，再接入 `/scan`、`/points` 和全局路径。
-4. 实现 Empty、Static Sparse、Static Dense、Narrow Passage、Crossing、Head-on、Multi Dynamic、Local Minimum Trap 八类场景。
-5. 实现 GT obstacle bridge、自动重置、固定随机种子、rosbag 和 benchmark manager。
-6. 建立 DWB、MPPI、Vanilla D-CBF 和 Proposed 四组公平基线。
+1. `[部分完成]` 开发机已有 Gazebo Classic 11.10.2 和 Gazebo ROS 插件；Nav2 与 ros2_control 尚未安装。为避免越过 `05` 目录修改宿主系统，当前底盘使用 `gazebo_ros_diff_drive`，Nav2 留作明确授权后的依赖补充。
+2. `[已完成]` 建立 R680 近似差速 URDF/Xacro、惯导、720 线束 2D 雷达和 16 线 3D LiDAR；近似尺寸仅供仿真，不能替代实车标定。
+3. `[已完成]` 开发机实测 `/cmd_vel → /odom → /tf`、`/scan`、`/points_raw → /points`、`/imu/data_raw` 和 `/plan` 链路在线；点云严格输出 `x/y/z/intensity/ring`。
+4. `[已完成]` 实现并实启 Empty、Static Sparse、Static Dense、Narrow Passage、Crossing、Head-on、Multi Dynamic、Local Minimum Trap 八类场景。
+5. `[已完成]` 实现 GT obstacle bridge、`/simulation/reset_benchmark`、固定随机种子 42、项目内 rosbag 录制脚本和 benchmark manager。
+6. `[待完成]` DWB、MPPI 依赖 Nav2，暂不伪造基线；Vanilla D-CBF 和 Proposed 的公平批量评测需要在下一步把现有规划节点接入仿真 `/cmd_vel` 后完成。
+
+阶段 2 当前验收证据：开发机三个 ROS 2 包编译通过，八类场景运行审计全部 `passed=true`；Crossing 的 GT 障碍物 3 秒位移为 `0.576 m`，Head-on 和 Multi Dynamic 的最大位移为 `2.288 m`。空场景观测频率约为 odom 50 Hz、IMU 100 Hz、scan 15 Hz、16 线点云 10 Hz。证据文件位于 `reports/simulation_*_runtime.json`。
 
 完成标准：八类场景能够一键运行、重复、记录并汇总成功率、碰撞率、最小间距、到达时间、轨迹平滑度和计算延迟。
 

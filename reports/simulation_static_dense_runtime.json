@@ -1,0 +1,30 @@
+{
+  "counts": {
+    "benchmark": 223,
+    "ground_truth": 275,
+    "imu": 284,
+    "odom": 142,
+    "plan": 6,
+    "points": 57,
+    "scan": 42
+  },
+  "frames": {
+    "ground_truth": "odom",
+    "imu": "imu_link",
+    "odom": "odom",
+    "plan": "odom",
+    "points": "c16_link",
+    "scan": "laser_2d_link"
+  },
+  "ground_truth_max_movement_m": 0.0,
+  "minimum_ground_truth_movement_m": 0.0,
+  "passed": true,
+  "point_fields": [
+    "x",
+    "y",
+    "z",
+    "intensity",
+    "ring"
+  ],
+  "wall_elapsed_s": 3.005439216271043
+}

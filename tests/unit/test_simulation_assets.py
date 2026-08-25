@@ -33,6 +33,7 @@ def test_all_eight_scenarios_have_parseable_worlds():
         world = worlds / scenario["world"]
         assert world.is_file()
         assert "${" not in world.read_text(encoding="utf-8")
+        assert "libgazebo_ros_state.so" in world.read_text(encoding="utf-8")
         ET.parse(world)
 
 

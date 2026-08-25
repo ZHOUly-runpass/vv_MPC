@@ -6,6 +6,7 @@ import math
 import rclpy
 from gazebo_msgs.msg import ModelStates
 from rclpy.node import Node
+from rclpy.qos import qos_profile_sensor_data
 from std_msgs.msg import String
 from std_srvs.srv import Empty, Trigger
 
@@ -26,7 +27,7 @@ class BenchmarkManager(Node):
         self.collision = False
         self.reached_goal = False
         self.publisher = self.create_publisher(String, "/simulation/benchmark_status", 10)
-        self.create_subscription(ModelStates, "/gazebo/model_states", self.callback, 10)
+        self.create_subscription(ModelStates, "/model_states", self.callback, qos_profile_sensor_data)
         self.reset_client = self.create_client(Empty, "/reset_simulation")
         self.create_service(Trigger, "/simulation/reset_benchmark", self.reset)
 
@@ -72,6 +73,9 @@ def main(args=None) -> None:
     node = BenchmarkManager()
     try:
         rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
     finally:
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()

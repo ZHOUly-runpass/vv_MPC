@@ -16,7 +16,8 @@ class DynamicObstacleController(Node):
         _, scenario = load_scenario(self.get_parameter("scenario_file").value, self.get_parameter("scenario").value)
         self.obstacles = dynamic_obstacles(scenario)
         self.started_ns = self.get_clock().now().nanoseconds
-        self.client = self.create_client(SetEntityState, "/gazebo/set_entity_state")
+        self.client = self.create_client(SetEntityState, "/set_entity_state")
+        self.pending = {}
         self.create_timer(0.05, self.tick)
 
     def tick(self) -> None:
@@ -24,6 +25,8 @@ class DynamicObstacleController(Node):
             return
         elapsed = (self.get_clock().now().nanoseconds - self.started_ns) * 1e-9
         for item in self.obstacles:
+            if item["name"] in self.pending:
+                continue
             coordinate = triangle_position(
                 float(item["start"]), float(item["minimum"]), float(item["maximum"]), float(item["speed"]), elapsed
             )
@@ -41,7 +44,18 @@ class DynamicObstacleController(Node):
             state.pose.position.z = float(item["fixed"][1])
             state.pose.orientation.w = 1.0
             request.state = state
-            self.client.call_async(request)
+            future = self.client.call_async(request)
+            self.pending[item["name"]] = future
+            future.add_done_callback(lambda done, name=item["name"]: self.completed(name, done))
+
+    def completed(self, name, future) -> None:
+        self.pending.pop(name, None)
+        try:
+            response = future.result()
+            if not response.success:
+                self.get_logger().error(f"Gazebo rejected the state update for {name}")
+        except Exception as error:
+            self.get_logger().error(f"set_entity_state failed for {name}: {error}")
 
 
 def main(args=None) -> None:
@@ -49,6 +63,9 @@ def main(args=None) -> None:
     node = DynamicObstacleController()
     try:
         rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
     finally:
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()

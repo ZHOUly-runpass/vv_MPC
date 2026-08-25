@@ -7,6 +7,7 @@ import rclpy
 from geometry_msgs.msg import PoseArray
 from nav_msgs.msg import Odometry, Path
 from rclpy.node import Node
+from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import Imu, LaserScan, PointCloud2
 from std_msgs.msg import String
 
@@ -16,6 +17,7 @@ class RuntimeAudit(Node):
         super().__init__("runtime_audit")
         self.declare_parameter("output", "simulation_runtime.json")
         self.declare_parameter("timeout_s", 25.0)
+        self.declare_parameter("minimum_ground_truth_movement_m", 0.0)
         self.started = time.monotonic()
         self.counts = {key: 0 for key in ("odom", "scan", "points", "imu", "plan", "ground_truth", "benchmark")}
         self.frames = {}
@@ -28,7 +30,8 @@ class RuntimeAudit(Node):
             (String, "/simulation/benchmark_status", "benchmark"),
         ]
         for msg_type, topic, key in specs:
-            self.create_subscription(msg_type, topic, lambda msg, k=key: self.receive(k, msg), 10)
+            qos = qos_profile_sensor_data if key in ("scan", "points", "imu") else 10
+            self.create_subscription(msg_type, topic, lambda msg, k=key: self.receive(k, msg), qos)
 
     def receive(self, key, message) -> None:
         self.counts[key] += 1
@@ -50,10 +53,12 @@ class RuntimeAudit(Node):
         movement = 0.0
         if self.gt_first and self.gt_last and len(self.gt_first) == len(self.gt_last):
             movement = max((sum((a - b) ** 2 for a, b in zip(first, last)) ** 0.5 for first, last in zip(self.gt_first, self.gt_last)), default=0.0)
-        passed = self.complete() and required_fields.issubset(self.point_fields)
+        minimum_movement = float(self.get_parameter("minimum_ground_truth_movement_m").value)
+        passed = self.complete() and required_fields.issubset(self.point_fields) and movement >= minimum_movement
         payload = {
             "passed": passed, "counts": self.counts, "frames": self.frames,
             "point_fields": self.point_fields, "ground_truth_max_movement_m": movement,
+            "minimum_ground_truth_movement_m": minimum_movement,
             "wall_elapsed_s": time.monotonic() - self.started,
         }
         with open(self.get_parameter("output").value, "w", encoding="utf-8") as stream:
