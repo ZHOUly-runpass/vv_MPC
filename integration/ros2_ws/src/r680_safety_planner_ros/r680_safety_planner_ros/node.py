@@ -73,6 +73,9 @@ class PlannerNode(Node):
         self.odometry_frame: str | None = None
         self.latest_odometry_s: float | None = None
         self.latest_imu_s: float | None = None
+        self.latest_cloud_s: float | None = None
+        self.latest_tf_s: float | None = None
+        self.latest_planner_heartbeat_s: float | None = None
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
         self.pipeline: SafetyPlanningPipeline | None = None
@@ -83,7 +86,7 @@ class PlannerNode(Node):
         self.create_subscription(PointCloud2, topics["point_cloud"]["name"], self._on_cloud, qos_profile_sensor_data)
         self.create_subscription(PathMessage, topics["global_path"]["name"], self._on_path, 10)
         zero_rate = float(self.config.get("command_adapter", "zero_publish_rate_hz"))
-        self.create_timer(1.0 / zero_rate, self._publish_zero_if_locked)
+        self.create_timer(1.0 / zero_rate, self._watchdog_timer)
         self.get_logger().warning(
             "motion_unlocked=%s; failed_gates=%d" % (self.config.motion_unlocked, len(self.config.failed_gates))
         )
@@ -152,6 +155,7 @@ class PlannerNode(Node):
             xyz = point_cloud2.read_points_numpy(message, field_names=("x", "y", "z"), skip_nans=True)
             points = np.asarray(xyz, dtype=np.float64).reshape(-1, 3)
             timestamp = stamp_seconds(message.header.stamp)
+            self.latest_cloud_s = timestamp
             if self.odometry_frame is None:
                 self._publish_zero("odometry_frame_missing")
                 return
@@ -165,8 +169,10 @@ class PlannerNode(Node):
                 self._publish_zero("cloud_transform_missing")
                 return
             points = transform_xyz(points, cloud_transform.transform)
+            self.latest_tf_s = timestamp
             route = self._route_in_odometry_frame()
             now_s = self.get_clock().now().nanoseconds * 1e-9
+            self.latest_planner_heartbeat_s = now_s
             result = self.pipeline.cycle(
                 LidarFrame(points, timestamp, self.odometry_frame, fields=("x", "y", "z")),
                 self.latest_state.copy(),
@@ -174,7 +180,7 @@ class PlannerNode(Node):
                 route_xy=route,
                 odometry_s=self.latest_odometry_s,
                 imu_s=self.latest_imu_s,
-                tf_s=timestamp,
+                tf_s=self.latest_tf_s,
             )
             command = Twist()
             command.linear.x, command.linear.y, command.angular.z = result.command.as_array().tolist()
@@ -191,9 +197,26 @@ class PlannerNode(Node):
             self.get_logger().error(f"planning cycle failed: {error}")
             self._publish_zero("cycle_exception")
 
-    def _publish_zero_if_locked(self) -> None:
+    def _watchdog_timer(self) -> None:
         if not self.config.motion_unlocked or self.pipeline is None:
             self._publish_zero("commissioning_lock")
+            return
+        now_s = self.get_clock().now().nanoseconds * 1e-9
+        safety = self.config.get("safety_supervisor")
+        checks = (
+            ("point_cloud_timeout", self.latest_cloud_s, safety["point_cloud_timeout_s"]),
+            ("odometry_timeout", self.latest_odometry_s, safety["odometry_timeout_s"]),
+            ("imu_timeout", self.latest_imu_s, safety["imu_timeout_s"]),
+            ("tf_timeout", self.latest_tf_s, safety["tf_timeout_s"]),
+            ("planner_heartbeat_timeout", self.latest_planner_heartbeat_s,
+             safety["planner_heartbeat_timeout_s"]),
+        )
+        for reason, timestamp, maximum_age in checks:
+            if timestamp is None or now_s - timestamp < -1e-6 or now_s - timestamp > maximum_age:
+                self._publish_zero(reason)
+                return
+        if self.latest_route is None:
+            self._publish_zero("route_missing")
 
     def _publish_zero(self, reason: str) -> None:
         self.command_publisher.publish(Twist())
