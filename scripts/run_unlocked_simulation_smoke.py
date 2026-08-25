@@ -38,6 +38,7 @@ def main() -> int:
     result = pipeline.cycle(
         frame, np.zeros(5), 1.01,
         route_xy=np.array([[0.0, 0.0], [5.0, 0.0]], dtype=np.float64),
+        odometry_s=1.01, imu_s=1.01, tf_s=1.01,
     )
     report = {
         "simulation_only": True, "motion_allowed": result.motion_allowed,

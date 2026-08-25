@@ -19,9 +19,12 @@ from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry, Path as PathMessage
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
-from sensor_msgs.msg import PointCloud2
+from rclpy.time import Time
+from rclpy.duration import Duration
+from sensor_msgs.msg import Imu, PointCloud2
 from sensor_msgs_py import point_cloud2
 from std_msgs.msg import String
+from tf2_ros import Buffer, TransformException, TransformListener
 
 from r680_safety_planner.config import load_project_config
 from r680_safety_planner.interfaces import LidarFrame
@@ -40,6 +43,18 @@ def quaternion_yaw(quaternion) -> float:
     )
 
 
+def transform_xyz(points: np.ndarray, transform) -> np.ndarray:
+    quaternion = transform.rotation
+    translation = transform.translation
+    x, y, z, w = quaternion.x, quaternion.y, quaternion.z, quaternion.w
+    rotation = np.array([
+        [1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
+        [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
+        [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)],
+    ], dtype=np.float64)
+    return points @ rotation.T + np.array([translation.x, translation.y, translation.z])
+
+
 class PlannerNode(Node):
     """ROS adapter that remains a zero-command guard until config is unlocked."""
 
@@ -56,10 +71,15 @@ class PlannerNode(Node):
         self.latest_route: np.ndarray | None = None
         self.route_frame: str | None = None
         self.odometry_frame: str | None = None
+        self.latest_odometry_s: float | None = None
+        self.latest_imu_s: float | None = None
+        self.tf_buffer = Buffer()
+        self.tf_listener = TransformListener(self.tf_buffer, self)
         self.pipeline: SafetyPlanningPipeline | None = None
         self._configure_pipeline()
         topics = self.config.get("ros2", "topics")
         self.create_subscription(Odometry, topics["odometry"]["name"], self._on_odometry, 20)
+        self.create_subscription(Imu, topics["imu_raw"]["name"], self._on_imu, qos_profile_sensor_data)
         self.create_subscription(PointCloud2, topics["point_cloud"]["name"], self._on_cloud, qos_profile_sensor_data)
         self.create_subscription(PathMessage, topics["global_path"]["name"], self._on_path, 10)
         zero_rate = float(self.config.get("command_adapter", "zero_publish_rate_hz"))
@@ -95,6 +115,10 @@ class PlannerNode(Node):
             return
         self.latest_state = np.asarray(base, dtype=np.float64)
         self.odometry_frame = message.header.frame_id
+        self.latest_odometry_s = stamp_seconds(message.header.stamp)
+
+    def _on_imu(self, message: Imu) -> None:
+        self.latest_imu_s = stamp_seconds(message.header.stamp)
 
     def _on_path(self, message: PathMessage) -> None:
         if len(message.poses) < 2 or not message.header.frame_id:
@@ -106,6 +130,21 @@ class PlannerNode(Node):
         )
         self.route_frame = message.header.frame_id
 
+    def _route_in_odometry_frame(self) -> np.ndarray | None:
+        if self.latest_route is None or self.route_frame is None or self.odometry_frame is None:
+            return None
+        if self.route_frame == self.odometry_frame:
+            return self.latest_route
+        try:
+            transform = self.tf_buffer.lookup_transform(
+                self.odometry_frame, self.route_frame, Time(), timeout=Duration(seconds=0.05)
+            )
+        except TransformException as error:
+            self.get_logger().warning(f"route transform unavailable: {error}")
+            return None
+        xyz = np.column_stack([self.latest_route, np.zeros(len(self.latest_route))])
+        return transform_xyz(xyz, transform.transform)[:, :2]
+
     def _on_cloud(self, message: PointCloud2) -> None:
         if self.pipeline is None or self.latest_state is None:
             return
@@ -113,12 +152,29 @@ class PlannerNode(Node):
             xyz = point_cloud2.read_points_numpy(message, field_names=("x", "y", "z"), skip_nans=True)
             points = np.asarray(xyz, dtype=np.float64).reshape(-1, 3)
             timestamp = stamp_seconds(message.header.stamp)
-            route = self.latest_route if self.route_frame == self.odometry_frame else None
+            if self.odometry_frame is None:
+                self._publish_zero("odometry_frame_missing")
+                return
+            try:
+                cloud_transform = self.tf_buffer.lookup_transform(
+                    self.odometry_frame, message.header.frame_id,
+                    Time.from_msg(message.header.stamp), timeout=Duration(seconds=0.05),
+                )
+            except TransformException as error:
+                self.get_logger().error(f"cloud transform unavailable: {error}")
+                self._publish_zero("cloud_transform_missing")
+                return
+            points = transform_xyz(points, cloud_transform.transform)
+            route = self._route_in_odometry_frame()
+            now_s = self.get_clock().now().nanoseconds * 1e-9
             result = self.pipeline.cycle(
-                LidarFrame(points, timestamp, message.header.frame_id, fields=("x", "y", "z")),
+                LidarFrame(points, timestamp, self.odometry_frame, fields=("x", "y", "z")),
                 self.latest_state.copy(),
-                self.get_clock().now().nanoseconds * 1e-9,
+                now_s,
                 route_xy=route,
+                odometry_s=self.latest_odometry_s,
+                imu_s=self.latest_imu_s,
+                tf_s=timestamp,
             )
             command = Twist()
             command.linear.x, command.linear.y, command.angular.z = result.command.as_array().tolist()

@@ -94,6 +94,9 @@ class SafetyPlanningPipeline:
         initial_state: np.ndarray,
         now_s: float,
         route_xy: np.ndarray | None = None,
+        odometry_s: float | None = None,
+        imu_s: float | None = None,
+        tf_s: float | None = None,
     ) -> PipelineCycleResult:
         processed, _ = self.preprocessor.process(frame)
         self.backbone.infer(processed).validate()
@@ -142,9 +145,9 @@ class SafetyPlanningPipeline:
                 command=proposed,
                 planner_heartbeat_s=now_s,
                 point_cloud_s=frame.timestamp_s,
-                odometry_s=now_s,
-                imu_s=now_s,
-                tf_s=now_s,
+                odometry_s=float("-inf") if odometry_s is None else odometry_s,
+                imu_s=float("-inf") if imu_s is None else imu_s,
+                tf_s=float("-inf") if tf_s is None else tf_s,
                 solver_timed_out=solver_timed_out,
                 obstacle_emergency=obstacle_emergency and selected is None,
                 route_ready=route_ready,
@@ -175,6 +178,9 @@ def run_synthetic_smoke(config: ProjectConfig) -> dict[str, object]:
         np.zeros(5, dtype=np.float64),
         now_s=10.02,
         route_xy=np.array([[0.0, 0.0], [5.0, 0.0]], dtype=np.float64),
+        odometry_s=10.02,
+        imu_s=10.02,
+        tf_s=10.02,
     )
     if np.any(result.command.as_array() != 0.0):
         raise RuntimeError("Synthetic smoke violated commissioning motion lock")
