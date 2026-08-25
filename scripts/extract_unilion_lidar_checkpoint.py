@@ -3,9 +3,11 @@ from __future__ import annotations
 
 import argparse
 from hashlib import sha256
+import json
 from pathlib import Path
 
 import torch
+from safetensors.torch import save_file
 
 
 DEFAULT_PREFIXES = ("pts_voxel_encoder.", "pts_middle_encoder.", "pts_backbone.", "pts_neck.")
@@ -36,19 +38,22 @@ def main() -> int:
         for prefix in DEFAULT_PREFIXES
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    torch.save({
+    tensors = {key: value.detach().cpu().contiguous() for key, value in selected.items()}
+    metadata = {
         "schema_version": "1.0",
         "source_checkpoint_sha256": file_hash(args.source),
         "source_modality": "official_unilion_lct",
-        "selected_prefixes": DEFAULT_PREFIXES,
-        "prefix_counts": prefix_counts,
-        "state_dict": selected,
+        "selected_prefixes": ",".join(DEFAULT_PREFIXES),
+        "prefix_counts": ",".join(f"{key}:{value}" for key, value in prefix_counts.items()),
         "warning": "Initialization candidate only; not validated on C16.",
-    }, args.output)
+    }
+    save_file(tensors, args.output)
+    sidecar = args.output.with_suffix(args.output.suffix + ".json")
+    sidecar.write_text(json.dumps(metadata, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print({
         "output": str(args.output), "keys": len(selected),
         "prefix_counts": prefix_counts, "sha256": file_hash(args.output),
-        "size_bytes": args.output.stat().st_size,
+        "size_bytes": args.output.stat().st_size, "metadata": str(sidecar),
     })
     return 0
 
