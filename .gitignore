@@ -7,6 +7,8 @@ build/
 install/
 log/
 artifacts/*.npz
+artifacts/checkpoints/*
+!artifacts/checkpoints/README.md
 reports/runtime_*.json
 reports/runtime_*.log
 *.bag
