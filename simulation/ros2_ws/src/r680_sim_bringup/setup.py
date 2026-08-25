@@ -26,5 +26,8 @@ setup(
         "benchmark_manager = r680_sim_bringup.benchmark_manager:main",
         "route_publisher = r680_sim_bringup.route_publisher:main",
         "runtime_audit = r680_sim_bringup.runtime_audit:main",
+        "pointcloud_100_frame_audit = r680_sim_bringup.pointcloud_100_frame_audit:main",
+        "feature_health_bridge = r680_sim_bringup.feature_health_bridge:main",
+        "cmd_vel_relay = r680_sim_bringup.cmd_vel_relay:main",
     ]},
 )

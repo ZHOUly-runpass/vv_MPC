@@ -14,6 +14,8 @@ from launch_ros.parameter_descriptions import ParameterValue
 def launch_setup(context):
     scenario_name = LaunchConfiguration("scenario").perform(context)
     headless = LaunchConfiguration("headless").perform(context).lower() in ("1", "true", "yes")
+    use_ros2_control = LaunchConfiguration("use_ros2_control").perform(context).lower() in ("1", "true", "yes")
+    publish_route = LaunchConfiguration("publish_route").perform(context).lower() in ("1", "true", "yes")
     bringup_share = get_package_share_directory("r680_sim_bringup")
     description_share = get_package_share_directory("r680_sim_description")
     worlds_share = get_package_share_directory("r680_sim_worlds")
@@ -28,7 +30,7 @@ def launch_setup(context):
     if not os.path.isfile(world):
         raise RuntimeError(f"scenario world does not exist: {world}")
     xacro_file = os.path.join(description_share, "urdf", "r680_sim.urdf.xacro")
-    description = ParameterValue(Command(["xacro ", xacro_file]), value_type=str)
+    description = ParameterValue(Command(["xacro ", xacro_file, " use_ros2_control:=", str(use_ros2_control).lower()]), value_type=str)
     common = {"scenario_file": scenario_file, "scenario": scenario_name, "use_sim_time": True}
     gazebo_models = os.pathsep.join(filter(None, [
         os.path.join(worlds_share, "models"), "/usr/share/gazebo-11/models",
@@ -51,7 +53,11 @@ def launch_setup(context):
         Node(package="r680_sim_bringup", executable="pointcloud_field_adapter", parameters=[{"use_sim_time": True}], output="screen"),
         Node(package="r680_sim_bringup", executable="ground_truth_bridge", parameters=[common], output="screen"),
         Node(package="r680_sim_bringup", executable="dynamic_obstacle_controller", parameters=[common], output="screen"),
-        Node(package="r680_sim_bringup", executable="route_publisher", parameters=[common], output="screen"),
+        *([Node(package="r680_sim_bringup", executable="route_publisher", parameters=[common], output="screen")] if publish_route else []),
+        *([Node(package="controller_manager", executable="spawner", arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager"], output="screen"),
+           Node(package="controller_manager", executable="spawner", arguments=["diff_drive_base_controller", "--controller-manager", "/controller_manager"], output="screen"),
+           Node(package="r680_sim_bringup", executable="cmd_vel_relay", parameters=[{"use_sim_time": True}], output="screen")]
+          if use_ros2_control else []),
         Node(package="r680_sim_bringup", executable="benchmark_manager", parameters=[common], output="screen"),
     ]
 
@@ -60,5 +66,7 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument("scenario", default_value="empty"),
         DeclareLaunchArgument("headless", default_value="true"),
+        DeclareLaunchArgument("use_ros2_control", default_value="false"),
+        DeclareLaunchArgument("publish_route", default_value="true"),
         OpaqueFunction(function=launch_setup),
     ])

@@ -49,7 +49,7 @@ class RuntimeAudit(Node):
         return all(self.counts[key] > 0 for key in required) and time.monotonic() - self.started >= 3.0
 
     def write(self) -> bool:
-        required_fields = {"x", "y", "z", "intensity", "ring"}
+        required_fields = {"x", "y", "z", "intensity", "ring", "time"}
         movement = 0.0
         if self.gt_first and self.gt_last and len(self.gt_first) == len(self.gt_last):
             movement = max((sum((a - b) ** 2 for a, b in zip(first, last)) ** 0.5 for first, last in zip(self.gt_first, self.gt_last)), default=0.0)

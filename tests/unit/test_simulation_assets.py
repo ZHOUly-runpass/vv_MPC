@@ -5,6 +5,7 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 
 import numpy as np
+import pytest
 import yaml
 
 
@@ -40,8 +41,10 @@ def test_all_eight_scenarios_have_parseable_worlds():
 def test_description_contract_contains_diff_drive_and_true_16_layers():
     xacro = (SIM / "r680_sim_description" / "urdf" / "r680_sim.urdf.xacro").read_text(encoding="utf-8")
     assert "libgazebo_ros_diff_drive.so" in xacro
+    assert "libgazebo_ros2_control.so" in xacro
     assert "<vertical><samples>16</samples>" in xacro
     assert "sensor_msgs/PointCloud2" in xacro
+    assert 'PointField(name="time"' in (BRINGUP / "r680_sim_bringup" / "pointcloud_field_adapter.py").read_text(encoding="utf-8")
     ET.fromstring(xacro)
 
 
@@ -50,6 +53,14 @@ def test_ring_is_derived_from_sensor_elevation():
     angles = np.deg2rad(np.array([-15.0, 0.0, 15.0]))
     xyz = np.stack([np.cos(angles), np.zeros(3), np.sin(angles)], axis=1)
     assert scenario.elevation_to_ring(xyz, 16, -15.0, 15.0).tolist() == [0, 8, 15]
+
+
+def test_simulated_relative_time_and_extrinsic_transform():
+    scenario = _scenario_module()
+    xyz = np.array([[-1.0, 0.0, 0.0], [1.0, 0.0, 0.0]])
+    assert scenario.azimuth_to_relative_time(xyz, 0.1).tolist() == pytest.approx([0.1, 0.05])
+    transformed = scenario.rigid_transform_xyz(xyz, [0.08, 0.0, 0.43], [0.0, 0.0, 0.0])
+    np.testing.assert_allclose(transformed, xyz + [0.08, 0.0, 0.43])
 
 
 def test_triangle_motion_is_bounded_and_repeatable():
