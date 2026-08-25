@@ -45,8 +45,8 @@ def main() -> int:
     times = []
     statuses = []
     active_obstacles = None
+    solver = CasadiDcbfSolver(model, 0.3, hard_deadline_ms=10000.0)
     for _ in range(args.repeats):
-        solver = CasadiDcbfSolver(model, 0.3, hard_deadline_ms=10000.0)
         request = MpcRequest(initial, reference, tuple(obstacles))
         active_obstacles = len(solver.select_reachable_obstacles(request))
         result = solver.solve(request)

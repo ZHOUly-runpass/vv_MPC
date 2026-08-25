@@ -107,6 +107,7 @@ class CasadiDcbfSolver:
             "control": 0.2, "smoothness": 2.0, "obstacle_slack": 10000.0,
             **(weights or {}),
         }
+        self._problem_cache: dict[tuple[int, int, float], dict[str, object]] = {}
 
     @staticmethod
     def available() -> bool:
@@ -185,6 +186,54 @@ class CasadiDcbfSolver:
                 active.append(obstacle)
         return tuple(active)
 
+    def _build_problem(self, ca, intervals: int, obstacle_count: int, dt_s: float) -> dict[str, object]:
+        opti = ca.Opti()
+        states = opti.variable(self.model.state_size, intervals + 1)
+        controls = opti.variable(self.model.control_size, intervals)
+        initial = opti.parameter(self.model.state_size)
+        reference_states = opti.parameter(self.model.state_size, intervals + 1)
+        reference_controls = opti.parameter(self.model.control_size, intervals)
+        slack = opti.variable(obstacle_count, intervals) if obstacle_count else None
+        obstacle_x = opti.parameter(obstacle_count, intervals + 1) if obstacle_count else None
+        obstacle_y = opti.parameter(obstacle_count, intervals + 1) if obstacle_count else None
+        safe_radius = opti.parameter(obstacle_count, intervals + 1) if obstacle_count else None
+        opti.subject_to(states[:, 0] == initial)
+        for index in range(intervals):
+            opti.subject_to(states[:, index + 1] == self._dynamics(
+                ca, states[:, index], controls[:, index], dt_s))
+        self._apply_bounds(opti, states, controls)
+
+        objective = self.weights["position"] * ca.sumsqr(states[0:2, :] - reference_states[0:2, :])
+        objective += self.weights["yaw"] * ca.sumsqr(states[2, :] - reference_states[2, :])
+        objective += self.weights["velocity"] * ca.sumsqr(states[3:, :] - reference_states[3:, :])
+        objective += self.weights["control"] * ca.sumsqr(controls - reference_controls)
+        if intervals > 1:
+            objective += self.weights["smoothness"] * ca.sumsqr(controls[:, 1:] - controls[:, :-1])
+        if slack is not None:
+            opti.subject_to(opti.bounded(0.0, slack, self.maximum_slack))
+            objective += self.weights["obstacle_slack"] * ca.sumsqr(slack)
+            gamma = 1.0 - np.exp(-self.continuous_alpha * dt_s)
+            for obstacle_index in range(obstacle_count):
+                h_values = []
+                for index in range(intervals + 1):
+                    dx = states[0, index] - obstacle_x[obstacle_index, index]
+                    dy = states[1, index] - obstacle_y[obstacle_index, index]
+                    h_values.append(dx * dx + dy * dy - safe_radius[obstacle_index, index] ** 2)
+                for index in range(intervals):
+                    opti.subject_to(h_values[index] + slack[obstacle_index, index] >= 0.0)
+                    opti.subject_to(h_values[index + 1] - (1.0 - gamma) * h_values[index]
+                                    + slack[obstacle_index, index] >= 0.0)
+        opti.minimize(objective)
+        opti.solver("ipopt", {"expand": True, "print_time": False},
+                    {"max_iter": self.max_iterations, "print_level": 0, "sb": "yes"})
+        return {
+            "opti": opti, "states": states, "controls": controls, "slack": slack,
+            "initial": initial, "reference_states": reference_states,
+            "reference_controls": reference_controls, "obstacle_x": obstacle_x,
+            "obstacle_y": obstacle_y, "safe_radius": safe_radius,
+            "last_states": None, "last_controls": None, "last_slack": None,
+        }
+
     def solve(self, request: MpcRequest) -> MpcResult:
         started = perf_counter()
         request.validate()
@@ -195,56 +244,41 @@ class CasadiDcbfSolver:
         reference = request.reference
         intervals = reference.controls.shape[0]
         dt_s = float(np.median(np.diff(reference.timestamps_s)))
-        opti = ca.Opti()
-        states = opti.variable(self.model.state_size, intervals + 1)
-        controls = opti.variable(self.model.control_size, intervals)
         active_obstacles = self.select_reachable_obstacles(request)
         obstacle_count = len(active_obstacles)
-        slack = opti.variable(obstacle_count, intervals) if obstacle_count else None
-        opti.subject_to(states[:, 0] == request.initial_state)
-        for index in range(intervals):
-            opti.subject_to(states[:, index + 1] == self._dynamics(ca, states[:, index], controls[:, index], dt_s))
-        self._apply_bounds(opti, states, controls)
-
-        ref_states = ca.DM(reference.states.T)
-        ref_controls = ca.DM(reference.controls.T)
-        objective = self.weights["position"] * ca.sumsqr(states[0:2, :] - ref_states[0:2, :])
-        objective += self.weights["yaw"] * ca.sumsqr(states[2, :] - ref_states[2, :])
-        objective += self.weights["velocity"] * ca.sumsqr(states[3:, :] - ref_states[3:, :])
-        objective += self.weights["control"] * ca.sumsqr(controls - ref_controls)
-        if intervals > 1:
-            objective += self.weights["smoothness"] * ca.sumsqr(controls[:, 1:] - controls[:, :-1])
-
-        gamma = 1.0 - np.exp(-self.continuous_alpha * dt_s)
+        cache_key = (intervals, obstacle_count, round(dt_s, 9))
+        problem = self._problem_cache.get(cache_key)
+        if problem is None:
+            problem = self._build_problem(ca, intervals, obstacle_count, dt_s)
+            self._problem_cache[cache_key] = problem
+        opti, states, controls, slack = (problem["opti"], problem["states"],
+                                          problem["controls"], problem["slack"])
+        opti.set_value(problem["initial"], request.initial_state)
+        opti.set_value(problem["reference_states"], reference.states.T)
+        opti.set_value(problem["reference_controls"], reference.controls.T)
+        if obstacle_count:
+            centers = np.stack([obstacle.states[:, :2] for obstacle in active_obstacles])
+            radii = []
+            for obstacle in active_obstacles:
+                covariance_radius = self.sigma_multiplier * np.sqrt(np.maximum(
+                    0.0, np.linalg.eigvalsh(obstacle.covariance)[:, -1]))
+                radii.append(self.ego_radius_m + 0.5 * np.hypot(
+                    obstacle.lengths, obstacle.widths) + self.fixed_margin_m + covariance_radius)
+            opti.set_value(problem["obstacle_x"], centers[:, :, 0])
+            opti.set_value(problem["obstacle_y"], centers[:, :, 1])
+            opti.set_value(problem["safe_radius"], np.stack(radii))
+        opti.set_initial(states, problem["last_states"] if problem["last_states"] is not None else reference.states.T)
+        opti.set_initial(controls, problem["last_controls"] if problem["last_controls"] is not None else reference.controls.T)
         if slack is not None:
-            opti.subject_to(opti.bounded(0.0, slack, self.maximum_slack))
-            objective += self.weights["obstacle_slack"] * ca.sumsqr(slack)
-            for obstacle_index, obstacle in enumerate(active_obstacles):
-                h_values = []
-                for index in range(intervals + 1):
-                    covariance_radius = self.sigma_multiplier * np.sqrt(max(
-                        0.0, float(np.linalg.eigvalsh(obstacle.covariance[index]).max())))
-                    obstacle_radius = 0.5 * float(np.hypot(obstacle.lengths[index], obstacle.widths[index]))
-                    safe_radius = self.ego_radius_m + obstacle_radius + self.fixed_margin_m + covariance_radius
-                    dx = states[0, index] - float(obstacle.states[index, 0])
-                    dy = states[1, index] - float(obstacle.states[index, 1])
-                    h_values.append(dx * dx + dy * dy - safe_radius * safe_radius)
-                for index in range(intervals):
-                    opti.subject_to(h_values[index] + slack[obstacle_index, index] >= 0.0)
-                    opti.subject_to(h_values[index + 1] - (1.0 - gamma) * h_values[index]
-                                    + slack[obstacle_index, index] >= 0.0)
-        opti.minimize(objective)
-        opti.set_initial(states, ref_states)
-        opti.set_initial(controls, ref_controls)
-        if slack is not None:
-            opti.set_initial(slack, 0.0)
-        opti.solver("ipopt", {"expand": True, "print_time": False},
-                    {"max_iter": self.max_iterations, "print_level": 0, "sb": "yes"})
+            opti.set_initial(slack, problem["last_slack"] if problem["last_slack"] is not None else 0.0)
         try:
             solution = opti.solve()
             solved_states = np.asarray(solution.value(states), dtype=np.float64).T
             solved_controls = np.asarray(solution.value(controls), dtype=np.float64).T
             slack_max = 0.0 if slack is None else float(np.max(solution.value(slack)))
+            problem["last_states"] = solved_states.T
+            problem["last_controls"] = solved_controls.T
+            problem["last_slack"] = None if slack is None else solution.value(slack)
             status = str(opti.stats().get("return_status", "solved"))
             feasible = True
         except RuntimeError:
