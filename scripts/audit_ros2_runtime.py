@@ -8,7 +8,7 @@ import json
 import subprocess
 from pathlib import Path
 
-from r680_safety_planner.config import ProjectConfig
+from r680_safety_planner.config import load_project_config
 
 
 def command(*parts: str) -> str:
@@ -21,7 +21,7 @@ def main() -> int:
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    config = ProjectConfig.load(args.config)
+    config = load_project_config(args.config)
     topic_types = {}
     lines = command("ros2", "topic", "list", "-t").splitlines()
     for line in lines:

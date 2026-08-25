@@ -1,5 +1,6 @@
 __pycache__/
 *.py[cod]
+*.egg-info/
 .pytest_cache/
 .venv/
 build/
@@ -7,5 +8,6 @@ install/
 log/
 artifacts/*.npz
 reports/runtime_*.json
+reports/runtime_*.log
 *.bag
 *.db3
