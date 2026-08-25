@@ -124,14 +124,14 @@ C16 / 仿真16线点云
 
 目标：先建立可重复的确定性闭环，不升级开发机宿主系统。
 
-1. `[安装待 sudo，工程配置已完成]` 已获得安装授权并确认 apt 候选版本：Navigation2/Nav2 Bringup 1.1.20、ros2_control 2.54.0、ros2_controllers 2.53.1、gazebo_ros2_control 0.4.10。开发机 `sudo` 要求交互密码，用户执行安装命令后进行最终实启；项目已具备 ros2_control URDF、控制器 YAML、速度中继、Nav2 DWB 参数与一键 launch。
+1. `[已完成]` 开发机已安装 Navigation2/Nav2 Bringup、ros2_control、ros2_controllers 和 gazebo_ros2_control；四个核心包均解析到 `/opt/ros/humble`。ros2_control URDF、控制器 YAML、标准 `/cmd_vel` 与 `/odom` 桥接、Nav2 DWB 参数和一键 launch 已完成实启验证。
 2. `[已完成]` 建立 R680 近似差速 URDF/Xacro、惯导、720 线束 2D 雷达和 16 线 3D LiDAR；近似尺寸仅供仿真，不能替代实车标定。
 3. `[已完成]` 开发机实测 `/cmd_vel → /odom → /tf`、`/scan`、`/points_raw → /points`、`/imu/data_raw` 和 `/plan` 链路在线；点云严格输出 `x/y/z/intensity/ring`。
 4. `[已完成]` 实现并实启 Empty、Static Sparse、Static Dense、Narrow Passage、Crossing、Head-on、Multi Dynamic、Local Minimum Trap 八类场景。
 5. `[已完成]` 实现 GT obstacle bridge、`/simulation/reset_benchmark`、固定随机种子 42、项目内 rosbag 录制脚本和 benchmark manager。
-6. `[待完成]` DWB、MPPI 依赖 Nav2，暂不伪造基线；Vanilla D-CBF 和 Proposed 的公平批量评测需要在下一步把现有规划节点接入仿真 `/cmd_vel` 后完成。
+6. `[部分完成]` DWB 已完成空场景 `NavigateToPose` 闭环验证；MPPI、Vanilla D-CBF 和 Proposed 的公平批量评测仍需在下一步把相应规划节点接入仿真 `/cmd_vel` 后完成。
 
-阶段 2 当前验收证据：开发机三个 ROS 2 包编译通过，八类场景运行审计全部 `passed=true`；Crossing 的 GT 障碍物 3 秒位移为 `0.576 m`，Head-on 和 Multi Dynamic 的最大位移为 `2.288 m`。空场景观测频率约为 odom 50 Hz、IMU 100 Hz、scan 15 Hz、16 线点云 10 Hz。证据文件位于 `reports/simulation_*_runtime.json`。
+阶段 2 当前验收证据：开发机三个 ROS 2 包编译通过，八类场景运行审计全部 `passed=true`；Crossing 的 GT 障碍物 3 秒位移为 `0.576 m`，Head-on 和 Multi Dynamic 的最大位移为 `2.288 m`。空场景观测频率约为 odom 50 Hz、IMU 100 Hz、scan 15 Hz、16 线点云 10 Hz。Nav2 联合实测中两个控制器和四个核心生命周期节点均为 `active`，1 m 导航目标返回 `SUCCEEDED`，采样窗口里程计前进 `0.6435 m`。证据位于 `reports/simulation_*_runtime.json` 和 `reports/Nav2与ros2_control部署报告.md`。
 
 完成标准：八类场景能够一键运行、重复、记录并汇总成功率、碰撞率、最小间距、到达时间、轨迹平滑度和计算延迟。
 
