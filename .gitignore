@@ -4,6 +4,7 @@ __pycache__/
 .pytest_cache/
 .venv/
 .tools/
+.conda/
 build/
 install/
 log/
