@@ -47,7 +47,7 @@ cd "$UNI/mmdetection3d"
 cd "$UNI/projects/mmdet3d_plugin/models/ops/mamba"
 "$ENV_DIR/bin/python" -m pip install --no-build-isolation .
 cd "$UNI/projects"
-"$ENV_DIR/bin/python" setup.py develop
+"$ENV_DIR/bin/python" -m pip install --no-build-isolation -e .
 
 cd "$UNI"
 PYTHONPATH="$UNI:$UNI/projects" "$ENV_DIR/bin/python" -c \
