@@ -36,3 +36,9 @@ def test_stale_lidar_forces_zero() -> None:
     assert not decision.allowed
     assert "stale_point_cloud" in {event.code for event in decision.events}
 
+
+def test_missing_route_forces_zero() -> None:
+    item = inputs()
+    decision = supervisor(True).evaluate(SafetyInputs(**{**item.__dict__, "route_ready": False}))
+    assert not decision.allowed
+    assert "route_missing" in {event.code for event in decision.events}

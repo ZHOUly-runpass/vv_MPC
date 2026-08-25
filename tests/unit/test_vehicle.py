@@ -35,3 +35,11 @@ def test_candidate_generator_produces_seven_valid_candidates() -> None:
     assert len(candidates) == 7
     assert {candidate.role for candidate in candidates} == set(CandidateGenerator.ROLES)
 
+
+def test_nominal_candidate_accelerates_toward_route() -> None:
+    model = DifferentialModel(limits())
+    generator = CandidateGenerator(model, horizon_s=1.0, dt_s=0.1)
+    route = np.array([[0.0, 0.0], [2.0, 0.5]])
+    nominal = generator.generate(np.zeros(5), route_xy=route)[0]
+    assert nominal.states[-1, 0] > 0.0
+    assert nominal.states[-1, 2] > 0.0

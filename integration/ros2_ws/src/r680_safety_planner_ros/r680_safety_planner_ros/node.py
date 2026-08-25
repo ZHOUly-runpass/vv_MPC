@@ -16,7 +16,7 @@ for _parent in Path(__file__).resolve().parents:
 import numpy as np
 import rclpy
 from geometry_msgs.msg import Twist
-from nav_msgs.msg import Odometry
+from nav_msgs.msg import Odometry, Path as PathMessage
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import PointCloud2
@@ -53,11 +53,15 @@ class PlannerNode(Node):
         self.command_publisher = self.create_publisher(Twist, self.config.get("command_adapter", "output_topic"), 1)
         self.status_publisher = self.create_publisher(String, "/r680_safety/status", 10)
         self.latest_state: np.ndarray | None = None
+        self.latest_route: np.ndarray | None = None
+        self.route_frame: str | None = None
+        self.odometry_frame: str | None = None
         self.pipeline: SafetyPlanningPipeline | None = None
         self._configure_pipeline()
         topics = self.config.get("ros2", "topics")
         self.create_subscription(Odometry, topics["odometry"]["name"], self._on_odometry, 20)
         self.create_subscription(PointCloud2, topics["point_cloud"]["name"], self._on_cloud, qos_profile_sensor_data)
+        self.create_subscription(PathMessage, topics["global_path"]["name"], self._on_path, 10)
         zero_rate = float(self.config.get("command_adapter", "zero_publish_rate_hz"))
         self.create_timer(1.0 / zero_rate, self._publish_zero_if_locked)
         self.get_logger().warning(
@@ -90,6 +94,17 @@ class PlannerNode(Node):
         else:
             return
         self.latest_state = np.asarray(base, dtype=np.float64)
+        self.odometry_frame = message.header.frame_id
+
+    def _on_path(self, message: PathMessage) -> None:
+        if len(message.poses) < 2 or not message.header.frame_id:
+            self.latest_route, self.route_frame = None, None
+            return
+        self.latest_route = np.asarray(
+            [[pose.pose.position.x, pose.pose.position.y] for pose in message.poses],
+            dtype=np.float64,
+        )
+        self.route_frame = message.header.frame_id
 
     def _on_cloud(self, message: PointCloud2) -> None:
         if self.pipeline is None or self.latest_state is None:
@@ -98,10 +113,12 @@ class PlannerNode(Node):
             xyz = point_cloud2.read_points_numpy(message, field_names=("x", "y", "z"), skip_nans=True)
             points = np.asarray(xyz, dtype=np.float64).reshape(-1, 3)
             timestamp = stamp_seconds(message.header.stamp)
+            route = self.latest_route if self.route_frame == self.odometry_frame else None
             result = self.pipeline.cycle(
                 LidarFrame(points, timestamp, message.header.frame_id, fields=("x", "y", "z")),
                 self.latest_state.copy(),
                 self.get_clock().now().nanoseconds * 1e-9,
+                route_xy=route,
             )
             command = Twist()
             command.linear.x, command.linear.y, command.angular.z = result.command.as_array().tolist()

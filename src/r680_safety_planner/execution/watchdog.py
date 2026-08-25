@@ -19,6 +19,7 @@ class SafetyInputs:
     emergency_stop_pressed: bool = False
     hardware_ready: bool = True
     obstacle_emergency: bool = False
+    route_ready: bool = True
 
 
 @dataclass(frozen=True)
@@ -73,6 +74,8 @@ class SafetySupervisor:
             failures.append(("hardware_not_ready", "controller enable/battery/diagnostics not ready"))
         if inputs.obstacle_emergency:
             failures.append(("obstacle_emergency", "obstacle is inside emergency stopping boundary"))
+        if not inputs.route_ready:
+            failures.append(("route_missing", "no route is available in the odometry frame"))
         if not self.adapter.motion_unlocked:
             failures.append(("motion_locked", "commissioning gates are not complete"))
 
@@ -83,4 +86,3 @@ class SafetySupervisor:
         if events:
             return SupervisorDecision(CommandAdapter.zero(inputs.now_s, "watchdog_stop"), False, events)
         return SupervisorDecision(self.adapter.sanitize(inputs.command, inputs.now_s), True, ())
-

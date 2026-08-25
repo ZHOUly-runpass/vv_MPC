@@ -93,6 +93,7 @@ class SafetyPlanningPipeline:
         frame: LidarFrame,
         initial_state: np.ndarray,
         now_s: float,
+        route_xy: np.ndarray | None = None,
     ) -> PipelineCycleResult:
         processed, _ = self.preprocessor.process(frame)
         self.backbone.infer(processed).validate()
@@ -110,7 +111,11 @@ class SafetyPlanningPipeline:
             occupancy_cfg["size_y_m"],
         )
         accepted = []
-        for candidate in self.generator.generate(initial_state):
+        route_ready = route_xy is not None and route_xy.ndim == 2 and route_xy.shape[0] >= 2
+        target_speed = None if route_ready else 0.0
+        for candidate in self.generator.generate(
+            initial_state, route_xy=route_xy, target_speed_mps=target_speed
+        ):
             check = self.filter.check(candidate, occupancy=None)  # obstacle barriers handle occupied points
             if check.accepted:
                 accepted.append(candidate)
@@ -142,6 +147,7 @@ class SafetyPlanningPipeline:
                 tf_s=now_s,
                 solver_timed_out=solver_timed_out,
                 obstacle_emergency=obstacle_emergency and selected is None,
+                route_ready=route_ready,
             )
         )
         return PipelineCycleResult(
@@ -164,7 +170,12 @@ def run_synthetic_smoke(config: ProjectConfig) -> dict[str, object]:
     )
     extra = np.zeros((obstacle.shape[0], 3), dtype=np.float64)
     frame = LidarFrame(np.concatenate([obstacle, extra], axis=1), timestamp_s=10.0)
-    result = pipeline.cycle(frame, np.zeros(5, dtype=np.float64), now_s=10.02)
+    result = pipeline.cycle(
+        frame,
+        np.zeros(5, dtype=np.float64),
+        now_s=10.02,
+        route_xy=np.array([[0.0, 0.0], [5.0, 0.0]], dtype=np.float64),
+    )
     if np.any(result.command.as_array() != 0.0):
         raise RuntimeError("Synthetic smoke violated commissioning motion lock")
     return {
