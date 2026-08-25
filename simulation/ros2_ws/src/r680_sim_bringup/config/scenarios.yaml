@@ -1,0 +1,55 @@
+schema_version: "1.0"
+robot:
+  model_name: r680_sim
+  start: [-6.0, 0.0, 0.12, 0.0]
+  radius_m: 0.31
+  route_spacing_m: 0.20
+  goal_tolerance_m: 0.40
+scenarios:
+  empty:
+    world: empty.world
+    goal: [6.0, 0.0]
+    obstacles: []
+  static_sparse:
+    world: static_sparse.world
+    goal: [6.0, 0.0]
+    obstacles:
+      - {name: obstacle_sparse_1, radius_m: 0.39}
+      - {name: obstacle_sparse_2, radius_m: 0.39}
+      - {name: obstacle_sparse_3, radius_m: 0.39}
+  static_dense:
+    world: static_dense.world
+    goal: [6.0, 0.0]
+    obstacle_prefix: obstacle_dense_
+    obstacle_count: 12
+    obstacle_radius_m: 0.39
+  narrow_passage:
+    world: narrow_passage.world
+    goal: [6.0, 0.0]
+    obstacles:
+      - {name: obstacle_wall_left, radius_m: 7.1, collision_check: false}
+      - {name: obstacle_wall_right, radius_m: 7.1, collision_check: false}
+  crossing_pedestrian:
+    world: crossing_pedestrian.world
+    goal: [6.0, 0.0]
+    obstacles:
+      - {name: obstacle_crossing_1, radius_m: 0.39, axis: y, start: -3.0, minimum: -3.0, maximum: 3.0, speed: 0.8, fixed: [0.0, 0.5]}
+  head_on:
+    world: head_on.world
+    goal: [6.0, 0.0]
+    obstacles:
+      - {name: obstacle_head_on_1, radius_m: 0.39, axis: x, start: 5.0, minimum: -5.0, maximum: 5.0, speed: -0.6, fixed: [0.0, 0.5]}
+  multi_dynamic:
+    world: multi_dynamic.world
+    goal: [6.0, 0.0]
+    obstacles:
+      - {name: obstacle_multi_1, radius_m: 0.39, axis: y, start: -3.0, minimum: -3.0, maximum: 3.0, speed: 0.7, fixed: [-1.0, 0.5]}
+      - {name: obstacle_multi_2, radius_m: 0.39, axis: y, start: 3.0, minimum: -3.0, maximum: 3.0, speed: -0.6, fixed: [2.0, 0.5]}
+      - {name: obstacle_multi_3, radius_m: 0.39, axis: x, start: 5.0, minimum: -4.0, maximum: 5.0, speed: -0.5, fixed: [0.8, 0.5]}
+  local_minimum_trap:
+    world: local_minimum_trap.world
+    goal: [6.0, 0.0]
+    obstacles:
+      - {name: obstacle_trap_back, radius_m: 7.1, collision_check: false}
+      - {name: obstacle_trap_left, radius_m: 7.1, collision_check: false}
+      - {name: obstacle_trap_right, radius_m: 7.1, collision_check: false}

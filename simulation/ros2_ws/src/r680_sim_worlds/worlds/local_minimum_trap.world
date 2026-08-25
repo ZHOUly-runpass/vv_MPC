@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<sdf version="1.6"><world name="local_minimum_trap"><physics name="default_physics" type="ode"><max_step_size>0.001</max_step_size><real_time_update_rate>1000</real_time_update_rate></physics><include><uri>model://ground_plane</uri></include><include><uri>model://sun</uri></include>
+<include><name>obstacle_trap_back</name><uri>model://r680_wall_long</uri><pose>2.5 0 0.6 0 0 1.57079632679</pose></include><include><name>obstacle_trap_left</name><uri>model://r680_wall_long</uri><pose>-0.5 2.2 0.6 0 0 0</pose></include><include><name>obstacle_trap_right</name><uri>model://r680_wall_long</uri><pose>-0.5 -2.2 0.6 0 0 0</pose></include></world></sdf>

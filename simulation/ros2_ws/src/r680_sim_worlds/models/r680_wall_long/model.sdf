@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<sdf version="1.6"><model name="r680_wall_long"><static>true</static><link name="body"><collision name="collision"><geometry><box><size>14 0.18 1.2</size></box></geometry></collision><visual name="visual"><geometry><box><size>14 0.18 1.2</size></box></geometry><material><ambient>0.35 0.35 0.35 1</ambient><diffuse>0.5 0.5 0.5 1</diffuse></material></visual></link></model></sdf>
