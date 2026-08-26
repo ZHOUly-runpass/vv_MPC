@@ -1,0 +1,110 @@
+{
+  "all_deadlines_pass": true,
+  "benchmark": {
+    "deadline_ms": 80.0,
+    "dt_s": 0.1,
+    "horizon_s": 2.0,
+    "intervals": 20,
+    "obstacle_counts": [
+      0,
+      8,
+      16,
+      32
+    ],
+    "placement": "near",
+    "repeats_per_case": 11
+  },
+  "cases": [
+    {
+      "active_obstacles": 0,
+      "all_obstacles_active": true,
+      "cold_ms": 232.6390161179006,
+      "deadline_ms": 80.0,
+      "deadline_pass": true,
+      "feasible_runs": 11,
+      "finite_outputs": true,
+      "h_min": null,
+      "obstacles": 0,
+      "repeats": 11,
+      "slack_max": 0.0,
+      "status_counts": {
+        "Solve_Succeeded": 11
+      },
+      "warm_max_ms": 2.04472616314888,
+      "warm_median_ms": 1.9248526077717543,
+      "warm_min_ms": 1.8590912222862244,
+      "warm_p95_ms": 2.0140400156378746
+    },
+    {
+      "active_obstacles": 8,
+      "all_obstacles_active": true,
+      "cold_ms": 106.68969107791781,
+      "deadline_ms": 80.0,
+      "deadline_pass": true,
+      "feasible_runs": 11,
+      "finite_outputs": true,
+      "h_min": 0.1980081418454135,
+      "obstacles": 8,
+      "repeats": 11,
+      "slack_max": 4.3838756700877903e-07,
+      "status_counts": {
+        "Solve_Succeeded": 11
+      },
+      "warm_max_ms": 13.963377103209496,
+      "warm_median_ms": 13.867674395442009,
+      "warm_min_ms": 13.8220121152699,
+      "warm_p95_ms": 13.949730736203492
+    },
+    {
+      "active_obstacles": 16,
+      "all_obstacles_active": true,
+      "cold_ms": 189.98434906825423,
+      "deadline_ms": 80.0,
+      "deadline_pass": true,
+      "feasible_runs": 11,
+      "finite_outputs": true,
+      "h_min": 0.19800814511491527,
+      "obstacles": 16,
+      "repeats": 11,
+      "slack_max": 4.2639761636209895e-07,
+      "status_counts": {
+        "Solve_Succeeded": 11
+      },
+      "warm_max_ms": 23.16318079829216,
+      "warm_median_ms": 22.996586048975587,
+      "warm_min_ms": 22.930154111236334,
+      "warm_p95_ms": 23.116385261528194
+    },
+    {
+      "active_obstacles": 32,
+      "all_obstacles_active": true,
+      "cold_ms": 358.6868070997298,
+      "deadline_ms": 80.0,
+      "deadline_pass": true,
+      "feasible_runs": 11,
+      "finite_outputs": true,
+      "h_min": 0.19800814933835353,
+      "obstacles": 32,
+      "repeats": 11,
+      "slack_max": 4.888898968211029e-07,
+      "status_counts": {
+        "Solve_Succeeded": 11
+      },
+      "warm_max_ms": 40.64540797844529,
+      "warm_median_ms": 40.531884878873825,
+      "warm_min_ms": 40.44877691194415,
+      "warm_p95_ms": 40.64326514489949
+    }
+  ],
+  "environment": {
+    "casadi": "3.8.0",
+    "executable": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/envs/planner/bin/python",
+    "numpy": "1.26.4",
+    "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.35",
+    "python": "3.10.12"
+  },
+  "generated_at_utc": "2026-08-26T03:16:20.722742+00:00",
+  "git_commit": "cf98200452476716da02d65a2bb021627b301cb3",
+  "schema_version": "1.0",
+  "suite_valid": true
+}
