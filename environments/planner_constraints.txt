@@ -1,0 +1,6 @@
+# Reproducible offline planner / D-CBF benchmark environment for Ubuntu 22.04.
+casadi==3.8.0
+numpy==1.26.4
+PyYAML==6.0.2
+pytest==7.4.4
+pytest-cov==5.0.0

@@ -22,6 +22,17 @@ python scripts/validate_config.py --config configs/robot/r680_c16.yaml
 python scripts/run_synthetic_smoke.py --config configs/robot/r680_c16.yaml
 ```
 
+Development-machine planner/CasADi environment and the 0/8/16/32 near-obstacle
+benchmark suite:
+
+```bash
+cd /home/zhou/E2Eproject_MPC/github_pull/05
+bash scripts/setup_planner_dev.sh "$PWD"
+.tools/envs/planner/bin/python scripts/benchmark_solver_suite.py \
+  --obstacle-counts 0 8 16 32 --repeats 11 --placement near \
+  --deadline-ms 80 --output reports/planner_casadi_obstacle_benchmark.json
+```
+
 ROS 2 development-machine setup and the fail-closed adapter are described in
 `integration/README.md`.
 
