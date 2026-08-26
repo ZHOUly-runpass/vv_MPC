@@ -7,6 +7,7 @@ import rclpy
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry, Path
 from rclpy.node import Node
+from rclpy.executors import ExternalShutdownException
 from std_msgs.msg import String
 
 
@@ -76,7 +77,7 @@ class BaselineController(Node):
 def main(args=None) -> None:
     rclpy.init(args=args); node = BaselineController()
     try: rclpy.spin(node)
-    except KeyboardInterrupt: pass
+    except (KeyboardInterrupt, ExternalShutdownException): pass
     finally:
         if rclpy.ok(): node.publisher.publish(Twist())
         node.destroy_node()

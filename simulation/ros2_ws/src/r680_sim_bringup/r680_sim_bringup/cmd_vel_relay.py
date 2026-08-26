@@ -4,6 +4,7 @@ import rclpy
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 from rclpy.node import Node
+from rclpy.executors import ExternalShutdownException
 
 
 class CmdVelRelay(Node):
@@ -18,7 +19,8 @@ class CmdVelRelay(Node):
 def main(args=None) -> None:
     rclpy.init(args=args); node = CmdVelRelay()
     try: rclpy.spin(node)
-    except KeyboardInterrupt: pass
+    except (KeyboardInterrupt, ExternalShutdownException): pass
     finally:
-        node.cmd_publisher.publish(Twist()); node.destroy_node()
+        if rclpy.ok(): node.cmd_publisher.publish(Twist())
+        node.destroy_node()
         if rclpy.ok(): rclpy.shutdown()

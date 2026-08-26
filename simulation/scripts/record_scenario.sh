@@ -40,6 +40,8 @@ timeout --signal=INT --kill-after=5s "${duration}s" ros2 bag record -o "$bag" \
 if [[ "$bag_status" -ne 0 && "$bag_status" -ne 124 ]]; then
   exit "$bag_status"
 fi
-printf '{"schema_version":"1.0","scenario":"%s","difficulty":"%s","seed":%s,"duration_s":%s,"bag":"%s"}\n' \
-  "$scenario" "$difficulty" "$seed" "$duration" "$bag" >"${bag}_run.json"
+config_sha256="$(sha256sum simulation/ros2_ws/src/r680_sim_bringup/config/scenarios.yaml | cut -d' ' -f1)"
+code_revision="$(git rev-parse HEAD)"
+printf '{"schema_version":"1.0","scenario":"%s","difficulty":"%s","seed":%s,"duration_s":%s,"bag":"%s","config_sha256":"%s","code_revision":"%s"}\n' \
+  "$scenario" "$difficulty" "$seed" "$duration" "$bag" "$config_sha256" "$code_revision" >"${bag}_run.json"
 echo "$bag"
