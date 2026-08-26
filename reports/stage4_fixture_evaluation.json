@@ -1,0 +1,18 @@
+{
+  "split": "test",
+  "samples": 2,
+  "checkpoint_epoch": 2,
+  "metrics": {
+    "loss_control": 0.01931126043200493,
+    "loss_ranking": 0.047100916504859924,
+    "loss_h_min": 4.424627304077148,
+    "loss_feasible": 0.22810858488082886,
+    "loss_slack": 0.08447487652301788,
+    "loss_correction": 0.12081589549779892,
+    "loss_risk": 0.2786649465560913,
+    "loss_total": 1.049670934677124,
+    "control_mae": 0.1502988487482071,
+    "ranking_accuracy": 1.0,
+    "feasible_accuracy": 1.0
+  }
+}

@@ -28,7 +28,7 @@ def setup(context):
         with open(params, encoding="utf-8") as stream:
             payload = yaml.safe_load(stream)
         payload["controller_server"]["ros__parameters"]["FollowPath"] = {
-            "plugin": "nav2_mppi_controller::MPPIController", "time_steps": 56, "model_dt": 0.05,
+            "plugin": "nav2_mppi_controller::MPPIController", "time_steps": 30, "model_dt": 0.1,
             "batch_size": 1200, "vx_max": 0.5, "vx_min": 0.0, "wz_max": 0.8,
             "iteration_count": 1, "motion_model": "DiffDrive", "visualize": False,
             "critics": ["ConstraintCritic", "ObstaclesCritic", "GoalCritic", "GoalAngleCritic", "PathAlignCritic", "PathFollowCritic", "PathAngleCritic", "PreferForwardCritic"],
@@ -40,7 +40,7 @@ def setup(context):
         PythonLaunchDescriptionSource(os.path.join(bringup, "launch", "simulation.launch.py")),
         launch_arguments={"scenario": scenario, "headless": "true", "use_ros2_control": "true",
                           "publish_route": "true" if controller in {"vanilla_dcbf", "proposed"} else "false",
-                          "seed": seed, "difficulty": difficulty}.items(),
+                          "seed": seed, "difficulty": difficulty, "baseline": controller}.items(),
     )
     navigation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(nav2, "launch", "navigation_launch.py")),
@@ -55,6 +55,9 @@ def setup(context):
     ]
     if controller in {"dwb", "mppi"}:
         common.append(navigation)
+        common.append(Node(package="r680_sim_bringup", executable="nav_goal_sender",
+                           parameters=[{"scenario_file": os.path.join(bringup, "config", "scenarios.yaml"),
+                                        "scenario": scenario, "baseline": controller, "use_sim_time": True}], output="screen"))
     else:
         common.append(Node(package="r680_sim_bringup", executable="baseline_controller",
                            parameters=[{"baseline": controller, "use_sim_time": True}], output="screen"))

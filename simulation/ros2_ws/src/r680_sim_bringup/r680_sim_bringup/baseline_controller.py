@@ -78,5 +78,6 @@ def main(args=None) -> None:
     try: rclpy.spin(node)
     except KeyboardInterrupt: pass
     finally:
-        node.publisher.publish(Twist()); node.destroy_node()
+        if rclpy.ok(): node.publisher.publish(Twist())
+        node.destroy_node()
         if rclpy.ok(): rclpy.shutdown()

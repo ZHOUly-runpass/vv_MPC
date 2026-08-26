@@ -18,6 +18,7 @@ def launch_setup(context):
     publish_route = LaunchConfiguration("publish_route").perform(context).lower() in ("1", "true", "yes")
     seed = int(LaunchConfiguration("seed").perform(context))
     difficulty = LaunchConfiguration("difficulty").perform(context).lower()
+    baseline = LaunchConfiguration("baseline").perform(context).lower()
     difficulty_scales = {"easy": 0.75, "nominal": 1.0, "hard": 1.25}
     if difficulty not in difficulty_scales:
         raise RuntimeError(f"unknown difficulty {difficulty!r}; choices={sorted(difficulty_scales)}")
@@ -37,7 +38,8 @@ def launch_setup(context):
     xacro_file = os.path.join(description_share, "urdf", "r680_sim.urdf.xacro")
     description = ParameterValue(Command(["xacro ", xacro_file, " use_ros2_control:=", str(use_ros2_control).lower()]), value_type=str)
     common = {"scenario_file": scenario_file, "scenario": scenario_name, "use_sim_time": True,
-              "seed": seed, "difficulty": difficulty, "difficulty_scale": difficulty_scales[difficulty]}
+              "seed": seed, "difficulty": difficulty, "difficulty_scale": difficulty_scales[difficulty],
+              "baseline": baseline}
     gazebo_models = os.pathsep.join(filter(None, [
         os.path.join(worlds_share, "models"), "/usr/share/gazebo-11/models",
         os.environ.get("GAZEBO_MODEL_PATH", ""),
@@ -76,5 +78,6 @@ def generate_launch_description():
         DeclareLaunchArgument("publish_route", default_value="true"),
         DeclareLaunchArgument("seed", default_value="42"),
         DeclareLaunchArgument("difficulty", default_value="nominal"),
+        DeclareLaunchArgument("baseline", default_value="uncontrolled"),
         OpaqueFunction(function=launch_setup),
     ])

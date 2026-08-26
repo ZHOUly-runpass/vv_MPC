@@ -15,5 +15,8 @@ for controller in dwb mppi vanilla_dcbf proposed; do
     scenario:="$scenario" controller:="$controller" seed:=42 difficulty:=nominal >"$log" 2>&1 || status=$?
   status="${status:-0}"
   if [[ "$status" -ne 0 && "$status" -ne 124 ]]; then echo "$controller failed: $status" >&2; exit "$status"; fi
+  if grep -Eq "Failed to bring up all requested nodes|Original error:" "$log"; then
+    echo "$controller lifecycle activation failed; inspect $log" >&2; exit 3
+  fi
   unset status
 done

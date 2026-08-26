@@ -5,6 +5,7 @@ import math
 
 import rclpy
 from gazebo_msgs.msg import ModelStates
+from geometry_msgs.msg import Twist
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 from std_msgs.msg import String
@@ -18,6 +19,7 @@ class BenchmarkManager(Node):
         super().__init__("benchmark_manager")
         self.declare_parameter("scenario_file", "")
         self.declare_parameter("scenario", "empty")
+        self.declare_parameter("baseline", "uncontrolled")
         self.robot, scenario = load_scenario(self.get_parameter("scenario_file").value, self.get_parameter("scenario").value)
         self.scenario_name = self.get_parameter("scenario").value
         self.goal = scenario["goal"]
@@ -26,8 +28,14 @@ class BenchmarkManager(Node):
         self.min_clearance = float("inf")
         self.collision = False
         self.reached_goal = False
+        self.path_length_m = 0.0
+        self.command_smoothness = 0.0
+        self.command_count = 0
+        self.previous_position = None
+        self.previous_command = None
         self.publisher = self.create_publisher(String, "/simulation/benchmark_status", 10)
         self.create_subscription(ModelStates, "/model_states", self.callback, qos_profile_sensor_data)
+        self.create_subscription(Twist, "/cmd_vel", self.command_callback, 20)
         self.reset_client = self.create_client(Empty, "/reset_simulation")
         self.create_service(Trigger, "/simulation/reset_benchmark", self.reset)
 
@@ -36,6 +44,10 @@ class BenchmarkManager(Node):
         if self.robot["model_name"] not in indexed:
             return
         robot_pose = indexed[self.robot["model_name"]]
+        position = (robot_pose.position.x, robot_pose.position.y)
+        if self.previous_position is not None:
+            self.path_length_m += math.hypot(position[0] - self.previous_position[0], position[1] - self.previous_position[1])
+        self.previous_position = position
         robot_radius = float(self.robot["radius_m"])
         for name, spec in self.obstacles.items():
             if name not in indexed:
@@ -54,12 +66,24 @@ class BenchmarkManager(Node):
             "reached_goal": self.reached_goal,
             "collision": self.collision,
             "min_clearance_m": None if math.isinf(self.min_clearance) else self.min_clearance,
+            "baseline": self.get_parameter("baseline").value,
+            "path_length_m": self.path_length_m,
+            "command_smoothness": self.command_smoothness,
+            "command_count": self.command_count,
         }
         self.publisher.publish(String(data=json.dumps(payload, sort_keys=True)))
+
+    def command_callback(self, message: Twist) -> None:
+        command = (message.linear.x, message.angular.z)
+        if self.previous_command is not None:
+            self.command_smoothness += (command[0] - self.previous_command[0]) ** 2 + (command[1] - self.previous_command[1]) ** 2
+        self.previous_command = command; self.command_count += 1
 
     def reset(self, _request, response):
         self.started_ns = self.get_clock().now().nanoseconds
         self.min_clearance, self.collision, self.reached_goal = float("inf"), False, False
+        self.path_length_m, self.command_smoothness, self.command_count = 0.0, 0.0, 0
+        self.previous_position = self.previous_command = None
         if self.reset_client.service_is_ready():
             self.reset_client.call_async(Empty.Request())
             response.success, response.message = True, "Gazebo reset requested and benchmark counters cleared"
