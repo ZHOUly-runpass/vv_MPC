@@ -43,7 +43,10 @@ class NavGoalSender(Node):
 
     def accepted(self, future) -> None:
         handle = future.result()
-        if not handle.accepted: self.publish("rejected"); return
+        if not handle.accepted:
+            self.sent = False
+            self.publish("rejected_retrying")
+            return
         self.publish("accepted"); handle.get_result_async().add_done_callback(self.finished)
 
     def finished(self, future) -> None: self.publish("finished", result_status=int(future.result().status))
