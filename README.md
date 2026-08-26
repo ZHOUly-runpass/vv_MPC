@@ -71,3 +71,5 @@ The fixture only verifies schema, teacher, training, checkpoint, and evaluation 
 For actual collection, inspect the full 72-run matrix first with
 `python scripts/batch_collect.py --dry-run`, then run it on the ROS development machine.
 Four unified simulation controller names are `dwb`, `mppi`, `vanilla_dcbf`, and `proposed`.
+The exact field contract is documented in `docs/training_sample_schema.md`; development-machine
+evidence and remaining truth-data gates are recorded in `reports/阶段4开发机验收报告.md`.
