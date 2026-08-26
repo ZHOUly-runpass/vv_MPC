@@ -18,13 +18,15 @@ class CandidatePseudoLabel:
 
 def classify_solver_result(result: MpcResult, deadline_ms: float) -> str:
     status = result.status.lower()
-    if result.solve_time_ms > deadline_ms or "deadline" in status or "timeout" in status:
+    if result.solve_time_ms > deadline_ms or any(token in status for token in ("deadline", "timeout", "maximum_cputime")):
         return "timeout"
-    if any(token in status for token in ("nan", "exception", "failure", "invalid")):
+    if any(token in status for token in (
+        "nan", "exception", "failure", "invalid", "maximum_iterations", "restoration_failed", "diverging",
+    )):
         return "numeric_failure"
-    if not result.feasible:
+    if "infeasible" in status or not result.feasible:
         return "infeasible"
-    return "feasible"
+    return "success"
 
 
 def build_pseudo_labels(

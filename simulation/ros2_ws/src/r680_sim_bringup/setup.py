@@ -29,5 +29,6 @@ setup(
         "pointcloud_100_frame_audit = r680_sim_bringup.pointcloud_100_frame_audit:main",
         "feature_health_bridge = r680_sim_bringup.feature_health_bridge:main",
         "cmd_vel_relay = r680_sim_bringup.cmd_vel_relay:main",
+        "baseline_controller = r680_sim_bringup.baseline_controller:main",
     ]},
 )

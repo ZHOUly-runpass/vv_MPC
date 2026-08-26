@@ -16,6 +16,11 @@ def launch_setup(context):
     headless = LaunchConfiguration("headless").perform(context).lower() in ("1", "true", "yes")
     use_ros2_control = LaunchConfiguration("use_ros2_control").perform(context).lower() in ("1", "true", "yes")
     publish_route = LaunchConfiguration("publish_route").perform(context).lower() in ("1", "true", "yes")
+    seed = int(LaunchConfiguration("seed").perform(context))
+    difficulty = LaunchConfiguration("difficulty").perform(context).lower()
+    difficulty_scales = {"easy": 0.75, "nominal": 1.0, "hard": 1.25}
+    if difficulty not in difficulty_scales:
+        raise RuntimeError(f"unknown difficulty {difficulty!r}; choices={sorted(difficulty_scales)}")
     bringup_share = get_package_share_directory("r680_sim_bringup")
     description_share = get_package_share_directory("r680_sim_description")
     worlds_share = get_package_share_directory("r680_sim_worlds")
@@ -31,14 +36,15 @@ def launch_setup(context):
         raise RuntimeError(f"scenario world does not exist: {world}")
     xacro_file = os.path.join(description_share, "urdf", "r680_sim.urdf.xacro")
     description = ParameterValue(Command(["xacro ", xacro_file, " use_ros2_control:=", str(use_ros2_control).lower()]), value_type=str)
-    common = {"scenario_file": scenario_file, "scenario": scenario_name, "use_sim_time": True}
+    common = {"scenario_file": scenario_file, "scenario": scenario_name, "use_sim_time": True,
+              "seed": seed, "difficulty": difficulty, "difficulty_scale": difficulty_scales[difficulty]}
     gazebo_models = os.pathsep.join(filter(None, [
         os.path.join(worlds_share, "models"), "/usr/share/gazebo-11/models",
         os.environ.get("GAZEBO_MODEL_PATH", ""),
     ]))
     gazebo = ExecuteProcess(cmd=[
         "gzserver", world, "-s", "libgazebo_ros_init.so", "-s", "libgazebo_ros_factory.so",
-        "-s", "libgazebo_ros_force_system.so", "--seed", "42",
+        "-s", "libgazebo_ros_force_system.so", "--seed", str(seed),
     ], output="screen")
     start = robot["start"]
     return [
@@ -68,5 +74,7 @@ def generate_launch_description():
         DeclareLaunchArgument("headless", default_value="true"),
         DeclareLaunchArgument("use_ros2_control", default_value="false"),
         DeclareLaunchArgument("publish_route", default_value="true"),
+        DeclareLaunchArgument("seed", default_value="42"),
+        DeclareLaunchArgument("difficulty", default_value="nominal"),
         OpaqueFunction(function=launch_setup),
     ])

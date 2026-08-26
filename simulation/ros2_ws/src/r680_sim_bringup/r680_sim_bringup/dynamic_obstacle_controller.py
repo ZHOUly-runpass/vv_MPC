@@ -13,8 +13,10 @@ class DynamicObstacleController(Node):
         super().__init__("dynamic_obstacle_controller")
         self.declare_parameter("scenario_file", "")
         self.declare_parameter("scenario", "empty")
+        self.declare_parameter("difficulty_scale", 1.0)
         _, scenario = load_scenario(self.get_parameter("scenario_file").value, self.get_parameter("scenario").value)
         self.obstacles = dynamic_obstacles(scenario)
+        self.difficulty_scale = float(self.get_parameter("difficulty_scale").value)
         self.started_ns = self.get_clock().now().nanoseconds
         self.client = self.create_client(SetEntityState, "/set_entity_state")
         self.pending = {}
@@ -28,16 +30,17 @@ class DynamicObstacleController(Node):
             if item["name"] in self.pending:
                 continue
             coordinate = triangle_position(
-                float(item["start"]), float(item["minimum"]), float(item["maximum"]), float(item["speed"]), elapsed
+                float(item["start"]), float(item["minimum"]), float(item["maximum"]),
+                float(item["speed"]) * self.difficulty_scale, elapsed
             )
             request = SetEntityState.Request()
             state = EntityState(name=item["name"], reference_frame="world")
             if item["axis"] == "x":
                 state.pose.position.x, state.pose.position.y = coordinate, float(item["fixed"][0])
-                state.twist.linear.x = float(item["speed"])
+                state.twist.linear.x = float(item["speed"]) * self.difficulty_scale
             elif item["axis"] == "y":
                 state.pose.position.x, state.pose.position.y = float(item["fixed"][0]), coordinate
-                state.twist.linear.y = float(item["speed"])
+                state.twist.linear.y = float(item["speed"]) * self.difficulty_scale
             else:
                 self.get_logger().error(f"unsupported obstacle axis: {item['axis']}")
                 continue

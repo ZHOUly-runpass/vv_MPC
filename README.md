@@ -53,3 +53,21 @@ The default input is deterministic synthetic C16-format data for plumbing and
 performance validation, not accuracy evidence. Pass `--nuscenes-sample PATH`
 after legally obtaining a five-float nuScenes LiDAR sample. See
 `reports/UniLION阶段1执行报告.md` for the measured result and remaining gates.
+
+Stage-4 data and training pipeline:
+
+```bash
+PYTHONPATH="$PWD/src" .tools/envs/planner/bin/python scripts/create_training_fixture.py --output-dir .tools/training_fixture
+PYTHONPATH="$PWD/src" .tools/envs/planner/bin/python scripts/generate_teacher_labels.py \
+  --manifest .tools/training_fixture/raw_manifest.jsonl --output-dir .tools/training_labeled
+PYTHONPATH="$PWD/src" .tools/envs/unilion/bin/python scripts/train_planner.py \
+  --manifest .tools/training_labeled/manifest.jsonl --output-dir .tools/training_run --epochs 2
+PYTHONPATH="$PWD/src" .tools/envs/unilion/bin/python scripts/evaluate_planner.py \
+  --manifest .tools/training_labeled/manifest.jsonl --checkpoint .tools/training_run/best.pt \
+  --split test --output reports/training_fixture_evaluation.json
+```
+
+The fixture only verifies schema, teacher, training, checkpoint, and evaluation plumbing.
+For actual collection, inspect the full 72-run matrix first with
+`python scripts/batch_collect.py --dry-run`, then run it on the ROS development machine.
+Four unified simulation controller names are `dwb`, `mppi`, `vanilla_dcbf`, and `proposed`.

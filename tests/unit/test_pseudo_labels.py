@@ -9,7 +9,7 @@ def result(feasible=True, time=10.0, status="Solve_Succeeded"):
 
 
 def test_solver_outcomes_are_not_conflated() -> None:
-    assert classify_solver_result(result(), 80.0) == "feasible"
+    assert classify_solver_result(result(), 80.0) == "success"
     assert classify_solver_result(result(False), 80.0) == "infeasible"
     assert classify_solver_result(result(False, 90.0), 80.0) == "timeout"
     assert classify_solver_result(result(False, status="numeric_failure"), 80.0) == "numeric_failure"
