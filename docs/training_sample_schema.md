@@ -19,6 +19,12 @@
 | `candidate_controls` | float32 | `[K,T-1,U]` | 候选控制序列 |
 | `candidate_timestamps_s` | float32 | `[T]` | 严格递增的相对时间 |
 
+## 正式时间网格与重采样规则
+
+正式训练和 teacher 的唯一时间网格是：预测域 `2.0 s`、`dt=0.1 s`、20 个控制区间、21 个状态/障碍时刻。新录制数据必须直接产生这一网格。
+
+历史候选若使用 `dt=0.2 s`，转换规则固定为 `zero_order_hold_controls_rerollout_states_linear_obstacles`：控制量按零阶保持重采样到 0.1 s；候选状态不做坐标插值，而是从同一初始状态用车辆模型和重采样控制重新 rollout；障碍位置、速度、尺寸与协方差线性插值，有效掩码采用相邻源时刻的保守逻辑与。该规则及目标 `dt` 会写入样本/teacher 元数据，禁止在同一批正式标签中混用时间网格。
+
 ## MPC teacher 字段
 
 | 字段 | dtype | 形状 | 含义 |
@@ -65,6 +71,8 @@ bash simulation/scripts/record_scenario.sh "$PWD" crossing_pedestrian 60 41 hard
 - `/planning/mpc_result`
 
 在线未运行 CasADi teacher 时，`/planning/mpc_result` 明确使用 `offline_teacher_pending`，正式 teacher 字段由离线求解器生成。
+
+teacher 必须显式读取车辆配置。仿真使用 `configs/robot/r680_sim.yaml`，其中尺寸、包络半径、速度/加速度约束和 MPC 参数与仿真 URDF/controller 对齐；实车配置 `configs/robot/r680_c16.yaml` 在 R680 参数未确认时会被拒绝，不能退回硬编码默认值生成正式标签。
 
 一键转换命令：
 

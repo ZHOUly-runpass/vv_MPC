@@ -1,0 +1,45 @@
+{
+  "counts": {
+    "candidates": 24,
+    "controller": 12,
+    "costmap": 7,
+    "imu": 470,
+    "odom": 238,
+    "plan": 6,
+    "points": 47
+  },
+  "difficulty_status": {
+    "configured_models": [
+      "obstacle_sparse_1",
+      "obstacle_sparse_2",
+      "obstacle_sparse_3"
+    ],
+    "difficulty": "easy",
+    "failed_models": {},
+    "ready": true,
+    "schema_version": "1.0",
+    "target_count": 3
+  },
+  "disk": {
+    "free_bytes": 505193496576,
+    "minimum_free_bytes": 5368709120,
+    "path": "/home/zhou/E2Eproject_MPC/github_pull/05"
+  },
+  "duration_s": 5.0,
+  "failures": [],
+  "frequency_hz": {
+    "candidates": 4.895014134445206,
+    "controller": 2.6231090387076046,
+    "costmap": 1.5789865531268041,
+    "imu": 95.33318000272381,
+    "odom": 48.7896759411978,
+    "plan": 1.1151761932290738,
+    "points": 9.555626289514793
+  },
+  "schema_version": "1.0",
+  "status": "passed",
+  "transforms": {
+    "base_footprint<-c16_link": 1,
+    "odom<-base_footprint": 1
+  }
+}

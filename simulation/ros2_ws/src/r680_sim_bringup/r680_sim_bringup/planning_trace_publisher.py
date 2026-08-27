@@ -81,6 +81,12 @@ class PlanningTracePublisher(Node):
             candidates.append({"role": role, "states": states.tolist(), "controls": controls.tolist()})
         predictions = []
         for obstacle in self.obstacles:
+            # Walls and other map geometry remain represented by the Nav2
+            # costmap.  Approximating a long wall with its bounding-circle
+            # radius would turn a valid passage into a permanently infeasible
+            # dynamic-obstacle constraint.
+            if not obstacle.get("collision_check", True):
+                continue
             px, py = obstacle["position"][:2]; vx, vy = obstacle["velocity"][:2]
             states = [[px+vx*t, py+vy*t, 0.0, vx, vy, 1.0] for t in timestamps]
             predictions.append({"name": obstacle["name"], "states": states,

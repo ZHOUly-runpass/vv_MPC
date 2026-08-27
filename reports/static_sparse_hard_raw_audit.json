@@ -1,0 +1,15 @@
+{
+  "errors": [],
+  "metadata_groups": {
+    "{'scenario': 'static_sparse', 'difficulty': 'hard', 'seed': 53, 'controller': 'dwb'}": 3
+  },
+  "samples": 3,
+  "schema_version": "1.0",
+  "shape_groups": {
+    "{'points': [7402, 6], 'route': [32, 4], 'ego_state': [5], 'costmap': [3, 60, 60], 'obstacle_states': [3, 21, 6], 'candidate_states': [7, 21, 5], 'candidate_controls': [7, 20, 2], 'candidate_timestamps_s': [21]}": 1,
+    "{'points': [7438, 6], 'route': [32, 4], 'ego_state': [5], 'costmap': [3, 60, 60], 'obstacle_states': [3, 21, 6], 'candidate_states': [7, 21, 5], 'candidate_controls': [7, 20, 2], 'candidate_timestamps_s': [21]}": 1,
+    "{'points': [7507, 6], 'route': [32, 4], 'ego_state': [5], 'costmap': [3, 60, 60], 'obstacle_states': [3, 21, 6], 'candidate_states': [7, 21, 5], 'candidate_controls': [7, 20, 2], 'candidate_timestamps_s': [21]}": 1
+  },
+  "status": "passed",
+  "valid_samples": 3
+}
