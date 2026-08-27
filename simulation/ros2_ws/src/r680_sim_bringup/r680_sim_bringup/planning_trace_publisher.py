@@ -28,8 +28,8 @@ class PlanningTracePublisher(Node):
         self.declare_parameter("horizon_s", 2.0)
         self.declare_parameter("dt_s", 0.2)
         self.odom = None; self.route = None; self.obstacles = []; self.controller_status = {}
-        self.publishers = {name: self.create_publisher(String, f"/planning/{name}", 10) for name in
-                           ("candidates", "obstacle_predictions", "mpc_request", "mpc_result")}
+        self.trace_publishers = {name: self.create_publisher(String, f"/planning/{name}", 10) for name in
+                                 ("candidates", "obstacle_predictions", "mpc_request", "mpc_result")}
         self.create_subscription(Odometry, "/odom", lambda msg: setattr(self, "odom", msg), 20)
         self.create_subscription(Path, "/plan", lambda msg: setattr(self, "route", msg), 10)
         self.create_subscription(String, "/simulation/ground_truth_obstacles", self.on_obstacles, 10)
@@ -47,7 +47,7 @@ class PlanningTracePublisher(Node):
     def publish(self, name: str, payload: dict) -> None:
         payload.update(schema_version="1.0", stamp_s=self.get_clock().now().nanoseconds * 1e-9,
                        baseline=self.get_parameter("baseline").value)
-        self.publishers[name].publish(String(data=json.dumps(payload, separators=(",", ":"), sort_keys=True)))
+        self.trace_publishers[name].publish(String(data=json.dumps(payload, separators=(",", ":"), sort_keys=True)))
 
     def tick(self) -> None:
         if self.odom is None or self.route is None or not self.route.poses: return
