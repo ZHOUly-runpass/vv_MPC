@@ -30,6 +30,47 @@ def costmap_array(message) -> np.ndarray:
     return np.stack([occupied, np.zeros_like(occupied), (grid < 0).astype(np.float32)])
 
 
+def pointcloud_array(message, fields: tuple[str, ...]) -> np.ndarray:
+    """Decode PointCloud2 without depending on a ROS Python installation."""
+    formats = {1: "i1", 2: "u1", 3: "<i2", 4: "<u2", 5: "<i4", 6: "<u4", 7: "<f4", 8: "<f8"}
+    by_name = {field.name: field for field in message.fields}
+    missing = set(fields)-set(by_name)
+    if missing: raise ValueError(f"point cloud missing fields: {sorted(missing)}")
+    names, dtype_formats, offsets = [], [], []
+    for name in fields:
+        field = by_name[name]; names.append(name); dtype_formats.append(formats[int(field.datatype)]); offsets.append(int(field.offset))
+    dtype = np.dtype({"names": names, "formats": dtype_formats, "offsets": offsets, "itemsize": int(message.point_step)})
+    count = int(message.width)*int(message.height)
+    structured = np.frombuffer(bytes(message.data), dtype=dtype, count=count)
+    return np.column_stack([structured[name] for name in fields]).astype(np.float32, copy=False)
+
+
+def bag_messages(path: Path):
+    try:
+        from rosbags.highlevel import AnyReader
+        with AnyReader([path]) as reader:
+            topics = {connection.topic for connection in reader.connections}
+            yield topics, None, None
+            for connection, timestamp_ns, raw in reader.messages():
+                yield connection.topic, reader.deserialize(raw, connection.msgtype), timestamp_ns
+        return
+    except ImportError:
+        pass
+    try:
+        import rosbag2_py
+        from rclpy.serialization import deserialize_message
+        from rosidl_runtime_py.utilities import get_message
+    except ImportError as error:
+        raise RuntimeError("install the project 'rosbag' extra or ros-humble-rosbag2-py") from error
+    reader = rosbag2_py.SequentialReader(); reader.open(rosbag2_py.StorageOptions(uri=str(path), storage_id="sqlite3"),
+        rosbag2_py.ConverterOptions(input_serialization_format="cdr", output_serialization_format="cdr"))
+    types = {item.name: get_message(item.type) for item in reader.get_all_topics_and_types()}
+    yield set(types), None, None
+    while reader.has_next():
+        topic, raw, timestamp_ns = reader.read_next()
+        yield topic, deserialize_message(raw, types[topic]), timestamp_ns
+
+
 def trace_arrays(candidates: dict, obstacles: dict) -> dict[str, np.ndarray]:
     candidate_items, obstacle_items = candidates["items"], obstacles["items"]
     states = np.asarray([item["states"] for item in candidate_items], dtype=np.float32)
@@ -60,36 +101,24 @@ def main() -> int:
     bag = args.bag.resolve(); output = args.output_dir.resolve(); config = args.config if args.config.is_absolute() else root/args.config
     checkpoint = args.checkpoint if args.checkpoint.is_absolute() else root/args.checkpoint
     if not checkpoint.is_file(): raise FileNotFoundError(checkpoint)
-    try:
-        import rosbag2_py
-        from rclpy.serialization import deserialize_message
-        from rosidl_runtime_py.utilities import get_message
-        from sensor_msgs_py import point_cloud2
-    except ImportError as error: raise RuntimeError("run this extractor after sourcing ROS 2 Humble") from error
     metadata_path = Path(str(bag) + "_run.json")
     run = json.loads(metadata_path.read_text()) if metadata_path.is_file() else {}
     source_hash = directory_sha256(bag); config_hash = sha256(config.read_bytes()).hexdigest()
     checkpoint_hash = sha256(checkpoint.read_bytes()).hexdigest()
     revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
     code_hash = sha256(revision.encode()).hexdigest()
-    reader = rosbag2_py.SequentialReader(); reader.open(rosbag2_py.StorageOptions(uri=str(bag), storage_id="sqlite3"),
-        rosbag2_py.ConverterOptions(input_serialization_format="cdr", output_serialization_format="cdr"))
-    types = {item.name: get_message(item.type) for item in reader.get_all_topics_and_types()}
+    stream = bag_messages(bag); types, _, _ = next(stream)
     required = {"/points", "/odom", "/plan", "/local_costmap/costmap_raw", "/planning/candidates", "/planning/obstacle_predictions"}
     missing = required-set(types)
     if missing: raise RuntimeError(f"bag is missing required topics: {sorted(missing)}")
     latest = {}; entries = []; previous_sample_ns = -10**30; period_ns = int(1e9/args.sample_hz); max_age_ns = int(args.max_age_ms*1e6)
-    while reader.has_next():
-        topic, raw, timestamp_ns = reader.read_next(); message = deserialize_message(raw, types[topic])
+    for topic, message, timestamp_ns in stream:
         if topic != "/points":
             if topic in required: latest[topic] = (timestamp_ns, message)
             continue
         if timestamp_ns-previous_sample_ns < period_ns or not (required-{"/points"}).issubset(latest): continue
         if any(abs(timestamp_ns-latest[name][0]) > max_age_ns for name in required if name not in {"/points", "/plan"}): continue
-        fields = ("x","y","z","intensity","ring","time"); names = {field.name for field in message.fields}
-        if not set(fields).issubset(names): raise ValueError(f"point cloud missing fields: {sorted(set(fields)-names)}")
-        raw_points = point_cloud2.read_points(message, field_names=fields, skip_nans=False)
-        points = np.column_stack([raw_points[name] for name in fields]).astype(np.float32, copy=False)
+        fields = ("x","y","z","intensity","ring","time"); points = pointcloud_array(message, fields)
         if not len(points) or not np.all(np.isfinite(points)): continue
         odom = latest["/odom"][1]; candidates = json.loads(latest["/planning/candidates"][1].data)
         obstacles = json.loads(latest["/planning/obstacle_predictions"][1].data)

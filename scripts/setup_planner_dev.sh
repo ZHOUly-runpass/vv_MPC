@@ -19,7 +19,7 @@ fi
 "$ENV_DIR/bin/python" -m pip install --upgrade pip setuptools wheel
 "$ENV_DIR/bin/python" -m pip install --upgrade \
   --constraint "$PROJECT_DIR/environments/planner_constraints.txt" \
-  --editable "$PROJECT_DIR[solver,test]"
+  --editable "$PROJECT_DIR[solver,test,rosbag]"
 
 PYTHONDONTWRITEBYTECODE=1 "$ENV_DIR/bin/python" \
   "$PROJECT_DIR/scripts/audit_planner_environment.py" \
