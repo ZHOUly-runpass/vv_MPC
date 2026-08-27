@@ -1,0 +1,17 @@
+{
+  "checkpoint_sha256_counts": {
+    "9ba65cfead901ea08db3664108838d4c85bd6621592cc08cca0dfe61af4eb262": 13
+  },
+  "errors": [],
+  "manifest": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/schema_pipeline_test/labeled/manifest.jsonl",
+  "samples": 13,
+  "schema_version": "1.0",
+  "shape_groups": {
+    "((6,), (384, 32, 32), (32, 4), (3, 60, 60), (7, 11, 5))": 13
+  },
+  "status": "passed",
+  "teacher_outcomes": {
+    "success": 91
+  },
+  "valid_samples": 13
+}

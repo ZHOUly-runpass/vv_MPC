@@ -53,8 +53,8 @@ def setup(context):
         Node(package="nav2_lifecycle_manager", executable="lifecycle_manager", name="lifecycle_manager_map",
              parameters=[{"use_sim_time": True, "autostart": True, "node_names": ["map_server"]}]),
     ]
+    common.append(navigation)
     if controller in {"dwb", "mppi"}:
-        common.append(navigation)
         common.append(Node(package="r680_sim_bringup", executable="nav_goal_sender",
                            parameters=[{"scenario_file": os.path.join(bringup, "config", "scenarios.yaml"),
                                         "scenario": scenario, "baseline": controller, "use_sim_time": True}], output="screen"))

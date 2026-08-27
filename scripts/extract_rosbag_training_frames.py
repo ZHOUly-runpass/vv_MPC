@@ -143,7 +143,8 @@ def main() -> int:
                     "scenario": run.get("scenario", "unknown"), "difficulty": run.get("difficulty", "unknown"),
                     "seed": run.get("seed", -1), "controller": run.get("controller", "unknown"),
                     "source_sha256": source_hash, "config_sha256": config_hash,
-                    "checkpoint_sha256": checkpoint_hash, "code_sha256": code_hash, "feature_status": "pending"}
+                    "checkpoint_sha256": checkpoint_hash, "code_sha256": code_hash, "feature_status": "pending",
+                    "costmap_encoding": "nav2_aggregate_reserved_dynamic_unknown"}
         path = output/"raw"/f"{sample_id}.npz"; payload_hash = save_raw_training_frame(path, arrays, metadata)
         entries.append({"sample_id": sample_id, "path": str(path.relative_to(output)), "payload_sha256": payload_hash,
                         "scenario": metadata["scenario"], "difficulty": metadata["difficulty"], "seed": metadata["seed"],

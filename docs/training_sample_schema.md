@@ -75,6 +75,8 @@ bash simulation/scripts/convert_rosbag_to_schema.sh \
 
 转换分三步：纯 Python `rosbags` 解包并同步 → 独立 UniLION CUDA 环境批量生成冻结特征 → 组装并重新校验 schema 1.0。默认按 2 Hz 取样，并将原始 `[384,180,180]` BEV 自适应平均池化为 `[384,32,32]`，降低数据集磁盘占用；池化尺寸和特征配置哈希写入元数据。
 
+当前Nav2只发布融合后的costmap，转换器将其编码为“融合占用、预留动态层、未知区域”三通道，并写入 `costmap_encoding=nav2_aggregate_reserved_dynamic_unknown`。动态障碍监督来自独立的 `/planning/obstacle_predictions`，不把融合costmap误称为可精确拆分的静态/动态图层。
+
 组装后的 `raw_manifest.jsonl` 可直接传给 `generate_teacher_labels.py`。使用以下命令执行完整哈希、结构和 teacher outcome 审计：
 
 ```bash

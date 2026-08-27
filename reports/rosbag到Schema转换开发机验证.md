@@ -14,7 +14,7 @@
 
 ## 验证结果
 
-1. rosbag成功录制传感器、TF、odom、路线、costmap、控制器状态，以及候选轨迹、障碍预测、MPC request/result四个规划追踪话题。
+1. rosbag成功录制传感器、TF、odom、路线、costmap、控制器状态，以及候选轨迹、障碍预测、MPC request/result四个规划追踪话题。本次bag包含141帧点云、22帧costmap、28条控制器状态，以及四类规划追踪话题各62条。
 2. 纯Python `rosbags 0.10.11` 成功读取 Humble sqlite3 bag，并注册解析 `nav2_msgs/Costmap`。
 3. 提取13个同步原始训练帧，源bag SHA-256为 `ac19e498fbf9a381f15bb0b35b32835f0a3068da4e3371c70515c751142037f6`。
 4. UniLION对13帧完成离线前向，输出13份 `[384,32,32]` 特征。
