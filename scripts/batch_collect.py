@@ -17,13 +17,15 @@ def main() -> int:
     parser.add_argument("--max-runs", type=int)
     parser.add_argument("--continue-on-error", action="store_true")
     parser.add_argument("--controller", choices=("dwb", "mppi", "vanilla_dcbf", "proposed"), default="dwb")
+    parser.add_argument("--manifest", type=Path, default=Path(".tools/collection/runs.jsonl"))
     args = parser.parse_args(); root = Path(__file__).resolve().parents[1]
     matrix_path = args.matrix if args.matrix.is_absolute() else root / args.matrix
     matrix = yaml.safe_load(matrix_path.read_text(encoding="utf-8"))
     runs = [(scenario, difficulty, int(seed)) for scenario in matrix["scenarios"]
             for difficulty in matrix["difficulties"] for seed in matrix["seeds"]]
     if args.max_runs is not None: runs = runs[:args.max_runs]
-    manifest = root / ".tools" / "collection" / "runs.jsonl"; manifest.parent.mkdir(parents=True, exist_ok=True)
+    manifest = args.manifest if args.manifest.is_absolute() else root / args.manifest
+    manifest.parent.mkdir(parents=True, exist_ok=True)
     for scenario, difficulty, seed in runs:
         command = ["bash", str(root / "simulation/scripts/record_scenario.sh"), str(root), scenario,
                    str(matrix["duration_s"]), str(seed), difficulty]
