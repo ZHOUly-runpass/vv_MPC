@@ -18,7 +18,9 @@ class NavGoalSender(Node):
         self.declare_parameter("scenario_file", "")
         self.declare_parameter("scenario", "empty")
         self.declare_parameter("baseline", "dwb")
-        _, scenario = load_scenario(self.get_parameter("scenario_file").value, self.get_parameter("scenario").value)
+        self.declare_parameter("difficulty", "nominal")
+        _, scenario = load_scenario(self.get_parameter("scenario_file").value, self.get_parameter("scenario").value,
+                                    self.get_parameter("difficulty").value)
         self.goal_xy = scenario["goal"]; self.sent = False
         self.state = "waiting_for_action_server"
         self.client = ActionClient(self, NavigateToPose, "/navigate_to_pose")

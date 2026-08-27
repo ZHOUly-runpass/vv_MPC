@@ -26,7 +26,7 @@ class PlanningTracePublisher(Node):
         super().__init__("planning_trace_publisher")
         self.declare_parameter("baseline", "uncontrolled")
         self.declare_parameter("horizon_s", 2.0)
-        self.declare_parameter("dt_s", 0.2)
+        self.declare_parameter("dt_s", 0.1)
         self.odom = None; self.route = None; self.obstacles = []; self.controller_status = {}
         self.trace_publishers = {name: self.create_publisher(String, f"/planning/{name}", 10) for name in
                                  ("candidates", "obstacle_predictions", "mpc_request", "mpc_result")}

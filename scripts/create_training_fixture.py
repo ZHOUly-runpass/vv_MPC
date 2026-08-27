@@ -25,7 +25,7 @@ def main() -> int:
     sample_dir = output / "raw"
     limits = VehicleLimits(0.5, 0.1, 0.0, 1.0, 0.5, 0.8, 0.0, 1.0)
     model = DifferentialModel(limits)
-    generator = CandidateGenerator(model, horizon_s=2.0, dt_s=0.2)
+    generator = CandidateGenerator(model, horizon_s=2.0, dt_s=0.1)
     entries = []
     for index in range(args.samples):
         rng = np.random.default_rng(1000 + index)

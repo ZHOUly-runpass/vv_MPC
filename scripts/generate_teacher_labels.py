@@ -9,12 +9,13 @@ from time import perf_counter
 import numpy as np
 
 from r680_safety_planner.data import (
-    TEACHER_OUTCOME_TO_CODE, load_manifest, load_training_sample, save_training_sample, write_manifest,
+    TEACHER_OUTCOME_TO_CODE, load_manifest, load_teacher_vehicle_config, load_training_sample,
+    save_training_sample, write_manifest,
 )
 from r680_safety_planner.data.pseudo_labels import classify_solver_result
 from r680_safety_planner.dcbf import CasadiDcbfSolver
 from r680_safety_planner.interfaces import CandidateTrajectory, MpcRequest, MpcResult, PredictedObstacle
-from r680_safety_planner.vehicle import DifferentialModel, VehicleLimits
+from r680_safety_planner.planning import RESAMPLING_RULE, resample_candidate_batch, resample_obstacle_batch
 
 
 def obstacles_from_sample(sample) -> tuple[PredictedObstacle, ...]:
@@ -38,18 +39,34 @@ def main() -> int:
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--deadline-ms", type=float, default=80.0)
+    parser.add_argument("--vehicle-config", type=Path, default=Path("configs/robot/r680_sim.yaml"))
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     manifest = args.manifest if args.manifest.is_absolute() else root / args.manifest
     source_root = manifest.parent
     output = args.output_dir if args.output_dir.is_absolute() else root / args.output_dir
-    limits = VehicleLimits(0.5, 0.1, 0.0, 1.0, 0.5, 0.8, 0.0, 1.0)
-    model = DifferentialModel(limits)
+    vehicle_config_path = args.vehicle_config if args.vehicle_config.is_absolute() else root/args.vehicle_config
+    vehicle = load_teacher_vehicle_config(vehicle_config_path); model = vehicle.model
     entries = []
     for entry in load_manifest(manifest):
         sample = load_training_sample(source_root / str(entry["path"]))
+        source_timestamps = sample.candidate_timestamps_s.copy()
+        candidate_states, candidate_controls, target_timestamps = resample_candidate_batch(
+            sample.candidate_states, sample.candidate_controls, source_timestamps, vehicle.dt_s, model)
+        obstacle_values = resample_obstacle_batch(
+            sample.obstacle_states, sample.obstacle_lengths, sample.obstacle_widths, sample.obstacle_covariance,
+            sample.obstacle_valid_mask, source_timestamps, target_timestamps)
+        sample = replace(sample, candidate_states=candidate_states, candidate_controls=candidate_controls,
+                         candidate_timestamps_s=target_timestamps, obstacle_states=obstacle_values[0],
+                         obstacle_lengths=obstacle_values[1], obstacle_widths=obstacle_values[2],
+                         obstacle_covariance=obstacle_values[3], obstacle_valid_mask=obstacle_values[4])
         obstacles = obstacles_from_sample(sample)
-        solver = CasadiDcbfSolver(model, 0.3, hard_deadline_ms=120_000.0)
+        solver = CasadiDcbfSolver(
+            model, vehicle.ego_radius_m, fixed_margin_m=float(vehicle.mpc.get("fixed_margin_m", 0.1)),
+            sigma_multiplier=float(vehicle.mpc.get("sigma_multiplier", 3.0)),
+            continuous_alpha=float(vehicle.mpc.get("continuous_alpha", 1.0)),
+            maximum_slack=float(vehicle.mpc.get("maximum_slack", 1.0)), hard_deadline_ms=args.deadline_ms,
+            max_iterations=int(vehicle.mpc.get("max_iterations", 100)))
         candidates = [CandidateTrajectory(
             sample.candidate_states[index].astype(np.float64),
             sample.candidate_controls[index].astype(np.float64),
@@ -87,7 +104,10 @@ def main() -> int:
             teacher_states=np.stack([result.states for result in results]).astype(np.float32),
             teacher_controls=np.stack([result.controls for result in results]).astype(np.float32),
             teacher_selected_index=selected,
-            metadata={**sample.metadata, "teacher": "casadi_dcbf_mpc", "teacher_deadline_ms": args.deadline_ms},
+            metadata={**sample.metadata, "teacher": "casadi_dcbf_mpc", "teacher_deadline_ms": args.deadline_ms,
+                      "teacher_vehicle_profile": vehicle.source.name, "teacher_vehicle_config_sha256": vehicle.sha256,
+                      "teacher_profile_kind": vehicle.profile_kind, "teacher_dt_s": vehicle.dt_s,
+                      "legacy_resampling_rule": RESAMPLING_RULE},
         )
         destination = output / "samples" / f"{sample.metadata['sample_id']}.npz"
         payload_hash = save_training_sample(destination, labeled)

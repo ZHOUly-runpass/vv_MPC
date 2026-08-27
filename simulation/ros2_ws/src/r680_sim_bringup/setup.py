@@ -32,5 +32,7 @@ setup(
         "baseline_controller = r680_sim_bringup.baseline_controller:main",
         "nav_goal_sender = r680_sim_bringup.nav_goal_sender:main",
         "planning_trace_publisher = r680_sim_bringup.planning_trace_publisher:main",
+        "scenario_difficulty_controller = r680_sim_bringup.scenario_difficulty_controller:main",
+        "collection_preflight = r680_sim_bringup.collection_preflight:main",
     ]},
 )

@@ -36,14 +36,19 @@ for _ in $(seq 1 60); do
   if grep -qx /points <<<"$topics" && grep -qx /planning/candidates <<<"$topics" && grep -qx /simulation/controller_status <<<"$topics"; then break; fi
   sleep 1
 done
-for required in /points /odom /plan /local_costmap/costmap_raw /simulation/ground_truth_obstacles /simulation/controller_status /planning/candidates /planning/obstacle_predictions /planning/mpc_request /planning/mpc_result; do
+for required in /points /odom /plan /local_costmap/costmap_raw /simulation/difficulty_status /simulation/ground_truth_obstacles /simulation/controller_status /planning/candidates /planning/obstacle_predictions /planning/mpc_request /planning/mpc_result; do
   if ! ros2 topic list | grep -qx "$required"; then echo "required topic missing: $required" >&2; exit 4; fi
 done
+preflight="$project_dir/.tools/preflight_${scenario}_${difficulty}_${seed}_${controller}.json"
+if ! timeout 30s ros2 run r680_sim_bringup collection_preflight --ros-args \
+  -p duration_s:=5.0 -p report_output:="$preflight" -p disk_path:="$project_dir" -p minimum_free_gib:=5.0; then
+  echo "collection preflight failed: $preflight" >&2; exit 5
+fi
 bag_status=0
 timeout --signal=INT --kill-after=5s "${duration}s" ros2 bag record -o "$bag" \
   /clock /tf /tf_static /odom /imu/data_raw /scan /points /plan /cmd_vel /local_costmap/costmap_raw \
   /simulation/ground_truth_obstacles /simulation/ground_truth_obstacle_poses \
-  /simulation/benchmark_status /simulation/controller_status \
+  /simulation/benchmark_status /simulation/controller_status /simulation/difficulty_status \
   /planning/candidates /planning/obstacle_predictions /planning/mpc_request /planning/mpc_result || bag_status=$?
 if [[ "$bag_status" -ne 0 && "$bag_status" -ne 124 ]]; then
   exit "$bag_status"

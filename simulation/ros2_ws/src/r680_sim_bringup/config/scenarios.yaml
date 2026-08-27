@@ -17,18 +17,30 @@ scenarios:
       - {name: obstacle_sparse_1, radius_m: 0.39}
       - {name: obstacle_sparse_2, radius_m: 0.39}
       - {name: obstacle_sparse_3, radius_m: 0.39}
+    difficulty_profiles:
+      easy: {active_obstacle_count: 1, goal: [5.0, -0.4], robot_start: [-5.0, 0.4, 0.12, 0.0], model_poses: {obstacle_sparse_1: [-0.5, 1.5, 0.5, 0.0]}}
+      nominal: {active_obstacle_count: 2, goal: [6.0, 0.0], robot_start: [-6.0, 0.0, 0.12, 0.0]}
+      hard: {active_obstacle_count: 3, goal: [6.0, 0.5], robot_start: [-6.0, -0.5, 0.12, 0.0], model_poses: {obstacle_sparse_1: [-1.0, 0.7, 0.5, 0.0], obstacle_sparse_2: [1.5, -0.65, 0.5, 0.0], obstacle_sparse_3: [3.7, 0.65, 0.5, 0.0]}}
   static_dense:
     world: static_dense.world
     goal: [6.0, 0.0]
     obstacle_prefix: obstacle_dense_
     obstacle_count: 12
     obstacle_radius_m: 0.39
+    difficulty_profiles:
+      easy: {active_obstacle_count: 6, goal: [5.0, -0.5], robot_start: [-5.5, 0.5, 0.12, 0.0]}
+      nominal: {active_obstacle_count: 9, goal: [6.0, 0.0], robot_start: [-6.0, 0.0, 0.12, 0.0]}
+      hard: {active_obstacle_count: 12, goal: [6.0, 0.6], robot_start: [-6.0, -0.6, 0.12, 0.0]}
   narrow_passage:
     world: narrow_passage.world
     goal: [6.0, 0.0]
     obstacles:
       - {name: obstacle_wall_left, radius_m: 7.1, collision_check: false}
       - {name: obstacle_wall_right, radius_m: 7.1, collision_check: false}
+    difficulty_profiles:
+      easy: {passage_width_m: 1.30, goal: [5.0, 0.0], model_poses: {obstacle_wall_left: [0.0, 0.74, 0.6, 0.0], obstacle_wall_right: [0.0, -0.74, 0.6, 0.0]}}
+      nominal: {passage_width_m: 1.02, goal: [6.0, 0.0], model_poses: {obstacle_wall_left: [0.0, 0.60, 0.6, 0.0], obstacle_wall_right: [0.0, -0.60, 0.6, 0.0]}}
+      hard: {passage_width_m: 0.80, goal: [6.0, 0.0], model_poses: {obstacle_wall_left: [0.0, 0.49, 0.6, 0.0], obstacle_wall_right: [0.0, -0.49, 0.6, 0.0]}}
   crossing_pedestrian:
     world: crossing_pedestrian.world
     goal: [6.0, 0.0]
@@ -53,3 +65,7 @@ scenarios:
       - {name: obstacle_trap_back, radius_m: 7.1, collision_check: false}
       - {name: obstacle_trap_left, radius_m: 7.1, collision_check: false}
       - {name: obstacle_trap_right, radius_m: 7.1, collision_check: false}
+    difficulty_profiles:
+      easy: {trap_entrance_width_m: 3.42, model_poses: {obstacle_trap_back: [3.2, 0.0, 0.6, 1.57079632679], obstacle_trap_left: [-0.5, 1.8, 0.6, 0.0], obstacle_trap_right: [-0.5, -1.8, 0.6, 0.0]}}
+      nominal: {trap_entrance_width_m: 2.82, model_poses: {obstacle_trap_back: [2.6, 0.0, 0.6, 1.57079632679], obstacle_trap_left: [-0.5, 1.5, 0.6, 0.0], obstacle_trap_right: [-0.5, -1.5, 0.6, 0.0]}}
+      hard: {trap_entrance_width_m: 2.22, goal: [6.0, 0.4], model_poses: {obstacle_trap_back: [2.0, 0.0, 0.6, 1.57079632679], obstacle_trap_left: [-0.5, 1.2, 0.6, 0.0], obstacle_trap_right: [-0.5, -1.2, 0.6, 0.0]}}

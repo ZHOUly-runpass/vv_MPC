@@ -57,7 +57,8 @@ def setup(context):
     if controller in {"dwb", "mppi"}:
         common.append(Node(package="r680_sim_bringup", executable="nav_goal_sender",
                            parameters=[{"scenario_file": os.path.join(bringup, "config", "scenarios.yaml"),
-                                        "scenario": scenario, "baseline": controller, "use_sim_time": True}], output="screen"))
+                                        "scenario": scenario, "difficulty": difficulty,
+                                        "baseline": controller, "use_sim_time": True}], output="screen"))
     else:
         common.append(Node(package="r680_sim_bringup", executable="baseline_controller",
                            parameters=[{"baseline": controller, "use_sim_time": True}], output="screen"))

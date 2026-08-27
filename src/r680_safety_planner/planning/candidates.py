@@ -20,7 +20,7 @@ class CandidateGenerator:
         "model_specific_escape_2",
     )
 
-    def __init__(self, model: VehicleModel, horizon_s: float = 2.0, dt_s: float = 0.2) -> None:
+    def __init__(self, model: VehicleModel, horizon_s: float = 2.0, dt_s: float = 0.1) -> None:
         self.model = model
         self.horizon_s = float(horizon_s)
         self.dt_s = float(dt_s)

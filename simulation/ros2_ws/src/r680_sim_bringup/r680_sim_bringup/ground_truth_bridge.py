@@ -17,7 +17,9 @@ class GroundTruthBridge(Node):
         super().__init__("ground_truth_bridge")
         self.declare_parameter("scenario_file", "")
         self.declare_parameter("scenario", "empty")
-        _, scenario = load_scenario(self.get_parameter("scenario_file").value, self.get_parameter("scenario").value)
+        self.declare_parameter("difficulty", "nominal")
+        _, scenario = load_scenario(self.get_parameter("scenario_file").value, self.get_parameter("scenario").value,
+                                    self.get_parameter("difficulty").value)
         self.catalog = {item["name"]: item for item in obstacle_catalog(scenario)}
         self.pose_pub = self.create_publisher(PoseArray, "/simulation/ground_truth_obstacle_poses", 10)
         self.json_pub = self.create_publisher(String, "/simulation/ground_truth_obstacles", 10)

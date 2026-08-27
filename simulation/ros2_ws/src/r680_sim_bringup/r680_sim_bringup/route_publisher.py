@@ -16,7 +16,9 @@ class RoutePublisher(Node):
         super().__init__("route_publisher")
         self.declare_parameter("scenario_file", "")
         self.declare_parameter("scenario", "empty")
-        robot, scenario = load_scenario(self.get_parameter("scenario_file").value, self.get_parameter("scenario").value)
+        self.declare_parameter("difficulty", "nominal")
+        robot, scenario = load_scenario(self.get_parameter("scenario_file").value, self.get_parameter("scenario").value,
+                                        self.get_parameter("difficulty").value)
         qos = QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL)
         self.publisher = self.create_publisher(Path, "/plan", qos)
         start, goal = robot["start"], scenario["goal"]

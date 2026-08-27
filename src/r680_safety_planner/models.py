@@ -41,7 +41,7 @@ if nn is not None:
             self,
             hidden_dim: int = 128,
             candidates: int = 7,
-            intervals: int = 10,
+            intervals: int = 20,
             control_dim: int = 2,
         ) -> None:
             super().__init__()
@@ -87,7 +87,7 @@ if nn is not None:
     class PlanningSafetyModel(nn.Module):
         """Compact trainable planner over frozen BEV features and route/ego context."""
 
-        def __init__(self, feature_channels: int, candidates: int = 7, intervals: int = 10,
+        def __init__(self, feature_channels: int, candidates: int = 7, intervals: int = 20,
                      ego_dim: int = 5, hidden_dim: int = 128) -> None:
             super().__init__()
             self.config = {

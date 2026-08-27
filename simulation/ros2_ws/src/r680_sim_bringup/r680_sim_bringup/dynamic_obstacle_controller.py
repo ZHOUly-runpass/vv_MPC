@@ -14,7 +14,9 @@ class DynamicObstacleController(Node):
         self.declare_parameter("scenario_file", "")
         self.declare_parameter("scenario", "empty")
         self.declare_parameter("difficulty_scale", 1.0)
-        _, scenario = load_scenario(self.get_parameter("scenario_file").value, self.get_parameter("scenario").value)
+        self.declare_parameter("difficulty", "nominal")
+        _, scenario = load_scenario(self.get_parameter("scenario_file").value, self.get_parameter("scenario").value,
+                                    self.get_parameter("difficulty").value)
         self.obstacles = dynamic_obstacles(scenario)
         self.difficulty_scale = float(self.get_parameter("difficulty_scale").value)
         self.started_ns = self.get_clock().now().nanoseconds

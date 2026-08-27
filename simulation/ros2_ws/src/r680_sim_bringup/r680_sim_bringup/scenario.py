@@ -3,17 +3,35 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 import math
+from copy import deepcopy
 
 import numpy as np
 import yaml
 
 
-def load_scenario(path: str, name: str) -> tuple[dict[str, Any], dict[str, Any]]:
+def _unfiltered_catalog(scenario: dict[str, Any]) -> list[dict[str, Any]]:
+    result = [dict(item) for item in scenario.get("obstacles", [])]
+    if "obstacle_prefix" in scenario:
+        result.extend({"name": f"{scenario['obstacle_prefix']}{index:02d}", "radius_m": scenario["obstacle_radius_m"]}
+                      for index in range(1, int(scenario["obstacle_count"])+1))
+    return result
+
+
+def load_scenario(path: str, name: str, difficulty: str = "nominal") -> tuple[dict[str, Any], dict[str, Any]]:
     payload = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
     scenarios = payload.get("scenarios", {})
     if name not in scenarios:
         raise ValueError(f"unknown scenario {name!r}; choices={sorted(scenarios)}")
-    return dict(payload["robot"]), dict(scenarios[name])
+    robot, scenario = deepcopy(payload["robot"]), deepcopy(scenarios[name])
+    profiles = scenario.pop("difficulty_profiles", {})
+    if difficulty not in {"easy", "nominal", "hard"}: raise ValueError(f"unknown difficulty {difficulty!r}")
+    profile = deepcopy(profiles.get(difficulty, {}))
+    if "robot_start" in profile: robot["start"] = profile.pop("robot_start")
+    all_names = [item["name"] for item in _unfiltered_catalog(scenario)]
+    scenario.update(profile); active_count = int(scenario.get("active_obstacle_count", len(all_names)))
+    scenario["inactive_obstacles"] = all_names[active_count:]
+    scenario["difficulty"] = difficulty
+    return robot, scenario
 
 
 def dynamic_obstacles(scenario: dict[str, Any]) -> list[dict[str, Any]]:
@@ -21,13 +39,8 @@ def dynamic_obstacles(scenario: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def obstacle_catalog(scenario: dict[str, Any]) -> list[dict[str, Any]]:
-    result = [dict(item) for item in scenario.get("obstacles", [])]
-    if "obstacle_prefix" in scenario:
-        result.extend(
-            {"name": f"{scenario['obstacle_prefix']}{index:02d}", "radius_m": scenario["obstacle_radius_m"]}
-            for index in range(1, int(scenario["obstacle_count"]) + 1)
-        )
-    return result
+    inactive = set(scenario.get("inactive_obstacles", []))
+    return [item for item in _unfiltered_catalog(scenario) if item["name"] not in inactive]
 
 
 def triangle_position(start: float, minimum: float, maximum: float, speed: float, time_s: float) -> float:

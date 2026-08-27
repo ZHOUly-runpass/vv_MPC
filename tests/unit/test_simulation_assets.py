@@ -68,3 +68,21 @@ def test_triangle_motion_is_bounded_and_repeatable():
     positions = [scenario.triangle_position(-3.0, -3.0, 3.0, 0.8, t) for t in range(40)]
     assert all(-3.0 <= value <= 3.0 for value in positions)
     assert positions == [scenario.triangle_position(-3.0, -3.0, 3.0, 0.8, t) for t in range(40)]
+
+
+def test_static_difficulty_profiles_change_geometry_and_density():
+    scenario = _scenario_module(); path = BRINGUP / "config/scenarios.yaml"
+    _, sparse_easy = scenario.load_scenario(str(path), "static_sparse", "easy")
+    _, sparse_hard = scenario.load_scenario(str(path), "static_sparse", "hard")
+    assert len(scenario.obstacle_catalog(sparse_easy)) == 1
+    assert len(scenario.obstacle_catalog(sparse_hard)) == 3
+    _, dense_easy = scenario.load_scenario(str(path), "static_dense", "easy")
+    _, dense_hard = scenario.load_scenario(str(path), "static_dense", "hard")
+    assert len(scenario.obstacle_catalog(dense_easy)) == 6
+    assert len(scenario.obstacle_catalog(dense_hard)) == 12
+    robot_easy, _ = scenario.load_scenario(str(path), "static_sparse", "easy")
+    robot_hard, _ = scenario.load_scenario(str(path), "static_sparse", "hard")
+    assert robot_easy["start"] != robot_hard["start"]
+    _, narrow_easy = scenario.load_scenario(str(path), "narrow_passage", "easy")
+    _, narrow_hard = scenario.load_scenario(str(path), "narrow_passage", "hard")
+    assert narrow_easy["passage_width_m"] > narrow_hard["passage_width_m"]

@@ -1,0 +1,32 @@
+schema_version: "1.0"
+profile_name: r680_gazebo_differential
+profile_kind: simulation
+parameters_confirmed: true
+provenance:
+  urdf: simulation/ros2_ws/src/r680_sim_description/urdf/r680_sim.urdf.xacro
+  controllers: simulation/ros2_ws/src/r680_sim_description/config/controllers.yaml
+vehicle:
+  variant: differential
+  ego_radius_m: 0.31
+  geometry: {length_m: 0.60, width_m: 0.44, wheel_diameter_m: 0.20, wheel_track_m: 0.48}
+  limits:
+    forward_velocity_max_mps: 0.50
+    reverse_velocity_max_mps: 0.30
+    lateral_velocity_max_mps: 0.0
+    yaw_rate_max_radps: 0.80
+    acceleration_max_mps2: 0.50
+    braking_deceleration_max_mps2: 0.80
+    lateral_acceleration_max_mps2: 0.0
+    yaw_acceleration_max_radps2: 1.0
+planning:
+  horizon_s: 2.0
+  dt_s: 0.10
+  intervals: 20
+  legacy_resampling_rule: zero_order_hold_controls_rerollout_states_linear_obstacles
+mpc:
+  hard_deadline_ms: 80.0
+  fixed_margin_m: 0.10
+  sigma_multiplier: 3.0
+  continuous_alpha: 1.0
+  maximum_slack: 1.0
+  max_iterations: 100

@@ -20,7 +20,9 @@ class BenchmarkManager(Node):
         self.declare_parameter("scenario_file", "")
         self.declare_parameter("scenario", "empty")
         self.declare_parameter("baseline", "uncontrolled")
-        self.robot, scenario = load_scenario(self.get_parameter("scenario_file").value, self.get_parameter("scenario").value)
+        self.declare_parameter("difficulty", "nominal")
+        self.robot, scenario = load_scenario(self.get_parameter("scenario_file").value, self.get_parameter("scenario").value,
+                                             self.get_parameter("difficulty").value)
         self.scenario_name = self.get_parameter("scenario").value
         self.goal = scenario["goal"]
         self.obstacles = {o["name"]: o for o in obstacle_catalog(scenario) if o.get("collision_check", True)}

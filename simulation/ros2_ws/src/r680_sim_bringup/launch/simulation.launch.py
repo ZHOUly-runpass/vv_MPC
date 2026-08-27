@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 
 import yaml
+from r680_sim_bringup.scenario import load_scenario
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, OpaqueFunction, SetEnvironmentVariable
@@ -30,8 +31,7 @@ def launch_setup(context):
         payload = yaml.safe_load(stream)
     if scenario_name not in payload["scenarios"]:
         raise RuntimeError(f"unknown scenario {scenario_name!r}; choices={sorted(payload['scenarios'])}")
-    scenario = payload["scenarios"][scenario_name]
-    robot = payload["robot"]
+    robot, scenario = load_scenario(scenario_file, scenario_name, difficulty)
     world = os.path.join(worlds_share, "worlds", scenario["world"])
     if not os.path.isfile(world):
         raise RuntimeError(f"scenario world does not exist: {world}")
@@ -59,6 +59,7 @@ def launch_setup(context):
             "-x", str(start[0]), "-y", str(start[1]), "-z", str(start[2]), "-Y", str(start[3]),
         ], output="screen"),
         Node(package="r680_sim_bringup", executable="pointcloud_field_adapter", parameters=[{"use_sim_time": True}], output="screen"),
+        Node(package="r680_sim_bringup", executable="scenario_difficulty_controller", parameters=[common], output="screen"),
         Node(package="r680_sim_bringup", executable="ground_truth_bridge", parameters=[common], output="screen"),
         Node(package="r680_sim_bringup", executable="dynamic_obstacle_controller", parameters=[common], output="screen"),
         *([Node(package="r680_sim_bringup", executable="route_publisher", parameters=[common], output="screen")] if publish_route else []),

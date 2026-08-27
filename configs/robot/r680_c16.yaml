@@ -328,11 +328,12 @@ geometric_perception:
 planning:
   update_rate_hz: 5.0
   horizon_s: 2.0
-  candidate_dt_s: 0.20
-  number_of_future_points: 10
+  candidate_dt_s: 0.10
+  number_of_future_points: 20
   number_of_candidates: 7
   top_k_for_mpc: 3
   candidate_generation: control_knots_then_vehicle_rollout
+  legacy_resampling_rule: zero_order_hold_controls_rerollout_states_linear_obstacles
   required_candidate_roles:
     - nominal_route_following
     - left_or_counterclockwise_bias
@@ -496,4 +497,3 @@ motion_unlock_policy:
   require_commissioning_allow_nonzero_command: true
   require_manual_arm: true
   default_action_if_any_gate_fails: publish_repeated_zero_velocity
-
