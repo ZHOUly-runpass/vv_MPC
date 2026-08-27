@@ -73,3 +73,12 @@ For actual collection, inspect the full 72-run matrix first with
 Four unified simulation controller names are `dwb`, `mppi`, `vanilla_dcbf`, and `proposed`.
 The exact field contract is documented in `docs/training_sample_schema.md`; development-machine
 evidence and remaining truth-data gates are recorded in `reports/阶段4开发机验收报告.md`.
+
+Closed-loop collection and rosbag conversion:
+
+```bash
+bash simulation/scripts/record_scenario.sh "$PWD" empty 60 41 nominal mppi
+bash simulation/scripts/convert_rosbag_to_schema.sh "$PWD" BAG_DIR OUTPUT_DIR 2 32
+PYTHONPATH="$PWD/src" .tools/envs/planner/bin/python scripts/generate_teacher_labels.py \
+  --manifest OUTPUT_DIR/schema_v1/raw_manifest.jsonl --output-dir OUTPUT_DIR/labeled
+```
