@@ -7,6 +7,8 @@
 3. `[已完成：代码]` CasADi MPC teacher 离线生成，严格区分成功、不可行、数值失败和超时。
 4. `[已完成：代码]` Dataset、DataLoader、联合损失、训练、checkpoint 和评测程序。
 5. `[已完成：统一入口]` DWB、MPPI、Vanilla D-CBF、Proposed 四组闭环启动接口；真实数据训练 checkpoint 和完整公平批量评测仍待执行。
+6. `[已完成：代码与开发机实测]` rosbag → 同步原始帧 → UniLION离线特征 → schema 1.0 NPZ → CasADi teacher流水线。
+7. `[已完成：代码]` 录制入口支持四控制器，并记录控制器状态、候选轨迹、障碍预测、MPC request/result。
 
 更新日期：2026-08-25  
 本地目录：`D:\E2Eproject_MPC\05`  

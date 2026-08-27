@@ -48,3 +48,36 @@
 ## 数据隔离规则
 
 真实数据必须以完整 rosbag/run 为单位划分 train/val/test；同一连续序列的相邻帧不得跨 split。建议另留未参与调参的场景—seed 组合做最终测试。合成夹具必须标记 `synthetic_fixture=true`，不得用于报告算法精度。
+
+## rosbag 转换流水线
+
+闭环录制入口的最后一个参数选择 `dwb`、`mppi`、`vanilla_dcbf` 或 `proposed`：
+
+```bash
+bash simulation/scripts/record_scenario.sh "$PWD" crossing_pedestrian 60 41 hard mppi
+```
+
+录制内容包括原始传感器、路线、Nav2 costmap、控制器状态，以及：
+
+- `/planning/candidates`
+- `/planning/obstacle_predictions`
+- `/planning/mpc_request`
+- `/planning/mpc_result`
+
+在线未运行 CasADi teacher 时，`/planning/mpc_result` 明确使用 `offline_teacher_pending`，正式 teacher 字段由离线求解器生成。
+
+一键转换命令：
+
+```bash
+bash simulation/scripts/convert_rosbag_to_schema.sh \
+  "$PWD" BAG_DIRECTORY OUTPUT_DIRECTORY 2 32
+```
+
+转换分三步：纯 Python `rosbags` 解包并同步 → 独立 UniLION CUDA 环境批量生成冻结特征 → 组装并重新校验 schema 1.0。默认按 2 Hz 取样，并将原始 `[384,180,180]` BEV 自适应平均池化为 `[384,32,32]`，降低数据集磁盘占用；池化尺寸和特征配置哈希写入元数据。
+
+组装后的 `raw_manifest.jsonl` 可直接传给 `generate_teacher_labels.py`。使用以下命令执行完整哈希、结构和 teacher outcome 审计：
+
+```bash
+PYTHONPATH="$PWD/src" .tools/envs/planner/bin/python scripts/audit_training_manifest.py \
+  --manifest DATA/manifest.jsonl --output reports/dataset_audit.json
+```
