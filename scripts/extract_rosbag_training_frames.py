@@ -25,9 +25,13 @@ def route_array(message, count: int = 32) -> np.ndarray:
 
 
 def costmap_array(message) -> np.ndarray:
-    grid = np.asarray(message.data, dtype=np.int16).reshape(message.info.height, message.info.width)
-    occupied = np.clip(grid, 0, 100).astype(np.float32) / 100.0
-    return np.stack([occupied, np.zeros_like(occupied), (grid < 0).astype(np.float32)])
+    if hasattr(message, "metadata"):
+        grid = np.asarray(message.data, dtype=np.uint8).reshape(message.metadata.size_y, message.metadata.size_x)
+        unknown = (grid == 255).astype(np.float32); occupied = np.minimum(grid, 254).astype(np.float32)/254.0
+    else:
+        grid = np.asarray(message.data, dtype=np.int16).reshape(message.info.height, message.info.width)
+        unknown = (grid < 0).astype(np.float32); occupied = np.clip(grid, 0, 100).astype(np.float32)/100.0
+    return np.stack([occupied, np.zeros_like(occupied), unknown])
 
 
 def pointcloud_array(message, fields: tuple[str, ...]) -> np.ndarray:
@@ -45,13 +49,21 @@ def pointcloud_array(message, fields: tuple[str, ...]) -> np.ndarray:
     return np.column_stack([structured[name] for name in fields]).astype(np.float32, copy=False)
 
 
-def bag_messages(path: Path):
+def bag_messages(path: Path, wanted: set[str]):
     try:
         from rosbags.highlevel import AnyReader
-        with AnyReader([path]) as reader:
+        from rosbags.typesys import Stores, get_typestore, get_types_from_msg
+        typestore = get_typestore(Stores.ROS2_HUMBLE)
+        definitions = {}
+        for name in ("CostmapMetaData", "Costmap"):
+            source = Path(f"/opt/ros/humble/share/nav2_msgs/msg/{name}.msg")
+            if source.is_file(): definitions.update(get_types_from_msg(source.read_text(), f"nav2_msgs/msg/{name}"))
+        if definitions: typestore.register(definitions)
+        with AnyReader([path], default_typestore=typestore) as reader:
             topics = {connection.topic for connection in reader.connections}
             yield topics, None, None
-            for connection, timestamp_ns, raw in reader.messages():
+            selected = [connection for connection in reader.connections if connection.topic in wanted]
+            for connection, timestamp_ns, raw in reader.messages(connections=selected):
                 yield connection.topic, reader.deserialize(raw, connection.msgtype), timestamp_ns
         return
     except ImportError:
@@ -68,7 +80,7 @@ def bag_messages(path: Path):
     yield set(types), None, None
     while reader.has_next():
         topic, raw, timestamp_ns = reader.read_next()
-        yield topic, deserialize_message(raw, types[topic]), timestamp_ns
+        if topic in wanted: yield topic, deserialize_message(raw, types[topic]), timestamp_ns
 
 
 def trace_arrays(candidates: dict, obstacles: dict) -> dict[str, np.ndarray]:
@@ -107,8 +119,8 @@ def main() -> int:
     checkpoint_hash = sha256(checkpoint.read_bytes()).hexdigest()
     revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
     code_hash = sha256(revision.encode()).hexdigest()
-    stream = bag_messages(bag); types, _, _ = next(stream)
     required = {"/points", "/odom", "/plan", "/local_costmap/costmap_raw", "/planning/candidates", "/planning/obstacle_predictions"}
+    stream = bag_messages(bag, required); types, _, _ = next(stream)
     missing = required-set(types)
     if missing: raise RuntimeError(f"bag is missing required topics: {sorted(missing)}")
     latest = {}; entries = []; previous_sample_ns = -10**30; period_ns = int(1e9/args.sample_hz); max_age_ns = int(args.max_age_ms*1e6)
