@@ -31,5 +31,6 @@ setup(
         "cmd_vel_relay = r680_sim_bringup.cmd_vel_relay:main",
         "baseline_controller = r680_sim_bringup.baseline_controller:main",
         "nav_goal_sender = r680_sim_bringup.nav_goal_sender:main",
+        "planning_trace_publisher = r680_sim_bringup.planning_trace_publisher:main",
     ]},
 )

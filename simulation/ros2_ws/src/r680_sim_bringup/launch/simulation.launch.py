@@ -67,6 +67,7 @@ def launch_setup(context):
            Node(package="r680_sim_bringup", executable="cmd_vel_relay", parameters=[{"use_sim_time": True}], output="screen")]
           if use_ros2_control else []),
         Node(package="r680_sim_bringup", executable="benchmark_manager", parameters=[common], output="screen"),
+        Node(package="r680_sim_bringup", executable="planning_trace_publisher", parameters=[common], output="screen"),
     ]
 
 

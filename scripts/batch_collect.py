@@ -16,6 +16,7 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--max-runs", type=int)
     parser.add_argument("--continue-on-error", action="store_true")
+    parser.add_argument("--controller", choices=("dwb", "mppi", "vanilla_dcbf", "proposed"), default="dwb")
     args = parser.parse_args(); root = Path(__file__).resolve().parents[1]
     matrix_path = args.matrix if args.matrix.is_absolute() else root / args.matrix
     matrix = yaml.safe_load(matrix_path.read_text(encoding="utf-8"))
@@ -26,8 +27,10 @@ def main() -> int:
     for scenario, difficulty, seed in runs:
         command = ["bash", str(root / "simulation/scripts/record_scenario.sh"), str(root), scenario,
                    str(matrix["duration_s"]), str(seed), difficulty]
+        command.append(args.controller)
         entry = {"schema_version": matrix["schema_version"], "scenario": scenario, "difficulty": difficulty,
                  "seed": seed, "duration_s": matrix["duration_s"], "command": command, "started_unix_s": time()}
+        entry["controller"] = args.controller
         if args.dry_run:
             entry["status"] = "planned"
         else:
