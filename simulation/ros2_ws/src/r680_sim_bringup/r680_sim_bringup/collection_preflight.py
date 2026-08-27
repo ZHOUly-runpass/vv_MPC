@@ -31,7 +31,7 @@ class CollectionPreflight(Node):
         self.create_subscription(String, "/planning/candidates", lambda msg: self.mark("candidates"), 20)
         self.create_subscription(String, "/simulation/controller_status", lambda msg: self.mark("controller"), 20)
         transient = QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL)
-        self.create_subscription(NavPath, "/plan", lambda msg: self.mark("plan"), transient)
+        self.create_subscription(NavPath, "/simulation/reference_route", lambda msg: self.mark("plan"), transient)
         self.create_subscription(String, "/simulation/difficulty_status", self.on_difficulty, transient)
         self.buffer = Buffer(); self.listener = TransformListener(self.buffer, self)
 

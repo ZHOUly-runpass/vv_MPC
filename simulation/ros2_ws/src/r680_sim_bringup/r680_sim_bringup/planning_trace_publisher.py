@@ -7,6 +7,7 @@ import numpy as np
 import rclpy
 from nav_msgs.msg import Odometry, Path
 from rclpy.node import Node
+from rclpy.qos import DurabilityPolicy, QoSProfile
 from std_msgs.msg import String
 
 
@@ -31,7 +32,8 @@ class PlanningTracePublisher(Node):
         self.trace_publishers = {name: self.create_publisher(String, f"/planning/{name}", 10) for name in
                                  ("candidates", "obstacle_predictions", "mpc_request", "mpc_result")}
         self.create_subscription(Odometry, "/odom", lambda msg: setattr(self, "odom", msg), 20)
-        self.create_subscription(Path, "/plan", lambda msg: setattr(self, "route", msg), 10)
+        route_qos = QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL)
+        self.create_subscription(Path, "/simulation/reference_route", lambda msg: setattr(self, "route", msg), route_qos)
         self.create_subscription(String, "/simulation/ground_truth_obstacles", self.on_obstacles, 10)
         self.create_subscription(String, "/simulation/controller_status", self.on_controller, 10)
         self.create_timer(0.2, self.tick)

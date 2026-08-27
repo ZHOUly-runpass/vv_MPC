@@ -62,7 +62,8 @@ def launch_setup(context):
         Node(package="r680_sim_bringup", executable="scenario_difficulty_controller", parameters=[common], output="screen"),
         Node(package="r680_sim_bringup", executable="ground_truth_bridge", parameters=[common], output="screen"),
         Node(package="r680_sim_bringup", executable="dynamic_obstacle_controller", parameters=[common], output="screen"),
-        *([Node(package="r680_sim_bringup", executable="route_publisher", parameters=[common], output="screen")] if publish_route else []),
+        Node(package="r680_sim_bringup", executable="route_publisher",
+             parameters=[{**common, "publish_plan": publish_route}], output="screen"),
         *([Node(package="controller_manager", executable="spawner", arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager"], output="screen"),
            Node(package="controller_manager", executable="spawner", arguments=["diff_drive_base_controller", "--controller-manager", "/controller_manager"], output="screen"),
            Node(package="r680_sim_bringup", executable="cmd_vel_relay", parameters=[{"use_sim_time": True}], output="screen")]

@@ -119,8 +119,11 @@ def main() -> int:
     checkpoint_hash = sha256(checkpoint.read_bytes()).hexdigest()
     revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
     code_hash = sha256(revision.encode()).hexdigest()
-    required = {"/points", "/odom", "/plan", "/local_costmap/costmap_raw", "/planning/candidates", "/planning/obstacle_predictions"}
-    stream = bag_messages(bag, required); types, _, _ = next(stream)
+    base_required = {"/points", "/odom", "/local_costmap/costmap_raw", "/planning/candidates", "/planning/obstacle_predictions"}
+    wanted = base_required | {"/simulation/reference_route", "/plan"}
+    stream = bag_messages(bag, wanted); types, _, _ = next(stream)
+    route_topic = "/simulation/reference_route" if "/simulation/reference_route" in types else "/plan"
+    required = base_required | {route_topic}
     missing = required-set(types)
     if missing: raise RuntimeError(f"bag is missing required topics: {sorted(missing)}")
     latest = {}; entries = []; previous_sample_ns = -10**30; period_ns = int(1e9/args.sample_hz); max_age_ns = int(args.max_age_ms*1e6)
@@ -129,13 +132,13 @@ def main() -> int:
             if topic in required: latest[topic] = (timestamp_ns, message)
             continue
         if timestamp_ns-previous_sample_ns < period_ns or not (required-{"/points"}).issubset(latest): continue
-        if any(abs(timestamp_ns-latest[name][0]) > max_age_ns for name in required if name not in {"/points", "/plan"}): continue
+        if any(abs(timestamp_ns-latest[name][0]) > max_age_ns for name in required if name not in {"/points", route_topic}): continue
         fields = ("x","y","z","intensity","ring","time"); points = pointcloud_array(message, fields)
         if not len(points) or not np.all(np.isfinite(points)): continue
         odom = latest["/odom"][1]; candidates = json.loads(latest["/planning/candidates"][1].data)
         obstacles = json.loads(latest["/planning/obstacle_predictions"][1].data)
         sample_id = f"{run.get('scenario','unknown')}_{run.get('difficulty','unknown')}_seed{run.get('seed','unknown')}_{timestamp_ns}"
-        arrays = {"points": points, "route": route_array(latest["/plan"][1]),
+        arrays = {"points": points, "route": route_array(latest[route_topic][1]),
                   "ego_state": np.asarray([odom.pose.pose.position.x, odom.pose.pose.position.y, yaw(odom.pose.pose.orientation),
                                              odom.twist.twist.linear.x, odom.twist.twist.angular.z], np.float32),
                   "costmap": costmap_array(latest["/local_costmap/costmap_raw"][1]), **trace_arrays(candidates, obstacles)}
