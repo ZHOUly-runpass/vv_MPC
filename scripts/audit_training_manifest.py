@@ -13,7 +13,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(); parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--output", type=Path); args = parser.parse_args(); manifest = args.manifest.resolve()
     entries = load_manifest(manifest); shapes = Counter(); outcomes = Counter(); checkpoints = Counter(); errors = []
-    outcomes_by_group = defaultdict(Counter); samples_by_group = Counter()
+    outcomes_by_group = defaultdict(Counter); statuses_by_group = defaultdict(Counter); samples_by_group = Counter()
     for entry in entries:
         try:
             sample = load_training_sample(manifest.parent/str(entry["path"]))
@@ -26,12 +26,14 @@ def main() -> int:
             if sample.teacher_present:
                 names = [TEACHER_OUTCOMES[int(code)] for code in sample.teacher_outcome_codes]
                 outcomes.update(names); outcomes_by_group[group].update(names)
+                statuses_by_group[group].update(str(value) for value in sample.metadata.get("teacher_solver_statuses", []))
         except Exception as error: errors.append({"sample_id": entry.get("sample_id"), "error": f"{type(error).__name__}:{error}"})
     report = {"schema_version": "1.0", "manifest": str(manifest), "samples": len(entries),
               "valid_samples": len(entries)-len(errors), "errors": errors, "shape_groups": dict(shapes),
               "checkpoint_sha256_counts": dict(checkpoints), "teacher_outcomes": dict(outcomes),
               "samples_by_group": dict(sorted(samples_by_group.items())),
               "teacher_outcomes_by_group": {key: dict(outcomes_by_group[key]) for key in sorted(outcomes_by_group)},
+              "teacher_statuses_by_group": {key: dict(statuses_by_group[key]) for key in sorted(statuses_by_group)},
               "status": "passed" if entries and not errors else "failed"}
     encoded = json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True)+"\n"
     if args.output:

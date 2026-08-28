@@ -107,7 +107,8 @@ def main() -> int:
             metadata={**sample.metadata, "teacher": "casadi_dcbf_mpc", "teacher_deadline_ms": args.deadline_ms,
                       "teacher_vehicle_profile": vehicle.source.name, "teacher_vehicle_config_sha256": vehicle.sha256,
                       "teacher_profile_kind": vehicle.profile_kind, "teacher_dt_s": vehicle.dt_s,
-                      "legacy_resampling_rule": RESAMPLING_RULE},
+                      "legacy_resampling_rule": RESAMPLING_RULE,
+                      "teacher_solver_statuses": [result.status for result in results]},
         )
         destination = output / "samples" / f"{sample.metadata['sample_id']}.npz"
         payload_hash = save_training_sample(destination, labeled)
