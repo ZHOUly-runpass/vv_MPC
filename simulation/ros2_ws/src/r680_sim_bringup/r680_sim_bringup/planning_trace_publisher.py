@@ -88,11 +88,13 @@ class PlanningTracePublisher(Node):
             if not obstacle.get("collision_check", True):
                 continue
             px, py = obstacle["position"][:2]; vx, vy = obstacle["velocity"][:2]
+            moving = math.hypot(vx, vy) > 1e-3
+            radius = float(obstacle["radius_m"])
+            box_side = math.sqrt(2.0)*radius
             states = [[px+vx*t, py+vy*t, 0.0, vx, vy, 1.0] for t in timestamps]
             predictions.append({"name": obstacle["name"], "states": states,
-                                "lengths": [2.0*float(obstacle["radius_m"])]*len(timestamps),
-                                "widths": [2.0*float(obstacle["radius_m"])]*len(timestamps),
-                                "covariance": [(np.eye(2)*(0.01+0.05*t)).tolist() for t in timestamps],
+                                "lengths": [box_side]*len(timestamps), "widths": [box_side]*len(timestamps),
+                                "covariance": [(np.eye(2)*(0.0025+(0.02*t if moving else 0.0))).tolist() for t in timestamps],
                                 "valid_mask": [True]*len(timestamps)})
         self.publish("candidates", {"timestamps_s": timestamps.tolist(), "items": candidates})
         self.publish("obstacle_predictions", {"timestamps_s": timestamps.tolist(), "items": predictions})

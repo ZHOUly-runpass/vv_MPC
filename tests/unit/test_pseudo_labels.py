@@ -13,3 +13,5 @@ def test_solver_outcomes_are_not_conflated() -> None:
     assert classify_solver_result(result(False), 80.0) == "infeasible"
     assert classify_solver_result(result(False, 90.0), 80.0) == "timeout"
     assert classify_solver_result(result(False, status="numeric_failure"), 80.0) == "numeric_failure"
+    assert classify_solver_result(result(False, status="Infeasible_Initial_State"), 80.0) == "infeasible"
+    assert classify_solver_result(result(True, status="Solve_Succeeded_After_Safe_Stop_Retry"), 80.0) == "success"

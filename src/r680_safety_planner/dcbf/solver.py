@@ -108,6 +108,7 @@ class CasadiDcbfSolver:
             **(weights or {}),
         }
         self._problem_cache: dict[tuple[int, int, float], dict[str, object]] = {}
+        self.last_diagnostics: dict[str, object] = {}
 
     @staticmethod
     def available() -> bool:
@@ -234,7 +235,7 @@ class CasadiDcbfSolver:
             "last_states": None, "last_controls": None, "last_slack": None,
         }
 
-    def solve(self, request: MpcRequest) -> MpcResult:
+    def solve(self, request: MpcRequest, initial_guess=None) -> MpcResult:
         started = perf_counter()
         request.validate()
         if not self.available():
@@ -246,6 +247,26 @@ class CasadiDcbfSolver:
         dt_s = float(np.median(np.diff(reference.timestamps_s)))
         active_obstacles = self.select_reachable_obstacles(request)
         obstacle_count = len(active_obstacles)
+        radii = []
+        for obstacle in active_obstacles:
+            covariance_radius = self.sigma_multiplier * np.sqrt(np.maximum(
+                0.0, np.linalg.eigvalsh(obstacle.covariance)[:, -1]))
+            radii.append(self.ego_radius_m + 0.5 * np.hypot(
+                obstacle.lengths, obstacle.widths) + self.fixed_margin_m + covariance_radius)
+        initial_h = [float(np.sum((request.initial_state[:2]-obstacle.states[0, :2])**2)-radius[0]**2)
+                     for obstacle, radius in zip(active_obstacles, radii)]
+        required_initial_slack = max(0.0, -min(initial_h, default=0.0))
+        if required_initial_slack > self.maximum_slack + 1e-9:
+            all_h = [barrier_series(reference.states, obstacle, self.ego_radius_m,
+                                    self.fixed_margin_m, self.sigma_multiplier)
+                     for obstacle in request.obstacles]
+            h_min = float(np.min(np.concatenate(all_h))) if all_h else float("inf")
+            elapsed_ms = (perf_counter() - started) * 1000.0
+            self.last_diagnostics = {"total_obstacles": len(request.obstacles), "active_obstacles": obstacle_count,
+                "required_initial_slack_squared": required_initial_slack, "iteration_count": 0,
+                "initial_guess": "not_solved", "return_status": "Infeasible_Initial_State"}
+            return MpcResult(reference.states.copy(), reference.controls.copy(), False, h_min,
+                             required_initial_slack, elapsed_ms, "Infeasible_Initial_State")
         cache_key = (intervals, obstacle_count, round(dt_s, 9))
         problem = self._problem_cache.get(cache_key)
         if problem is None:
@@ -258,17 +279,24 @@ class CasadiDcbfSolver:
         opti.set_value(problem["reference_controls"], reference.controls.T)
         if obstacle_count:
             centers = np.stack([obstacle.states[:, :2] for obstacle in active_obstacles])
-            radii = []
-            for obstacle in active_obstacles:
-                covariance_radius = self.sigma_multiplier * np.sqrt(np.maximum(
-                    0.0, np.linalg.eigvalsh(obstacle.covariance)[:, -1]))
-                radii.append(self.ego_radius_m + 0.5 * np.hypot(
-                    obstacle.lengths, obstacle.widths) + self.fixed_margin_m + covariance_radius)
             opti.set_value(problem["obstacle_x"], centers[:, :, 0])
             opti.set_value(problem["obstacle_y"], centers[:, :, 1])
             opti.set_value(problem["safe_radius"], np.stack(radii))
-        opti.set_initial(states, problem["last_states"] if problem["last_states"] is not None else reference.states.T)
-        opti.set_initial(controls, problem["last_controls"] if problem["last_controls"] is not None else reference.controls.T)
+        if initial_guess is not None:
+            initial_guess.validate()
+            if initial_guess.controls.shape != reference.controls.shape:
+                raise ValueError("initial guess and reference shapes differ")
+            guess_controls = initial_guess.controls
+            guess_states = self.model.rollout(request.initial_state, guess_controls, dt_s)
+            initial_source = initial_guess.role
+        elif problem["last_states"] is not None:
+            guess_states, guess_controls, initial_source = problem["last_states"].T, problem["last_controls"].T, "cache"
+        else:
+            guess_controls = reference.controls
+            guess_states = self.model.rollout(request.initial_state, guess_controls, dt_s)
+            initial_source = "reference_rerollout"
+        opti.set_initial(states, guess_states.T)
+        opti.set_initial(controls, guess_controls.T)
         if slack is not None:
             opti.set_initial(slack, problem["last_slack"] if problem["last_slack"] is not None else 0.0)
         try:
@@ -280,11 +308,13 @@ class CasadiDcbfSolver:
             problem["last_controls"] = solved_controls.T
             problem["last_slack"] = None if slack is None else solution.value(slack)
             status = str(opti.stats().get("return_status", "solved"))
+            iteration_count = int(opti.stats().get("iter_count", 0))
             feasible = True
         except RuntimeError:
             solved_states, solved_controls = reference.states.copy(), reference.controls.copy()
             slack_max, feasible = float("inf"), False
             status = str(opti.stats().get("return_status", "solver_failure"))
+            iteration_count = int(opti.stats().get("iter_count", 0))
 
         all_h = [barrier_series(solved_states, obstacle, self.ego_radius_m,
                                 self.fixed_margin_m, self.sigma_multiplier)
@@ -293,5 +323,8 @@ class CasadiDcbfSolver:
         elapsed_ms = (perf_counter() - started) * 1000.0
         if elapsed_ms > self.hard_deadline_ms:
             feasible, status = False, "deadline_exceeded"
+        self.last_diagnostics = {"total_obstacles": len(request.obstacles), "active_obstacles": obstacle_count,
+            "required_initial_slack_squared": required_initial_slack, "iteration_count": iteration_count,
+            "initial_guess": initial_source, "return_status": status}
         return MpcResult(solved_states, solved_controls, feasible, h_min,
                          slack_max, elapsed_ms, status)

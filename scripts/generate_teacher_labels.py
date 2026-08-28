@@ -53,6 +53,8 @@ def main() -> int:
         source_timestamps = sample.candidate_timestamps_s.copy()
         candidate_states, candidate_controls, target_timestamps = resample_candidate_batch(
             sample.candidate_states, sample.candidate_controls, source_timestamps, vehicle.dt_s, model)
+        candidate_states = np.stack([model.rollout(sample.ego_state.astype(np.float64), controls.astype(np.float64), vehicle.dt_s)
+                                     for controls in candidate_controls]).astype(np.float32)
         obstacle_values = resample_obstacle_batch(
             sample.obstacle_states, sample.obstacle_lengths, sample.obstacle_widths, sample.obstacle_covariance,
             sample.obstacle_valid_mask, source_timestamps, target_timestamps)
@@ -73,20 +75,38 @@ def main() -> int:
             sample.candidate_timestamps_s.astype(np.float64),
             role=f"candidate_{index}",
         ) for index in range(sample.candidate_states.shape[0])]
+        stop_index = min(range(len(candidates)), key=lambda index: float(np.mean(np.abs(candidates[index].states[:, 3:]))))
+        stop_candidate = candidates[stop_index]
         if candidates:
             try:
-                solver.solve(MpcRequest(sample.ego_state.astype(np.float64), candidates[-1], obstacles))
+                solver.solve(MpcRequest(sample.ego_state.astype(np.float64), stop_candidate, obstacles),
+                             initial_guess=stop_candidate)
             except RuntimeError:
                 pass
-        results, outcomes = [], []
+        results, outcomes, diagnostics = [], [], []
         for candidate in candidates:
             started = perf_counter()
             try:
                 result = solver.solve(MpcRequest(sample.ego_state.astype(np.float64), candidate, obstacles))
+                attempts = [dict(solver.last_diagnostics)]
+                if "maximum_iterations" in result.status.lower():
+                    retried = solver.solve(MpcRequest(sample.ego_state.astype(np.float64), candidate, obstacles),
+                                           initial_guess=stop_candidate)
+                    attempts.append(dict(solver.last_diagnostics)); total_ms = result.solve_time_ms+retried.solve_time_ms
+                    if retried.feasible and total_ms <= args.deadline_ms:
+                        result = replace(retried, solve_time_ms=total_ms,
+                                         status="Solve_Succeeded_After_Safe_Stop_Retry")
+                    elif total_ms > args.deadline_ms:
+                        result = replace(retried, feasible=False, solve_time_ms=total_ms, status="deadline_exceeded")
+                    else:
+                        result = replace(retried, solve_time_ms=total_ms)
             except Exception as error:
                 result = numeric_failure(candidate, (perf_counter() - started) * 1000.0, error)
+                attempts = [{"return_status": result.status, "exception": type(error).__name__}]
             results.append(result)
             outcomes.append(classify_solver_result(result, args.deadline_ms))
+            diagnostics.append({"candidate_index": len(results)-1, "safe_stop_candidate_index": stop_index,
+                                "attempts": attempts})
         successful = [index for index, outcome in enumerate(outcomes) if outcome == "success"]
         if successful:
             selected = min(successful, key=lambda index: (
@@ -108,7 +128,9 @@ def main() -> int:
                       "teacher_vehicle_profile": vehicle.source.name, "teacher_vehicle_config_sha256": vehicle.sha256,
                       "teacher_profile_kind": vehicle.profile_kind, "teacher_dt_s": vehicle.dt_s,
                       "legacy_resampling_rule": RESAMPLING_RULE,
-                      "teacher_solver_statuses": [result.status for result in results]},
+                      "teacher_candidate_anchor": "ego_state_rerollout",
+                      "teacher_solver_statuses": [result.status for result in results],
+                      "teacher_solver_diagnostics": diagnostics},
         )
         destination = output / "samples" / f"{sample.metadata['sample_id']}.npz"
         payload_hash = save_training_sample(destination, labeled)
