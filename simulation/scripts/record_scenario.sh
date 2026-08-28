@@ -26,17 +26,17 @@ bag="$project_dir/.tools/rosbags/${scenario}_${difficulty}_seed${seed}_${control
 setsid ros2 launch r680_sim_bringup nav2_sim.launch.py scenario:="$scenario" controller:="$controller" seed:="$seed" difficulty:="$difficulty" >"$project_dir/.tools/record_${scenario}_${difficulty}_${seed}_${controller}.log" 2>&1 &
 launch_pid=$!
 cleanup() {
-  if kill -0 "$launch_pid" 2>/dev/null; then kill -INT -- "-$launch_pid" 2>/dev/null || true; fi
+  if kill -0 -- "-$launch_pid" 2>/dev/null; then kill -INT -- "-$launch_pid" 2>/dev/null || true; fi
   for _ in $(seq 1 50); do
-    if ! kill -0 "$launch_pid" 2>/dev/null; then break; fi
+    if ! kill -0 -- "-$launch_pid" 2>/dev/null; then break; fi
     sleep 0.1
   done
-  if kill -0 "$launch_pid" 2>/dev/null; then kill -TERM -- "-$launch_pid" 2>/dev/null || true; fi
+  if kill -0 -- "-$launch_pid" 2>/dev/null; then kill -TERM -- "-$launch_pid" 2>/dev/null || true; fi
   for _ in $(seq 1 20); do
-    if ! kill -0 "$launch_pid" 2>/dev/null; then break; fi
+    if ! kill -0 -- "-$launch_pid" 2>/dev/null; then break; fi
     sleep 0.1
   done
-  if kill -0 "$launch_pid" 2>/dev/null; then kill -KILL -- "-$launch_pid" 2>/dev/null || true; fi
+  if kill -0 -- "-$launch_pid" 2>/dev/null; then kill -KILL -- "-$launch_pid" 2>/dev/null || true; fi
   wait "$launch_pid" 2>/dev/null || true
 }
 trap cleanup EXIT

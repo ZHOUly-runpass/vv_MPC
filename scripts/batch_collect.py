@@ -18,6 +18,8 @@ def main() -> int:
     parser.add_argument("--continue-on-error", action="store_true")
     parser.add_argument("--controller", choices=("dwb", "mppi", "vanilla_dcbf", "proposed"), default="dwb")
     parser.add_argument("--manifest", type=Path, default=Path(".tools/collection/runs.jsonl"))
+    parser.add_argument("--resume-successes", action="store_true",
+                        help="skip scenario/difficulty/seed/controller tuples already marked success")
     args = parser.parse_args(); root = Path(__file__).resolve().parents[1]
     matrix_path = args.matrix if args.matrix.is_absolute() else root / args.matrix
     matrix = yaml.safe_load(matrix_path.read_text(encoding="utf-8"))
@@ -26,6 +28,13 @@ def main() -> int:
     if args.max_runs is not None: runs = runs[:args.max_runs]
     manifest = args.manifest if args.manifest.is_absolute() else root / args.manifest
     manifest.parent.mkdir(parents=True, exist_ok=True)
+    if args.resume_successes and manifest.exists():
+        successful = set()
+        for line in manifest.read_text(encoding="utf-8").splitlines():
+            entry = json.loads(line)
+            if entry.get("status") == "success" and entry.get("controller", "dwb") == args.controller:
+                successful.add((entry["scenario"], entry["difficulty"], int(entry["seed"])))
+        runs = [run for run in runs if run not in successful]
     for scenario, difficulty, seed in runs:
         command = ["bash", str(root / "simulation/scripts/record_scenario.sh"), str(root), scenario,
                    str(matrix["duration_s"]), str(seed), difficulty]
