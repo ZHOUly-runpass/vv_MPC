@@ -1,0 +1,8 @@
+schema_version: "1.0"
+purpose: stage_b_static_teacher_validation
+scenarios:
+  - static_sparse
+  - static_dense
+seeds: [62]
+difficulties: [easy, nominal, hard]
+duration_s: 8
