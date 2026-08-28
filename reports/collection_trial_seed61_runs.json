@@ -1,0 +1,202 @@
+{
+  "expected_runs": 24,
+  "raw_manifest": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/collection_trial_seed61/raw_manifest.jsonl",
+  "runs": [
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_easy_seed61_dwb_20260827T132341Z",
+      "difficulty": "easy",
+      "samples": 3,
+      "scenario": "empty",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_nominal_seed61_dwb_20260827T132355Z",
+      "difficulty": "nominal",
+      "samples": 3,
+      "scenario": "empty",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_hard_seed61_dwb_20260827T132410Z",
+      "difficulty": "hard",
+      "samples": 3,
+      "scenario": "empty",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_easy_seed61_dwb_20260827T132424Z",
+      "difficulty": "easy",
+      "samples": 3,
+      "scenario": "static_sparse",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_nominal_seed61_dwb_20260827T132439Z",
+      "difficulty": "nominal",
+      "samples": 3,
+      "scenario": "static_sparse",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_hard_seed61_dwb_20260827T132453Z",
+      "difficulty": "hard",
+      "samples": 4,
+      "scenario": "static_sparse",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_dense_easy_seed61_dwb_20260827T132507Z",
+      "difficulty": "easy",
+      "samples": 4,
+      "scenario": "static_dense",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_dense_nominal_seed61_dwb_20260827T132520Z",
+      "difficulty": "nominal",
+      "samples": 3,
+      "scenario": "static_dense",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_dense_hard_seed61_dwb_20260827T132537Z",
+      "difficulty": "hard",
+      "samples": 3,
+      "scenario": "static_dense",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/narrow_passage_easy_seed61_dwb_20260827T132551Z",
+      "difficulty": "easy",
+      "samples": 3,
+      "scenario": "narrow_passage",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/narrow_passage_nominal_seed61_dwb_20260827T132605Z",
+      "difficulty": "nominal",
+      "samples": 3,
+      "scenario": "narrow_passage",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/narrow_passage_hard_seed61_dwb_20260827T132622Z",
+      "difficulty": "hard",
+      "samples": 3,
+      "scenario": "narrow_passage",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/crossing_pedestrian_easy_seed61_dwb_20260827T132635Z",
+      "difficulty": "easy",
+      "samples": 3,
+      "scenario": "crossing_pedestrian",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/crossing_pedestrian_nominal_seed61_dwb_20260827T132649Z",
+      "difficulty": "nominal",
+      "samples": 3,
+      "scenario": "crossing_pedestrian",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/crossing_pedestrian_hard_seed61_dwb_20260827T132704Z",
+      "difficulty": "hard",
+      "samples": 3,
+      "scenario": "crossing_pedestrian",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/head_on_easy_seed61_dwb_20260827T132718Z",
+      "difficulty": "easy",
+      "samples": 3,
+      "scenario": "head_on",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/head_on_nominal_seed61_dwb_20260827T132732Z",
+      "difficulty": "nominal",
+      "samples": 3,
+      "scenario": "head_on",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/head_on_hard_seed61_dwb_20260827T132746Z",
+      "difficulty": "hard",
+      "samples": 3,
+      "scenario": "head_on",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/multi_dynamic_easy_seed61_dwb_20260827T132801Z",
+      "difficulty": "easy",
+      "samples": 4,
+      "scenario": "multi_dynamic",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/multi_dynamic_nominal_seed61_dwb_20260828T015210Z",
+      "difficulty": "nominal",
+      "samples": 1,
+      "scenario": "multi_dynamic",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/multi_dynamic_hard_seed61_dwb_20260828T015226Z",
+      "difficulty": "hard",
+      "samples": 1,
+      "scenario": "multi_dynamic",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/local_minimum_trap_easy_seed61_dwb_20260828T015240Z",
+      "difficulty": "easy",
+      "samples": 2,
+      "scenario": "local_minimum_trap",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/local_minimum_trap_nominal_seed61_dwb_20260828T015256Z",
+      "difficulty": "nominal",
+      "samples": 2,
+      "scenario": "local_minimum_trap",
+      "seed": 61,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/local_minimum_trap_hard_seed61_dwb_20260828T015317Z",
+      "difficulty": "hard",
+      "samples": 3,
+      "scenario": "local_minimum_trap",
+      "seed": 61,
+      "status": "passed"
+    }
+  ],
+  "samples": 69,
+  "schema_version": "1.0",
+  "status": "passed",
+  "successful_runs": 24
+}
