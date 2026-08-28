@@ -1,0 +1,195 @@
+{
+  "failure_count": 0,
+  "failures": [],
+  "groups": {
+    "static_dense/easy": {
+      "metrics": {
+        "active_obstacles": {
+          "maximum": 1.0,
+          "median": 1.0
+        },
+        "initial_h_squared_min": {
+          "maximum": 0.37635741972692094,
+          "median": -0.4667584187800683
+        },
+        "initial_reference_error": {
+          "maximum": 0.0,
+          "median": 0.0
+        },
+        "reference_h_squared_min": {
+          "maximum": 0.37635741972692094,
+          "median": -0.4667584187800683
+        },
+        "required_slack_squared": {
+          "maximum": 0.8633087110787668,
+          "median": 0.4667584187800683
+        },
+        "rollout_defect_max": {
+          "maximum": 4.827137267682247e-07,
+          "median": 3.240669315118794e-07
+        }
+      },
+      "statuses": {
+        "success": 35
+      }
+    },
+    "static_dense/hard": {
+      "metrics": {
+        "active_obstacles": {
+          "maximum": 4.0,
+          "median": 3.0
+        },
+        "initial_h_squared_min": {
+          "maximum": 1.526905083538781,
+          "median": 1.4035755748959104
+        },
+        "initial_reference_error": {
+          "maximum": 0.0,
+          "median": 0.0
+        },
+        "reference_h_squared_min": {
+          "maximum": 1.4645330227444497,
+          "median": 0.8995197447898339
+        },
+        "required_slack_squared": {
+          "maximum": 0.021072993180290933,
+          "median": 0.0
+        },
+        "rollout_defect_max": {
+          "maximum": 4.1064033240445497e-07,
+          "median": 3.7297922661494454e-07
+        }
+      },
+      "statuses": {
+        "success": 35
+      }
+    },
+    "static_dense/nominal": {
+      "metrics": {
+        "active_obstacles": {
+          "maximum": 3.0,
+          "median": 1.0
+        },
+        "initial_h_squared_min": {
+          "maximum": -0.04913480189097463,
+          "median": -0.8069591389578589
+        },
+        "initial_reference_error": {
+          "maximum": 0.0,
+          "median": 0.0
+        },
+        "reference_h_squared_min": {
+          "maximum": -0.44997489840941307,
+          "median": -0.8103459755393109
+        },
+        "required_slack_squared": {
+          "maximum": 0.9017630214452991,
+          "median": 0.8084510062480005
+        },
+        "rollout_defect_max": {
+          "maximum": 4.688226749038904e-07,
+          "median": 3.8318652251234653e-07
+        }
+      },
+      "statuses": {
+        "success": 49
+      }
+    },
+    "static_sparse/easy": {
+      "metrics": {
+        "active_obstacles": {
+          "maximum": 0.0,
+          "median": 0.0
+        },
+        "initial_h_squared_min": {
+          "maximum": null,
+          "median": null
+        },
+        "initial_reference_error": {
+          "maximum": 0.0,
+          "median": 0.0
+        },
+        "reference_h_squared_min": {
+          "maximum": null,
+          "median": null
+        },
+        "required_slack_squared": {
+          "maximum": 0.0,
+          "median": 0.0
+        },
+        "rollout_defect_max": {
+          "maximum": 4.2823638768396677e-07,
+          "median": 3.1913985765186226e-07
+        }
+      },
+      "statuses": {
+        "success": 49
+      }
+    },
+    "static_sparse/hard": {
+      "metrics": {
+        "active_obstacles": {
+          "maximum": 2.0,
+          "median": 1.0
+        },
+        "initial_h_squared_min": {
+          "maximum": 0.8434429194502543,
+          "median": -0.05676356194066601
+        },
+        "initial_reference_error": {
+          "maximum": 0.0,
+          "median": 0.0
+        },
+        "reference_h_squared_min": {
+          "maximum": 0.8434429194502543,
+          "median": -0.4010494138105777
+        },
+        "required_slack_squared": {
+          "maximum": 0.6875861777853408,
+          "median": 0.395375073772403
+        },
+        "rollout_defect_max": {
+          "maximum": 4.186528830274483e-07,
+          "median": 3.547550235794006e-07
+        }
+      },
+      "statuses": {
+        "success": 42
+      }
+    },
+    "static_sparse/nominal": {
+      "metrics": {
+        "active_obstacles": {
+          "maximum": 1.0,
+          "median": 0.0
+        },
+        "initial_h_squared_min": {
+          "maximum": 1.8249225873689832,
+          "median": 1.8249225873689832
+        },
+        "initial_reference_error": {
+          "maximum": 0.0,
+          "median": 0.0
+        },
+        "reference_h_squared_min": {
+          "maximum": 1.8249225873689832,
+          "median": 1.8249225873689832
+        },
+        "required_slack_squared": {
+          "maximum": 0.0,
+          "median": 0.0
+        },
+        "rollout_defect_max": {
+          "maximum": 4.339666319630453e-07,
+          "median": 3.310121607924543e-07
+        }
+      },
+      "statuses": {
+        "success": 35
+      }
+    }
+  },
+  "manifest": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/stageb_static_seed62/labeled/manifest.jsonl",
+  "maximum_slack_squared": 1.0,
+  "schema_version": "1.0"
+}

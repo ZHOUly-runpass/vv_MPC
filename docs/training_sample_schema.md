@@ -25,6 +25,8 @@
 
 历史候选若使用 `dt=0.2 s`，转换规则固定为 `zero_order_hold_controls_rerollout_states_linear_obstacles`：控制量按零阶保持重采样到 0.1 s；候选状态不做坐标插值，而是从同一初始状态用车辆模型和重采样控制重新 rollout；障碍位置、速度、尺寸与协方差线性插值，有效掩码采用相邻源时刻的保守逻辑与。该规则及目标 `dt` 会写入样本/teacher 元数据，禁止在同一批正式标签中混用时间网格。
 
+teacher求解前还必须把每条候选控制从样本的当前 `ego_state` 重新 rollout，消除候选消息与同步里程计之间的初始状态偏差；元数据记录 `teacher_candidate_anchor=ego_state_rerollout`。若IPOPT达到迭代上限，只允许使用受控停车候选作为初值重试一次，并把每次迭代数、活跃障碍数、初值来源和底层返回状态写入 `teacher_solver_diagnostics`。固定初始状态已经无法在最大slack内满足约束时，求解前明确标为 `Infeasible_Initial_State`，不得归为数值失败。
+
 ## MPC teacher 字段
 
 | 字段 | dtype | 形状 | 含义 |

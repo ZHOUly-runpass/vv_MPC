@@ -1,0 +1,58 @@
+{
+  "expected_runs": 6,
+  "raw_manifest": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/stageb_static_seed62/raw_manifest.jsonl",
+  "runs": [
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_easy_seed62_dwb_20260828T145249Z",
+      "difficulty": "easy",
+      "samples": 7,
+      "scenario": "static_sparse",
+      "seed": 62,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_nominal_seed62_dwb_20260828T145308Z",
+      "difficulty": "nominal",
+      "samples": 5,
+      "scenario": "static_sparse",
+      "seed": 62,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_hard_seed62_dwb_20260828T145328Z",
+      "difficulty": "hard",
+      "samples": 6,
+      "scenario": "static_sparse",
+      "seed": 62,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_dense_easy_seed62_dwb_20260828T145347Z",
+      "difficulty": "easy",
+      "samples": 5,
+      "scenario": "static_dense",
+      "seed": 62,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_dense_nominal_seed62_dwb_20260828T145406Z",
+      "difficulty": "nominal",
+      "samples": 7,
+      "scenario": "static_dense",
+      "seed": 62,
+      "status": "passed"
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_dense_hard_seed62_dwb_20260828T145430Z",
+      "difficulty": "hard",
+      "samples": 5,
+      "scenario": "static_dense",
+      "seed": 62,
+      "status": "passed"
+    }
+  ],
+  "samples": 35,
+  "schema_version": "1.0",
+  "status": "passed",
+  "successful_runs": 6
+}

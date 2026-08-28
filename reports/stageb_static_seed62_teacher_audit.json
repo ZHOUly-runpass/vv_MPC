@@ -1,0 +1,102 @@
+{
+  "checkpoint_sha256_counts": {
+    "9ba65cfead901ea08db3664108838d4c85bd6621592cc08cca0dfe61af4eb262": 35
+  },
+  "errors": [],
+  "manifest": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/stageb_static_seed62/labeled/manifest.jsonl",
+  "samples": 35,
+  "samples_by_group": {
+    "static_dense/easy": 5,
+    "static_dense/hard": 5,
+    "static_dense/nominal": 7,
+    "static_sparse/easy": 7,
+    "static_sparse/hard": 6,
+    "static_sparse/nominal": 5
+  },
+  "schema_version": "1.0",
+  "shape_groups": {
+    "((6,), (384, 32, 32), (32, 4), (3, 60, 60), (7, 21, 5))": 35
+  },
+  "status": "passed",
+  "teacher_outcomes": {
+    "success": 245
+  },
+  "teacher_outcomes_by_group": {
+    "static_dense/easy": {
+      "success": 35
+    },
+    "static_dense/hard": {
+      "success": 35
+    },
+    "static_dense/nominal": {
+      "success": 49
+    },
+    "static_sparse/easy": {
+      "success": 49
+    },
+    "static_sparse/hard": {
+      "success": 42
+    },
+    "static_sparse/nominal": {
+      "success": 35
+    }
+  },
+  "teacher_solve_time_ms": {
+    "maximum": 11.93017292022705,
+    "p50": 6.84263277053833,
+    "p95": 10.4544282913208
+  },
+  "teacher_solve_time_ms_by_group": {
+    "static_dense/easy": {
+      "maximum": 8.04804515838623,
+      "p50": 7.1017022132873535,
+      "p95": 7.816901445388793
+    },
+    "static_dense/hard": {
+      "maximum": 11.93017292022705,
+      "p50": 9.652627944946289,
+      "p95": 11.466560173034669
+    },
+    "static_dense/nominal": {
+      "maximum": 10.457478523254395,
+      "p50": 7.01451301574707,
+      "p95": 10.265861511230469
+    },
+    "static_sparse/easy": {
+      "maximum": 4.750609874725342,
+      "p50": 2.8753607273101807,
+      "p95": 4.030357933044433
+    },
+    "static_sparse/hard": {
+      "maximum": 9.483928680419922,
+      "p50": 7.125242710113525,
+      "p95": 9.106691026687622
+    },
+    "static_sparse/nominal": {
+      "maximum": 6.902645587921143,
+      "p50": 3.2987165451049805,
+      "p95": 6.6903729915618895
+    }
+  },
+  "teacher_statuses_by_group": {
+    "static_dense/easy": {
+      "Solve_Succeeded": 35
+    },
+    "static_dense/hard": {
+      "Solve_Succeeded": 35
+    },
+    "static_dense/nominal": {
+      "Solve_Succeeded": 49
+    },
+    "static_sparse/easy": {
+      "Solve_Succeeded": 49
+    },
+    "static_sparse/hard": {
+      "Solve_Succeeded": 42
+    },
+    "static_sparse/nominal": {
+      "Solve_Succeeded": 35
+    }
+  },
+  "valid_samples": 35
+}
