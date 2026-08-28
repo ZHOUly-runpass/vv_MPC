@@ -20,6 +20,10 @@ set -u
 mkdir -p .tools/ros_logs .tools/gazebo_logs .tools/rosbags
 export ROS_LOG_DIR="$project_dir/.tools/ros_logs"
 export GAZEBO_LOG_PATH="$project_dir/.tools/gazebo_logs"
+domain_key="${scenario}:${difficulty}:${seed}:${controller}"
+domain_offset="$(printf '%s' "$domain_key" | cksum | awk '{print $1 % 100}')"
+export ROS_DOMAIN_ID="${R680_COLLECTION_ROS_DOMAIN_ID:-$((60 + domain_offset))}"
+export ROS_LOCALHOST_ONLY=1
 
 stamp="$(date -u +%Y%m%dT%H%M%SZ)"
 bag="$project_dir/.tools/rosbags/${scenario}_${difficulty}_seed${seed}_${controller}_${stamp}"
@@ -65,6 +69,6 @@ if [[ "$bag_status" -ne 0 && "$bag_status" -ne 124 ]]; then
 fi
 config_sha256="$(sha256sum simulation/ros2_ws/src/r680_sim_bringup/config/scenarios.yaml | cut -d' ' -f1)"
 code_revision="$(git rev-parse HEAD)"
-printf '{"schema_version":"1.0","scenario":"%s","difficulty":"%s","seed":%s,"controller":"%s","duration_s":%s,"bag":"%s","config_sha256":"%s","code_revision":"%s"}\n' \
-  "$scenario" "$difficulty" "$seed" "$controller" "$duration" "$bag" "$config_sha256" "$code_revision" >"${bag}_run.json"
+printf '{"schema_version":"1.0","scenario":"%s","difficulty":"%s","seed":%s,"controller":"%s","duration_s":%s,"ros_domain_id":%s,"bag":"%s","config_sha256":"%s","code_revision":"%s"}\n' \
+  "$scenario" "$difficulty" "$seed" "$controller" "$duration" "$ROS_DOMAIN_ID" "$bag" "$config_sha256" "$code_revision" >"${bag}_run.json"
 echo "$bag"
