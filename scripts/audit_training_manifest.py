@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import argparse
-from collections import Counter
+from collections import Counter, defaultdict
 import json
 from pathlib import Path
 
@@ -13,6 +13,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(); parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--output", type=Path); args = parser.parse_args(); manifest = args.manifest.resolve()
     entries = load_manifest(manifest); shapes = Counter(); outcomes = Counter(); checkpoints = Counter(); errors = []
+    outcomes_by_group = defaultdict(Counter); samples_by_group = Counter()
     for entry in entries:
         try:
             sample = load_training_sample(manifest.parent/str(entry["path"]))
@@ -20,12 +21,17 @@ def main() -> int:
             shapes[str((sample.points.shape[1:], sample.features.shape, sample.route.shape, sample.costmap.shape,
                         sample.candidate_states.shape))] += 1
             checkpoints[str(sample.metadata["checkpoint_sha256"])] += 1
+            group = f"{sample.metadata.get('scenario', 'unknown')}/{sample.metadata.get('difficulty', 'unknown')}"
+            samples_by_group[group] += 1
             if sample.teacher_present:
-                outcomes.update(TEACHER_OUTCOMES[int(code)] for code in sample.teacher_outcome_codes)
+                names = [TEACHER_OUTCOMES[int(code)] for code in sample.teacher_outcome_codes]
+                outcomes.update(names); outcomes_by_group[group].update(names)
         except Exception as error: errors.append({"sample_id": entry.get("sample_id"), "error": f"{type(error).__name__}:{error}"})
     report = {"schema_version": "1.0", "manifest": str(manifest), "samples": len(entries),
               "valid_samples": len(entries)-len(errors), "errors": errors, "shape_groups": dict(shapes),
               "checkpoint_sha256_counts": dict(checkpoints), "teacher_outcomes": dict(outcomes),
+              "samples_by_group": dict(sorted(samples_by_group.items())),
+              "teacher_outcomes_by_group": {key: dict(outcomes_by_group[key]) for key in sorted(outcomes_by_group)},
               "status": "passed" if entries and not errors else "failed"}
     encoded = json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True)+"\n"
     if args.output:
