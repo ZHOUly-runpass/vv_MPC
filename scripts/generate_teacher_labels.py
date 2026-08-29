@@ -40,6 +40,11 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--deadline-ms", type=float, default=80.0)
     parser.add_argument("--vehicle-config", type=Path, default=Path("configs/robot/r680_sim.yaml"))
+    parser.add_argument(
+        "--zero-obstacle-covariance",
+        action="store_true",
+        help="Zero obstacle covariance before MPC solving and persist a versioned teacher ablation.",
+    )
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     manifest = args.manifest if args.manifest.is_absolute() else root / args.manifest
@@ -55,8 +60,12 @@ def main() -> int:
             sample.candidate_states, sample.candidate_controls, source_timestamps, vehicle.dt_s, model)
         candidate_states = np.stack([model.rollout(sample.ego_state.astype(np.float64), controls.astype(np.float64), vehicle.dt_s)
                                      for controls in candidate_controls]).astype(np.float32)
+        source_obstacle_covariance = (
+            np.zeros_like(sample.obstacle_covariance)
+            if args.zero_obstacle_covariance else sample.obstacle_covariance
+        )
         obstacle_values = resample_obstacle_batch(
-            sample.obstacle_states, sample.obstacle_lengths, sample.obstacle_widths, sample.obstacle_covariance,
+            sample.obstacle_states, sample.obstacle_lengths, sample.obstacle_widths, source_obstacle_covariance,
             sample.obstacle_valid_mask, source_timestamps, target_timestamps)
         sample = replace(sample, candidate_states=candidate_states, candidate_controls=candidate_controls,
                          candidate_timestamps_s=target_timestamps, obstacle_states=obstacle_values[0],
@@ -114,6 +123,7 @@ def main() -> int:
             ))
         else:
             selected = min(range(len(results)), key=lambda index: (results[index].slack_max, -results[index].h_min))
+        teacher_ablation = "zero_obstacle_covariance" if args.zero_obstacle_covariance else "none"
         labeled = replace(
             sample,
             teacher_outcome_codes=np.asarray([TEACHER_OUTCOME_TO_CODE[name] for name in outcomes], dtype=np.int8),
@@ -127,6 +137,7 @@ def main() -> int:
             metadata={**sample.metadata, "teacher": "casadi_dcbf_mpc", "teacher_deadline_ms": args.deadline_ms,
                       "teacher_vehicle_profile": vehicle.source.name, "teacher_vehicle_config_sha256": vehicle.sha256,
                       "teacher_profile_kind": vehicle.profile_kind, "teacher_dt_s": vehicle.dt_s,
+                      "teacher_ablation": teacher_ablation,
                       "legacy_resampling_rule": RESAMPLING_RULE,
                       "teacher_candidate_anchor": "ego_state_rerollout",
                       "teacher_solver_statuses": [result.status for result in results],
@@ -135,7 +146,8 @@ def main() -> int:
         destination = output / "samples" / f"{sample.metadata['sample_id']}.npz"
         payload_hash = save_training_sample(destination, labeled)
         entries.append({**entry, "path": str(destination.relative_to(output)), "payload_sha256": payload_hash,
-                        "teacher_outcomes": outcomes, "teacher_selected_index": selected})
+                        "teacher_outcomes": outcomes, "teacher_selected_index": selected,
+                        "teacher_ablation": teacher_ablation})
     write_manifest(output / "manifest.jsonl", entries)
     print(output / "manifest.jsonl")
     return 0
