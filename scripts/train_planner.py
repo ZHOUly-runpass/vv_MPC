@@ -47,7 +47,10 @@ def main() -> int:
     parser.add_argument("--seed", type=int, default=680)
     parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     parser.add_argument("--zero-features", action="store_true", help="ablation: replace UniLION features with zeros")
+    parser.add_argument("--ablation", default="main", help="versioned experiment name stored in the checkpoint")
     args = parser.parse_args()
+    if args.zero_features and args.ablation != "main":
+        raise ValueError("--zero-features already defines the no_unilion_features ablation")
     root = Path(__file__).resolve().parents[1]
     manifest = args.manifest if args.manifest.is_absolute() else root / args.manifest
     output = args.output_dir if args.output_dir.is_absolute() else root / args.output_dir
@@ -66,10 +69,11 @@ def main() -> int:
     train_loader = DataLoader(train, args.batch_size, shuffle=True, generator=generator, collate_fn=collate_training_samples)
     val_loader = DataLoader(val, args.batch_size, shuffle=False, collate_fn=collate_training_samples)
     manifest_hash = sha256(manifest.read_bytes()).hexdigest()
+    ablation = "no_unilion_features" if args.zero_features else args.ablation
     training_config = {"epochs": args.epochs, "batch_size": args.batch_size,
                        "learning_rate": args.learning_rate, "seed": args.seed,
                        "model": config, "loss_weights": loss_fn.weights,
-                       "ablation": "no_unilion_features" if args.zero_features else "main"}
+                       "ablation": ablation}
     training_config_hash = sha256(json.dumps(training_config, sort_keys=True,
                                              separators=(",", ":")).encode()).hexdigest()
     dataset_version_path = manifest.parent / "dataset_version.json"
