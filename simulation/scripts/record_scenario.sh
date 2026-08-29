@@ -64,7 +64,7 @@ for _ in $(seq 1 60); do
   sleep 1
 done
 for required in "${required_topics[@]}"; do
-  if ! ros2 topic list | grep -qx "$required"; then echo "required topic missing: $required" >&2; exit 4; fi
+  if ! grep -qx "$required" <<<"$topics"; then echo "required topic missing: $required" >&2; exit 4; fi
 done
 preflight="$project_dir/.tools/preflight_${scenario}_${difficulty}_${seed}_${controller}.json"
 preflight_ok=0
