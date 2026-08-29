@@ -16,8 +16,9 @@
 12. `[已完成：24-run短bag与结构审计；标签质量待修复]` 已完成 8 场景 × 3 难度 × seed61 的 DWB 短采集，24/24 bag 成功、69/69 样本及 UniLION 特征有效；483 条 teacher 候选中 364 success、7 infeasible、112 numeric failure，数值失败集中在静态稠密/静态稀疏 hard，因此尚未批准扩大正式采集。
 13. `[已完成：阶段A/B静态问题修复与开发机验收]` 已定位候选/里程计不同步、静态障碍包围盒重复放大、静态GT协方差随时间错误增长、结构性不可行误报和不良warm-start；修复后使用seed62、8秒重新采集静态稀疏/稠密六组合，35/35样本、245/245候选全部 `Solve_Succeeded`，P95 10.45 ms、最大11.93 ms；随后已由阶段C完整矩阵复验。
 14. `[已完成：阶段C完整24-run门禁]` seed63、8场景×3难度、10秒采集24/24成功，得到187个有效样本且每组6–10个；1309条teacher候选为1274 success、35 infeasible、0 numeric failure、0 timeout，P95 8.61 ms、最大16.10 ms，批准进入多种子采集。
-15. `[进行中：阶段D多种子正式采集]` 已完成首批12/72个30秒bag（Empty三难度×seed64/65/66，以及Static Sparse/easy×三种子），完整性审计通过；剩余60组可用同一manifest和`--resume-successes`续跑。
+15. `[已完成：阶段D多种子正式采集与标签]` 已完成8场景×3难度×seed64/65/66共72/72个30秒bag，抽取1929个有效样本并生成同数量UniLION特征；13503条teacher候选为13202 success、215 infeasible、78 numeric failure（0.58%）、8 timeout（0.06%），通过5%/1%门禁。
 16. `[部分完成：阶段E四基线]` DWB、MPPI、Vanilla D-CBF、Proposed四入口短闭环均通过topic、TF、非零控制、实际位移和无碰撞审计；但Proposed当前仍明确上报`learned_checkpoint_active=false`，只是预测裕量安全回退，正式Proposed公平评测保持blocked。
+17. `[进行中：阶段F正式训练与评测]` 已冻结`r680_staged_v1`数据集，seed64/65/66严格对应train/val/test，各643样本；候选轨迹头和安全评估头完成20 epoch联合主训练，最佳epoch18，独立test排序准确率71.85%、可行性准确率98.76%、控制MAE 0.1193。checkpoint v2已保存模型、优化器、训练配置哈希、manifest哈希、数据版本哈希和Git提交号；五组消融实验尚待执行。
 
 更新日期：2026-08-25  
 本地目录：`D:\E2Eproject_MPC\05`  

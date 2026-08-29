@@ -1,0 +1,949 @@
+{
+  "attempts": 75,
+  "bag_evidence": [
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/crossing_pedestrian_easy_seed64_dwb_20260829T064623Z",
+      "database_bytes": 60506112,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "crossing_pedestrian",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/crossing_pedestrian_easy_seed65_dwb_20260829T064704Z",
+      "database_bytes": 60432384,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "crossing_pedestrian",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/crossing_pedestrian_easy_seed66_dwb_20260829T064746Z",
+      "database_bytes": 60735488,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "crossing_pedestrian",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/crossing_pedestrian_hard_seed64_dwb_20260829T065034Z",
+      "database_bytes": 60878848,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "crossing_pedestrian",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/crossing_pedestrian_hard_seed65_dwb_20260829T065115Z",
+      "database_bytes": 59908096,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "crossing_pedestrian",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/crossing_pedestrian_hard_seed66_dwb_20260829T065156Z",
+      "database_bytes": 61300736,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "crossing_pedestrian",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/crossing_pedestrian_nominal_seed64_dwb_20260829T064826Z",
+      "database_bytes": 55848960,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "crossing_pedestrian",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/crossing_pedestrian_nominal_seed65_dwb_20260829T064907Z",
+      "database_bytes": 62767104,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "crossing_pedestrian",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/crossing_pedestrian_nominal_seed66_dwb_20260829T064953Z",
+      "database_bytes": 61538304,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "crossing_pedestrian",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_easy_seed64_dwb_20260829T045238Z",
+      "database_bytes": 53374976,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "empty",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_easy_seed65_dwb_20260829T045319Z",
+      "database_bytes": 52961280,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "empty",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_easy_seed66_dwb_20260829T045401Z",
+      "database_bytes": 57380864,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "empty",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_hard_seed64_dwb_20260829T045826Z",
+      "database_bytes": 54755328,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "empty",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_hard_seed65_dwb_20260829T045908Z",
+      "database_bytes": 53727232,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "empty",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_hard_seed66_dwb_20260829T045949Z",
+      "database_bytes": 57458688,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "empty",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_nominal_seed64_dwb_20260829T045441Z",
+      "database_bytes": 53866496,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "empty",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_nominal_seed65_dwb_20260829T045523Z",
+      "database_bytes": 58351616,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "empty",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_nominal_seed66_dwb_20260829T045604Z",
+      "database_bytes": 57831424,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "empty",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/head_on_easy_seed64_dwb_20260829T065237Z",
+      "database_bytes": 58564608,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "head_on",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/head_on_easy_seed65_dwb_20260829T071129Z",
+      "database_bytes": 65036288,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "head_on",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/head_on_easy_seed66_dwb_20260829T065354Z",
+      "database_bytes": 64368640,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "head_on",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/head_on_hard_seed64_dwb_20260829T065638Z",
+      "database_bytes": 57950208,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "head_on",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/head_on_hard_seed65_dwb_20260829T065720Z",
+      "database_bytes": 62648320,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "head_on",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/head_on_hard_seed66_dwb_20260829T065801Z",
+      "database_bytes": 58544128,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "head_on",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/head_on_nominal_seed64_dwb_20260829T065435Z",
+      "database_bytes": 63098880,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "head_on",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/head_on_nominal_seed65_dwb_20260829T065516Z",
+      "database_bytes": 62758912,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "head_on",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/head_on_nominal_seed66_dwb_20260829T065557Z",
+      "database_bytes": 62177280,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "head_on",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/local_minimum_trap_easy_seed64_dwb_20260829T070503Z",
+      "database_bytes": 95764480,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "local_minimum_trap",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/local_minimum_trap_easy_seed65_dwb_20260829T070544Z",
+      "database_bytes": 92393472,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "local_minimum_trap",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/local_minimum_trap_easy_seed66_dwb_20260829T070626Z",
+      "database_bytes": 98254848,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "local_minimum_trap",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/local_minimum_trap_hard_seed64_dwb_20260829T070839Z",
+      "database_bytes": 99811328,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "local_minimum_trap",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/local_minimum_trap_hard_seed65_dwb_20260829T070920Z",
+      "database_bytes": 101806080,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "local_minimum_trap",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/local_minimum_trap_hard_seed66_dwb_20260829T071005Z",
+      "database_bytes": 99958784,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "local_minimum_trap",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/local_minimum_trap_nominal_seed64_dwb_20260829T070707Z",
+      "database_bytes": 99737600,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "local_minimum_trap",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/local_minimum_trap_nominal_seed65_dwb_20260829T071207Z",
+      "database_bytes": 92823552,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "local_minimum_trap",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/local_minimum_trap_nominal_seed66_dwb_20260829T070758Z",
+      "database_bytes": 93044736,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "local_minimum_trap",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/multi_dynamic_easy_seed64_dwb_20260829T065842Z",
+      "database_bytes": 61804544,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "multi_dynamic",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/multi_dynamic_easy_seed65_dwb_20260829T065924Z",
+      "database_bytes": 66367488,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "multi_dynamic",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/multi_dynamic_easy_seed66_dwb_20260829T070005Z",
+      "database_bytes": 63201280,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "multi_dynamic",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/multi_dynamic_hard_seed64_dwb_20260829T070250Z",
+      "database_bytes": 65896448,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "multi_dynamic",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/multi_dynamic_hard_seed65_dwb_20260829T070331Z",
+      "database_bytes": 66736128,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "multi_dynamic",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/multi_dynamic_hard_seed66_dwb_20260829T070415Z",
+      "database_bytes": 61878272,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "multi_dynamic",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/multi_dynamic_nominal_seed64_dwb_20260829T070046Z",
+      "database_bytes": 66445312,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "multi_dynamic",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/multi_dynamic_nominal_seed65_dwb_20260829T070128Z",
+      "database_bytes": 60637184,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "multi_dynamic",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/multi_dynamic_nominal_seed66_dwb_20260829T070209Z",
+      "database_bytes": 66154496,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "multi_dynamic",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/narrow_passage_easy_seed64_dwb_20260829T064007Z",
+      "database_bytes": 87810048,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "narrow_passage",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/narrow_passage_easy_seed65_dwb_20260829T064048Z",
+      "database_bytes": 97075200,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "narrow_passage",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/narrow_passage_easy_seed66_dwb_20260829T064129Z",
+      "database_bytes": 95965184,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "narrow_passage",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/narrow_passage_hard_seed64_dwb_20260829T064419Z",
+      "database_bytes": 100741120,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "narrow_passage",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/narrow_passage_hard_seed65_dwb_20260829T064501Z",
+      "database_bytes": 99598336,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "narrow_passage",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/narrow_passage_hard_seed66_dwb_20260829T064542Z",
+      "database_bytes": 99442688,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "narrow_passage",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/narrow_passage_nominal_seed64_dwb_20260829T064211Z",
+      "database_bytes": 97198080,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "narrow_passage",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/narrow_passage_nominal_seed65_dwb_20260829T064252Z",
+      "database_bytes": 89710592,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "narrow_passage",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/narrow_passage_nominal_seed66_dwb_20260829T064338Z",
+      "database_bytes": 98492416,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "narrow_passage",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_dense_easy_seed64_dwb_20260829T063354Z",
+      "database_bytes": 74625024,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "static_dense",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_dense_easy_seed65_dwb_20260829T063436Z",
+      "database_bytes": 70840320,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "static_dense",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_dense_easy_seed66_dwb_20260829T063518Z",
+      "database_bytes": 66543616,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "static_dense",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_dense_hard_seed64_dwb_20260829T063803Z",
+      "database_bytes": 76570624,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "static_dense",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_dense_hard_seed65_dwb_20260829T063844Z",
+      "database_bytes": 77471744,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "static_dense",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_dense_hard_seed66_dwb_20260829T063926Z",
+      "database_bytes": 75743232,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "static_dense",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_dense_nominal_seed64_dwb_20260829T063600Z",
+      "database_bytes": 70074368,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "static_dense",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_dense_nominal_seed65_dwb_20260829T063642Z",
+      "database_bytes": 71434240,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "static_dense",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_dense_nominal_seed66_dwb_20260829T063723Z",
+      "database_bytes": 65077248,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "static_dense",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_easy_seed64_dwb_20260829T050030Z",
+      "database_bytes": 61280256,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "static_sparse",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_easy_seed65_dwb_20260829T050111Z",
+      "database_bytes": 61046784,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "static_sparse",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_easy_seed66_dwb_20260829T050152Z",
+      "database_bytes": 58335232,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "static_sparse",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_hard_seed64_dwb_20260829T063152Z",
+      "database_bytes": 64491520,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "static_sparse",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_hard_seed65_dwb_20260829T063232Z",
+      "database_bytes": 62496768,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "static_sparse",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_hard_seed66_dwb_20260829T063314Z",
+      "database_bytes": 66031616,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "static_sparse",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_nominal_seed64_dwb_20260829T062947Z",
+      "database_bytes": 64208896,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "static_sparse",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_nominal_seed65_dwb_20260829T063029Z",
+      "database_bytes": 63774720,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "static_sparse",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_nominal_seed66_dwb_20260829T063110Z",
+      "database_bytes": 63713280,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "static_sparse",
+      "seed": 66
+    }
+  ],
+  "completed_tuples": [
+    [
+      "crossing_pedestrian",
+      "easy",
+      64
+    ],
+    [
+      "crossing_pedestrian",
+      "easy",
+      65
+    ],
+    [
+      "crossing_pedestrian",
+      "easy",
+      66
+    ],
+    [
+      "crossing_pedestrian",
+      "hard",
+      64
+    ],
+    [
+      "crossing_pedestrian",
+      "hard",
+      65
+    ],
+    [
+      "crossing_pedestrian",
+      "hard",
+      66
+    ],
+    [
+      "crossing_pedestrian",
+      "nominal",
+      64
+    ],
+    [
+      "crossing_pedestrian",
+      "nominal",
+      65
+    ],
+    [
+      "crossing_pedestrian",
+      "nominal",
+      66
+    ],
+    [
+      "empty",
+      "easy",
+      64
+    ],
+    [
+      "empty",
+      "easy",
+      65
+    ],
+    [
+      "empty",
+      "easy",
+      66
+    ],
+    [
+      "empty",
+      "hard",
+      64
+    ],
+    [
+      "empty",
+      "hard",
+      65
+    ],
+    [
+      "empty",
+      "hard",
+      66
+    ],
+    [
+      "empty",
+      "nominal",
+      64
+    ],
+    [
+      "empty",
+      "nominal",
+      65
+    ],
+    [
+      "empty",
+      "nominal",
+      66
+    ],
+    [
+      "head_on",
+      "easy",
+      64
+    ],
+    [
+      "head_on",
+      "easy",
+      65
+    ],
+    [
+      "head_on",
+      "easy",
+      66
+    ],
+    [
+      "head_on",
+      "hard",
+      64
+    ],
+    [
+      "head_on",
+      "hard",
+      65
+    ],
+    [
+      "head_on",
+      "hard",
+      66
+    ],
+    [
+      "head_on",
+      "nominal",
+      64
+    ],
+    [
+      "head_on",
+      "nominal",
+      65
+    ],
+    [
+      "head_on",
+      "nominal",
+      66
+    ],
+    [
+      "local_minimum_trap",
+      "easy",
+      64
+    ],
+    [
+      "local_minimum_trap",
+      "easy",
+      65
+    ],
+    [
+      "local_minimum_trap",
+      "easy",
+      66
+    ],
+    [
+      "local_minimum_trap",
+      "hard",
+      64
+    ],
+    [
+      "local_minimum_trap",
+      "hard",
+      65
+    ],
+    [
+      "local_minimum_trap",
+      "hard",
+      66
+    ],
+    [
+      "local_minimum_trap",
+      "nominal",
+      64
+    ],
+    [
+      "local_minimum_trap",
+      "nominal",
+      65
+    ],
+    [
+      "local_minimum_trap",
+      "nominal",
+      66
+    ],
+    [
+      "multi_dynamic",
+      "easy",
+      64
+    ],
+    [
+      "multi_dynamic",
+      "easy",
+      65
+    ],
+    [
+      "multi_dynamic",
+      "easy",
+      66
+    ],
+    [
+      "multi_dynamic",
+      "hard",
+      64
+    ],
+    [
+      "multi_dynamic",
+      "hard",
+      65
+    ],
+    [
+      "multi_dynamic",
+      "hard",
+      66
+    ],
+    [
+      "multi_dynamic",
+      "nominal",
+      64
+    ],
+    [
+      "multi_dynamic",
+      "nominal",
+      65
+    ],
+    [
+      "multi_dynamic",
+      "nominal",
+      66
+    ],
+    [
+      "narrow_passage",
+      "easy",
+      64
+    ],
+    [
+      "narrow_passage",
+      "easy",
+      65
+    ],
+    [
+      "narrow_passage",
+      "easy",
+      66
+    ],
+    [
+      "narrow_passage",
+      "hard",
+      64
+    ],
+    [
+      "narrow_passage",
+      "hard",
+      65
+    ],
+    [
+      "narrow_passage",
+      "hard",
+      66
+    ],
+    [
+      "narrow_passage",
+      "nominal",
+      64
+    ],
+    [
+      "narrow_passage",
+      "nominal",
+      65
+    ],
+    [
+      "narrow_passage",
+      "nominal",
+      66
+    ],
+    [
+      "static_dense",
+      "easy",
+      64
+    ],
+    [
+      "static_dense",
+      "easy",
+      65
+    ],
+    [
+      "static_dense",
+      "easy",
+      66
+    ],
+    [
+      "static_dense",
+      "hard",
+      64
+    ],
+    [
+      "static_dense",
+      "hard",
+      65
+    ],
+    [
+      "static_dense",
+      "hard",
+      66
+    ],
+    [
+      "static_dense",
+      "nominal",
+      64
+    ],
+    [
+      "static_dense",
+      "nominal",
+      65
+    ],
+    [
+      "static_dense",
+      "nominal",
+      66
+    ],
+    [
+      "static_sparse",
+      "easy",
+      64
+    ],
+    [
+      "static_sparse",
+      "easy",
+      65
+    ],
+    [
+      "static_sparse",
+      "easy",
+      66
+    ],
+    [
+      "static_sparse",
+      "hard",
+      64
+    ],
+    [
+      "static_sparse",
+      "hard",
+      65
+    ],
+    [
+      "static_sparse",
+      "hard",
+      66
+    ],
+    [
+      "static_sparse",
+      "nominal",
+      64
+    ],
+    [
+      "static_sparse",
+      "nominal",
+      65
+    ],
+    [
+      "static_sparse",
+      "nominal",
+      66
+    ]
+  ],
+  "expected_runs": 72,
+  "invalid_latest_runs": [],
+  "remaining_runs": 0,
+  "schema_version": "1.0",
+  "status": "complete",
+  "successful_latest_runs": 72
+}

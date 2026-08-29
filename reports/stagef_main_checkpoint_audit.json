@@ -1,0 +1,397 @@
+{
+  "path": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/training/r680_staged_v1_main/best.pt",
+  "sha256": "54cf9c73c73f3353199047746875637c48b97ac623d267ef776380744d7a7ee9",
+  "size_bytes": 18082274,
+  "content": {
+    "format_version": 2,
+    "epoch": 18,
+    "model_config": {
+      "feature_channels": 384,
+      "candidates": 7,
+      "intervals": 20,
+      "ego_dim": 5,
+      "hidden_dim": 128
+    },
+    "model_state": {
+      "feature.projection.0.weight": {
+        "shape": [
+          128,
+          384,
+          1,
+          1
+        ],
+        "dtype": "torch.float32"
+      },
+      "feature.projection.0.bias": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "feature.projection.1.weight": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "feature.projection.1.bias": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "costmap.0.weight": {
+        "shape": [
+          64,
+          3,
+          3,
+          3
+        ],
+        "dtype": "torch.float32"
+      },
+      "costmap.0.bias": {
+        "shape": [
+          64
+        ],
+        "dtype": "torch.float32"
+      },
+      "costmap.2.weight": {
+        "shape": [
+          128,
+          64,
+          3,
+          3
+        ],
+        "dtype": "torch.float32"
+      },
+      "costmap.2.bias": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "route_ego.route.0.weight": {
+        "shape": [
+          128,
+          4
+        ],
+        "dtype": "torch.float32"
+      },
+      "route_ego.route.0.bias": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "route_ego.route.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "route_ego.route.2.bias": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "route_ego.ego.0.weight": {
+        "shape": [
+          128,
+          5
+        ],
+        "dtype": "torch.float32"
+      },
+      "route_ego.ego.0.bias": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "route_ego.ego.2.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "route_ego.ego.2.bias": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.queries": {
+        "shape": [
+          7,
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.0.self_attn.in_proj_weight": {
+        "shape": [
+          384,
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.0.self_attn.in_proj_bias": {
+        "shape": [
+          384
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.0.self_attn.out_proj.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.0.self_attn.out_proj.bias": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.0.multihead_attn.in_proj_weight": {
+        "shape": [
+          384,
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.0.multihead_attn.in_proj_bias": {
+        "shape": [
+          384
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.0.multihead_attn.out_proj.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.0.multihead_attn.out_proj.bias": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.0.linear1.weight": {
+        "shape": [
+          2048,
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.0.linear1.bias": {
+        "shape": [
+          2048
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.0.linear2.weight": {
+        "shape": [
+          128,
+          2048
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.0.linear2.bias": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.0.norm1.weight": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.0.norm1.bias": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.0.norm2.weight": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.0.norm2.bias": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.0.norm3.weight": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.0.norm3.bias": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.1.self_attn.in_proj_weight": {
+        "shape": [
+          384,
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.1.self_attn.in_proj_bias": {
+        "shape": [
+          384
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.1.self_attn.out_proj.weight": {
+        "shape": [
+          128,
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.1.self_attn.out_proj.bias": {
+        "shape": [
+          128
+        ],
+        "dtype": "torch.float32"
+      },
+      "head.decoder.layers.1.multihead_attn.in_proj_weight": {
+        "shape": [
+          384,
+          128
+        ],
+        "dtype": "torch.float32"
+      }
+    },
+    "optimizer_state": {
+      "state": {
+        "type": "mapping",
+        "items": 61,
+        "keys": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12",
+          "13",
+          "14",
+          "15",
+          "16",
+          "17",
+          "18",
+          "19",
+          "20",
+          "21",
+          "22",
+          "23",
+          "24",
+          "25",
+          "26",
+          "27",
+          "28",
+          "29",
+          "30",
+          "31",
+          "32",
+          "33",
+          "34",
+          "35",
+          "36",
+          "37",
+          "38",
+          "39"
+        ]
+      },
+      "param_groups": [
+        {
+          "type": "mapping",
+          "items": 11,
+          "keys": [
+            "lr",
+            "betas",
+            "eps",
+            "weight_decay",
+            "amsgrad",
+            "foreach",
+            "maximize",
+            "capturable",
+            "differentiable",
+            "fused",
+            "params"
+          ]
+        }
+      ]
+    },
+    "metrics": {
+      "loss_control": 0.017226649601806192,
+      "loss_ranking": 0.8371100019704127,
+      "loss_h_min": 0.873143315709212,
+      "loss_feasible": 0.16556825177978673,
+      "loss_slack": 0.3359342829933675,
+      "loss_correction": 0.010172391846242997,
+      "loss_risk": 0.16611870580163102,
+      "loss_total": 0.7113583790801732,
+      "control_mae": 0.11006253337832297,
+      "ranking_accuracy": 0.7589424572317263,
+      "feasible_accuracy": 0.9657853862175119,
+      "epoch": 18
+    },
+    "manifest_sha256": "c9cef0ebc1f6fc5d6499542e8293ed9166135077c654a73a534b6b7605bd4d7d",
+    "training_config": {
+      "epochs": 20,
+      "batch_size": 8,
+      "learning_rate": 0.0003,
+      "seed": 680,
+      "model": {
+        "type": "mapping",
+        "items": 5,
+        "keys": [
+          "feature_channels",
+          "candidates",
+          "intervals",
+          "ego_dim",
+          "hidden_dim"
+        ]
+      },
+      "loss_weights": {
+        "type": "mapping",
+        "items": 7,
+        "keys": [
+          "control",
+          "ranking",
+          "h_min",
+          "feasible",
+          "slack",
+          "correction",
+          "risk"
+        ]
+      }
+    },
+    "training_config_sha256": "26327452140403a3b3db25b9f482e28e37dddf850ecf232218078c2f9c5785a3",
+    "dataset_version_sha256": "06ced7cdb0c20fadbf400dc1c4966ea895dd5192c9242422fff35f99b222142c",
+    "code_revision": "f59c1e746f4ce68b87edd6ca3c61ff0c7b85a3d7",
+    "seed": 680
+  }
+}
