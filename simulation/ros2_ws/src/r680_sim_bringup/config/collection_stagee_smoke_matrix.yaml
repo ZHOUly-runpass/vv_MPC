@@ -1,0 +1,7 @@
+schema_version: "1.0"
+purpose: stage_e_four_controller_smoke
+scenarios:
+  - static_sparse
+seeds: [67]
+difficulties: [nominal]
+duration_s: 8

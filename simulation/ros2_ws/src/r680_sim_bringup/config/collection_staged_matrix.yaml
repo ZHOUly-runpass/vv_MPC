@@ -1,0 +1,14 @@
+schema_version: "1.0"
+purpose: stage_d_multiseed_formal_collection
+scenarios:
+  - empty
+  - static_sparse
+  - static_dense
+  - narrow_passage
+  - crossing_pedestrian
+  - head_on
+  - multi_dynamic
+  - local_minimum_trap
+seeds: [64, 65, 66]
+difficulties: [easy, nominal, hard]
+duration_s: 30

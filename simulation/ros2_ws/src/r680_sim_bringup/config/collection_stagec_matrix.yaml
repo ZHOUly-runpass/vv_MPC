@@ -1,0 +1,14 @@
+schema_version: "1.0"
+purpose: stage_c_full_24_run_teacher_gate
+scenarios:
+  - empty
+  - static_sparse
+  - static_dense
+  - narrow_passage
+  - crossing_pedestrian
+  - head_on
+  - multi_dynamic
+  - local_minimum_trap
+seeds: [63]
+difficulties: [easy, nominal, hard]
+duration_s: 10
