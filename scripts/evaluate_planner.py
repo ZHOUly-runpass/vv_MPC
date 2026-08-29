@@ -30,10 +30,12 @@ def main() -> int:
     if checkpoint.get("manifest_sha256") != manifest_hash:
         raise ValueError("checkpoint manifest hash does not match evaluation manifest")
     model = PlanningSafetyModel(**checkpoint["model_config"]).to(args.device); model.load_state_dict(checkpoint["model_state"]); model.eval()
+    zero_features = checkpoint.get("training_config", {}).get("ablation") == "no_unilion_features"
     loss_fn = PlanningLoss(); totals = {}; count = 0
     with torch.no_grad():
         for batch in loader:
             batch = {key: (value.to(args.device) if isinstance(value, torch.Tensor) else value) for key, value in batch.items()}
+            if zero_features: batch["features"] = torch.zeros_like(batch["features"])
             prediction = model(batch["features"], batch["route"], batch["ego"], batch["costmap"])
             _, parts = loss_fn(prediction, batch)
             values = {**{f"loss_{key}": float(value.item()) for key, value in parts.items()}, **planning_metrics(prediction, batch)}
@@ -43,6 +45,7 @@ def main() -> int:
               "manifest_sha256": manifest_hash, "training_config_sha256": checkpoint.get("training_config_sha256"),
               "dataset_version_sha256": checkpoint.get("dataset_version_sha256"),
               "code_revision": checkpoint.get("code_revision"),
+              "ablation": checkpoint.get("training_config", {}).get("ablation", "main"),
               "metrics": {key: value / count for key, value in totals.items()}}
     output = resolve(args.output); output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2), encoding="utf-8"); print(json.dumps(report, indent=2)); return 0
