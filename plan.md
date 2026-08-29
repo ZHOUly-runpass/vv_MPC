@@ -18,7 +18,7 @@
 14. `[已完成：阶段C完整24-run门禁]` seed63、8场景×3难度、10秒采集24/24成功，得到187个有效样本且每组6–10个；1309条teacher候选为1274 success、35 infeasible、0 numeric failure、0 timeout，P95 8.61 ms、最大16.10 ms，批准进入多种子采集。
 15. `[已完成：阶段D多种子正式采集与标签]` 已完成8场景×3难度×seed64/65/66共72/72个30秒bag，抽取1929个有效样本并生成同数量UniLION特征；13503条teacher候选为13202 success、215 infeasible、78 numeric failure（0.58%）、8 timeout（0.06%），通过5%/1%门禁。
 16. `[部分完成：阶段E四基线]` DWB、MPPI、Vanilla D-CBF、Proposed四入口短闭环均通过topic、TF、非零控制、实际位移和无碰撞审计；但Proposed当前仍明确上报`learned_checkpoint_active=false`，只是预测裕量安全回退，正式Proposed公平评测保持blocked。
-17. `[进行中：阶段F正式训练与评测]` 已冻结`r680_staged_v1`数据集，seed64/65/66严格对应train/val/test，各643样本；候选轨迹头和安全评估头完成20 epoch联合主训练，最佳epoch18，独立test排序准确率71.85%、可行性准确率98.76%、控制MAE 0.1193。checkpoint v2已保存模型、优化器、训练配置哈希、manifest哈希、数据版本哈希和Git提交号；五组消融实验尚待执行。
+17. `[进行中：阶段F正式训练与评测]` 已冻结`r680_staged_v1`数据集，seed64/65/66严格对应train/val/test，各643样本；候选轨迹头和安全评估头完成20 epoch联合主训练，最佳epoch18，独立test排序准确率71.85%、可行性准确率98.76%、控制MAE 0.1193。checkpoint v2已保存模型、优化器、训练配置哈希、manifest哈希、数据版本哈希和Git提交号；“无UniLION特征”消融已完成，剩余四组消融待执行。
 
 更新日期：2026-08-25  
 本地目录：`D:\E2Eproject_MPC\05`  
