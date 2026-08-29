@@ -49,12 +49,21 @@ cleanup() {
 }
 trap cleanup EXIT
 
+required_topics=(
+  /points /odom /simulation/reference_route /local_costmap/costmap_raw
+  /simulation/difficulty_status /simulation/ground_truth_obstacles /simulation/controller_status
+  /planning/candidates /planning/obstacle_predictions /planning/mpc_request /planning/mpc_result
+)
 for _ in $(seq 1 60); do
   topics="$(ros2 topic list 2>/dev/null || true)"
-  if grep -qx /points <<<"$topics" && grep -qx /planning/candidates <<<"$topics" && grep -qx /simulation/controller_status <<<"$topics"; then break; fi
+  topics_ready=1
+  for required in "${required_topics[@]}"; do
+    if ! grep -qx "$required" <<<"$topics"; then topics_ready=0; break; fi
+  done
+  if [[ "$topics_ready" -eq 1 ]]; then break; fi
   sleep 1
 done
-for required in /points /odom /simulation/reference_route /local_costmap/costmap_raw /simulation/difficulty_status /simulation/ground_truth_obstacles /simulation/controller_status /planning/candidates /planning/obstacle_predictions /planning/mpc_request /planning/mpc_result; do
+for required in "${required_topics[@]}"; do
   if ! ros2 topic list | grep -qx "$required"; then echo "required topic missing: $required" >&2; exit 4; fi
 done
 preflight="$project_dir/.tools/preflight_${scenario}_${difficulty}_${seed}_${controller}.json"
