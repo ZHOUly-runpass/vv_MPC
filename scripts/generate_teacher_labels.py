@@ -13,7 +13,7 @@ from r680_safety_planner.data import (
     save_training_sample, write_manifest,
 )
 from r680_safety_planner.data.pseudo_labels import classify_solver_result
-from r680_safety_planner.dcbf import CasadiDcbfSolver
+from r680_safety_planner.dcbf import CasadiDcbfSolver, ReferenceDcbfSolver
 from r680_safety_planner.interfaces import CandidateTrajectory, MpcRequest, MpcResult, PredictedObstacle
 from r680_safety_planner.planning import RESAMPLING_RULE, resample_candidate_batch, resample_obstacle_batch
 
@@ -86,10 +86,16 @@ def main() -> int:
         type=int,
         help="Keep at most K risk-ranked obstacles before MPC solving.",
     )
+    parser.add_argument(
+        "--disable-dcbf",
+        action="store_true",
+        help="Run unconstrained MPC and compute safety labels only by post-hoc validation.",
+    )
     args = parser.parse_args()
     if args.max_obstacles is not None and args.max_obstacles <= 0:
         parser.error("--max-obstacles must be positive")
-    enabled_ablation_count = int(args.zero_obstacle_covariance) + int(args.candidate_count != 7) + int(args.max_obstacles is not None)
+    enabled_ablation_count = (int(args.zero_obstacle_covariance) + int(args.candidate_count != 7)
+                              + int(args.max_obstacles is not None) + int(args.disable_dcbf))
     if enabled_ablation_count > 1:
         parser.error("teacher ablations must be generated independently")
     root = Path(__file__).resolve().parents[1]
@@ -130,6 +136,13 @@ def main() -> int:
             continuous_alpha=float(vehicle.mpc.get("continuous_alpha", 1.0)),
             maximum_slack=float(vehicle.mpc.get("maximum_slack", 1.0)), hard_deadline_ms=args.deadline_ms,
             max_iterations=int(vehicle.mpc.get("max_iterations", 100)))
+        safety_validator = ReferenceDcbfSolver(
+            vehicle.ego_radius_m, fixed_margin_m=float(vehicle.mpc.get("fixed_margin_m", 0.1)),
+            sigma_multiplier=float(vehicle.mpc.get("sigma_multiplier", 3.0)),
+            continuous_alpha=float(vehicle.mpc.get("continuous_alpha", 1.0)),
+            maximum_slack=float(vehicle.mpc.get("maximum_slack", 1.0)),
+        )
+        solve_obstacles = () if args.disable_dcbf else obstacles
         candidates = [CandidateTrajectory(
             sample.candidate_states[index].astype(np.float64),
             sample.candidate_controls[index].astype(np.float64),
@@ -140,7 +153,7 @@ def main() -> int:
         stop_candidate = candidates[stop_index]
         if candidates:
             try:
-                solver.solve(MpcRequest(sample.ego_state.astype(np.float64), stop_candidate, obstacles),
+                solver.solve(MpcRequest(sample.ego_state.astype(np.float64), stop_candidate, solve_obstacles),
                              initial_guess=stop_candidate)
             except RuntimeError:
                 pass
@@ -148,10 +161,10 @@ def main() -> int:
         for candidate in candidates:
             started = perf_counter()
             try:
-                result = solver.solve(MpcRequest(sample.ego_state.astype(np.float64), candidate, obstacles))
+                result = solver.solve(MpcRequest(sample.ego_state.astype(np.float64), candidate, solve_obstacles))
                 attempts = [dict(solver.last_diagnostics)]
                 if "maximum_iterations" in result.status.lower():
-                    retried = solver.solve(MpcRequest(sample.ego_state.astype(np.float64), candidate, obstacles),
+                    retried = solver.solve(MpcRequest(sample.ego_state.astype(np.float64), candidate, solve_obstacles),
                                            initial_guess=stop_candidate)
                     attempts.append(dict(solver.last_diagnostics)); total_ms = result.solve_time_ms+retried.solve_time_ms
                     if retried.feasible and total_ms <= args.deadline_ms:
@@ -164,6 +177,22 @@ def main() -> int:
             except Exception as error:
                 result = numeric_failure(candidate, (perf_counter() - started) * 1000.0, error)
                 attempts = [{"return_status": result.status, "exception": type(error).__name__}]
+            if args.disable_dcbf and result.feasible:
+                solved_candidate = CandidateTrajectory(
+                    result.states, result.controls, candidate.timestamps_s, role=candidate.role,
+                )
+                safety = safety_validator.solve(MpcRequest(
+                    sample.ego_state.astype(np.float64), solved_candidate, obstacles,
+                ))
+                result = replace(
+                    result,
+                    feasible=bool(result.feasible and safety.feasible),
+                    h_min=safety.h_min,
+                    slack_max=safety.slack_max,
+                    solve_time_ms=result.solve_time_ms + safety.solve_time_ms,
+                    status=("unconstrained_mpc_posthoc_safe" if safety.feasible
+                            else "unconstrained_mpc_posthoc_infeasible"),
+                )
             results.append(result)
             outcomes.append(classify_solver_result(result, args.deadline_ms))
             diagnostics.append({"candidate_index": len(results)-1, "safe_stop_candidate_index": stop_index,
@@ -181,6 +210,8 @@ def main() -> int:
             teacher_ablation = f"candidate_count_{args.candidate_count}"
         elif args.max_obstacles is not None:
             teacher_ablation = f"max_obstacles_{args.max_obstacles}"
+        elif args.disable_dcbf:
+            teacher_ablation = "no_dcbf"
         else:
             teacher_ablation = "none"
         labeled = replace(
@@ -201,6 +232,9 @@ def main() -> int:
                       "teacher_max_obstacles": args.max_obstacles,
                       "teacher_original_obstacle_count": original_obstacle_count,
                       "teacher_screened_obstacle_count": int(sample.obstacle_states.shape[0]),
+                      "teacher_dcbf_enabled": not args.disable_dcbf,
+                      "teacher_safety_label_mode": ("posthoc_reference_validator" if args.disable_dcbf
+                                                    else "constrained_optimizer"),
                       "legacy_resampling_rule": RESAMPLING_RULE,
                       "teacher_candidate_anchor": "ego_state_rerollout",
                       "teacher_solver_statuses": [result.status for result in results],
