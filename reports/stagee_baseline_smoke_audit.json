@@ -1,0 +1,127 @@
+{
+  "formal_proposed_status": "blocked",
+  "interface_smoke_status": "passed",
+  "results": [
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_nominal_seed67_dwb_20260829T044845Z",
+      "controller": "dwb",
+      "controller_identities": [
+        "dwb"
+      ],
+      "final_benchmark": {
+        "baseline": "dwb",
+        "collision": false,
+        "command_count": 256,
+        "command_smoothness": 0.2813725097518233,
+        "elapsed_s": 14.100000000000001,
+        "goal_distance_m": 8.038532719992348,
+        "min_clearance_m": 1.3697977971657458,
+        "path_length_m": 4.220870332489323,
+        "reached_goal": false,
+        "scenario": "static_sparse"
+      },
+      "learned_checkpoint_active_values": [],
+      "nonzero_command_count": 139,
+      "odom_displacement_m": 2.011132411367699,
+      "status": "passed",
+      "topic_counts": {
+        "/cmd_vel": 139,
+        "/odom": 235,
+        "/simulation/benchmark_status": 378,
+        "/simulation/controller_status": 15
+      }
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_nominal_seed67_mppi_20260829T044905Z",
+      "controller": "mppi",
+      "controller_identities": [
+        "mppi"
+      ],
+      "final_benchmark": {
+        "baseline": "mppi",
+        "collision": false,
+        "command_count": 265,
+        "command_smoothness": 0.1087864219505571,
+        "elapsed_s": 14.200000000000001,
+        "goal_distance_m": 7.4608347150457295,
+        "min_clearance_m": 1.0128416355167058,
+        "path_length_m": 4.77302339551349,
+        "reached_goal": false,
+        "scenario": "static_sparse"
+      },
+      "learned_checkpoint_active_values": [],
+      "nonzero_command_count": 110,
+      "odom_displacement_m": 1.8775662745664528,
+      "status": "passed",
+      "topic_counts": {
+        "/cmd_vel": 110,
+        "/odom": 244,
+        "/simulation/benchmark_status": 245,
+        "/simulation/controller_status": 10
+      }
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_nominal_seed67_vanilla_dcbf_20260829T044924Z",
+      "controller": "vanilla_dcbf",
+      "controller_identities": [
+        "vanilla_dcbf"
+      ],
+      "final_benchmark": {
+        "baseline": "vanilla_dcbf",
+        "collision": false,
+        "command_count": 140,
+        "command_smoothness": 0.20420713327050194,
+        "elapsed_s": 14.0,
+        "goal_distance_m": 9.212671042697119,
+        "min_clearance_m": 1.7724133847453885,
+        "path_length_m": 2.787683551901802,
+        "reached_goal": false,
+        "scenario": "static_sparse"
+      },
+      "learned_checkpoint_active_values": [
+        false
+      ],
+      "nonzero_command_count": 50,
+      "odom_displacement_m": 1.0895599588619287,
+      "status": "passed",
+      "topic_counts": {
+        "/cmd_vel": 50,
+        "/odom": 247,
+        "/simulation/benchmark_status": 243,
+        "/simulation/controller_status": 49
+      }
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_nominal_seed67_proposed_20260829T044944Z",
+      "controller": "proposed",
+      "controller_identities": [
+        "proposed"
+      ],
+      "final_benchmark": {
+        "baseline": "proposed",
+        "collision": false,
+        "command_count": 151,
+        "command_smoothness": 0.15059574659164712,
+        "elapsed_s": 15.100000000000001,
+        "goal_distance_m": 10.440517580331035,
+        "min_clearance_m": 2.912588835001075,
+        "path_length_m": 1.5595154376656384,
+        "reached_goal": false,
+        "scenario": "static_sparse"
+      },
+      "learned_checkpoint_active_values": [
+        false
+      ],
+      "nonzero_command_count": 60,
+      "odom_displacement_m": 0.3717848131073706,
+      "status": "passed",
+      "topic_counts": {
+        "/cmd_vel": 60,
+        "/odom": 294,
+        "/simulation/benchmark_status": 290,
+        "/simulation/controller_status": 59
+      }
+    }
+  ],
+  "schema_version": "1.0"
+}

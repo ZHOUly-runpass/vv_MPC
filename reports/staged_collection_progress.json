@@ -1,0 +1,169 @@
+{
+  "attempts": 13,
+  "bag_evidence": [
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_easy_seed64_dwb_20260829T045238Z",
+      "database_bytes": 53374976,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "empty",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_easy_seed65_dwb_20260829T045319Z",
+      "database_bytes": 52961280,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "empty",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_easy_seed66_dwb_20260829T045401Z",
+      "database_bytes": 57380864,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "empty",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_hard_seed64_dwb_20260829T045826Z",
+      "database_bytes": 54755328,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "empty",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_hard_seed65_dwb_20260829T045908Z",
+      "database_bytes": 53727232,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "empty",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_hard_seed66_dwb_20260829T045949Z",
+      "database_bytes": 57458688,
+      "difficulty": "hard",
+      "metadata_present": true,
+      "scenario": "empty",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_nominal_seed64_dwb_20260829T045441Z",
+      "database_bytes": 53866496,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "empty",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_nominal_seed65_dwb_20260829T045523Z",
+      "database_bytes": 58351616,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "empty",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/empty_nominal_seed66_dwb_20260829T045604Z",
+      "database_bytes": 57831424,
+      "difficulty": "nominal",
+      "metadata_present": true,
+      "scenario": "empty",
+      "seed": 66
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_easy_seed64_dwb_20260829T050030Z",
+      "database_bytes": 61280256,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "static_sparse",
+      "seed": 64
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_easy_seed65_dwb_20260829T050111Z",
+      "database_bytes": 61046784,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "static_sparse",
+      "seed": 65
+    },
+    {
+      "bag": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/rosbags/static_sparse_easy_seed66_dwb_20260829T050152Z",
+      "database_bytes": 58335232,
+      "difficulty": "easy",
+      "metadata_present": true,
+      "scenario": "static_sparse",
+      "seed": 66
+    }
+  ],
+  "completed_tuples": [
+    [
+      "empty",
+      "easy",
+      64
+    ],
+    [
+      "empty",
+      "easy",
+      65
+    ],
+    [
+      "empty",
+      "easy",
+      66
+    ],
+    [
+      "empty",
+      "hard",
+      64
+    ],
+    [
+      "empty",
+      "hard",
+      65
+    ],
+    [
+      "empty",
+      "hard",
+      66
+    ],
+    [
+      "empty",
+      "nominal",
+      64
+    ],
+    [
+      "empty",
+      "nominal",
+      65
+    ],
+    [
+      "empty",
+      "nominal",
+      66
+    ],
+    [
+      "static_sparse",
+      "easy",
+      64
+    ],
+    [
+      "static_sparse",
+      "easy",
+      65
+    ],
+    [
+      "static_sparse",
+      "easy",
+      66
+    ]
+  ],
+  "expected_runs": 72,
+  "invalid_latest_runs": [],
+  "remaining_runs": 60,
+  "schema_version": "1.0",
+  "status": "in_progress",
+  "successful_latest_runs": 12
+}

@@ -1,0 +1,327 @@
+{
+  "checkpoint_sha256_counts": {
+    "9ba65cfead901ea08db3664108838d4c85bd6621592cc08cca0dfe61af4eb262": 187
+  },
+  "errors": [],
+  "manifest": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/stagec_seed63/labeled/manifest.jsonl",
+  "samples": 187,
+  "samples_by_group": {
+    "crossing_pedestrian/easy": 9,
+    "crossing_pedestrian/hard": 6,
+    "crossing_pedestrian/nominal": 9,
+    "empty/easy": 8,
+    "empty/hard": 9,
+    "empty/nominal": 7,
+    "head_on/easy": 9,
+    "head_on/hard": 8,
+    "head_on/nominal": 6,
+    "local_minimum_trap/easy": 7,
+    "local_minimum_trap/hard": 7,
+    "local_minimum_trap/nominal": 9,
+    "multi_dynamic/easy": 7,
+    "multi_dynamic/hard": 7,
+    "multi_dynamic/nominal": 9,
+    "narrow_passage/easy": 10,
+    "narrow_passage/hard": 9,
+    "narrow_passage/nominal": 7,
+    "static_dense/easy": 7,
+    "static_dense/hard": 9,
+    "static_dense/nominal": 7,
+    "static_sparse/easy": 7,
+    "static_sparse/hard": 7,
+    "static_sparse/nominal": 7
+  },
+  "schema_version": "1.0",
+  "shape_groups": {
+    "((6,), (384, 32, 32), (32, 4), (3, 60, 60), (7, 21, 5))": 187
+  },
+  "status": "passed",
+  "teacher_outcomes": {
+    "infeasible": 35,
+    "success": 1274
+  },
+  "teacher_outcomes_by_group": {
+    "crossing_pedestrian/easy": {
+      "success": 63
+    },
+    "crossing_pedestrian/hard": {
+      "success": 42
+    },
+    "crossing_pedestrian/nominal": {
+      "success": 63
+    },
+    "empty/easy": {
+      "success": 56
+    },
+    "empty/hard": {
+      "success": 63
+    },
+    "empty/nominal": {
+      "success": 49
+    },
+    "head_on/easy": {
+      "infeasible": 7,
+      "success": 56
+    },
+    "head_on/hard": {
+      "success": 56
+    },
+    "head_on/nominal": {
+      "success": 42
+    },
+    "local_minimum_trap/easy": {
+      "success": 49
+    },
+    "local_minimum_trap/hard": {
+      "success": 49
+    },
+    "local_minimum_trap/nominal": {
+      "success": 63
+    },
+    "multi_dynamic/easy": {
+      "infeasible": 7,
+      "success": 42
+    },
+    "multi_dynamic/hard": {
+      "success": 49
+    },
+    "multi_dynamic/nominal": {
+      "infeasible": 7,
+      "success": 56
+    },
+    "narrow_passage/easy": {
+      "infeasible": 14,
+      "success": 56
+    },
+    "narrow_passage/hard": {
+      "success": 63
+    },
+    "narrow_passage/nominal": {
+      "success": 49
+    },
+    "static_dense/easy": {
+      "success": 49
+    },
+    "static_dense/hard": {
+      "success": 63
+    },
+    "static_dense/nominal": {
+      "success": 49
+    },
+    "static_sparse/easy": {
+      "success": 49
+    },
+    "static_sparse/hard": {
+      "success": 49
+    },
+    "static_sparse/nominal": {
+      "success": 49
+    }
+  },
+  "teacher_solve_time_ms": {
+    "maximum": 16.1028995513916,
+    "p50": 3.0519425868988037,
+    "p95": 8.613709259033195
+  },
+  "teacher_solve_time_ms_by_group": {
+    "crossing_pedestrian/easy": {
+      "maximum": 4.179789066314697,
+      "p50": 2.947629928588867,
+      "p95": 4.000652503967285
+    },
+    "crossing_pedestrian/hard": {
+      "maximum": 4.18438720703125,
+      "p50": 2.879249095916748,
+      "p95": 3.9770657300949095
+    },
+    "crossing_pedestrian/nominal": {
+      "maximum": 4.209951877593994,
+      "p50": 2.792145013809204,
+      "p95": 4.010185933113098
+    },
+    "empty/easy": {
+      "maximum": 4.2624287605285645,
+      "p50": 2.6785510778427124,
+      "p95": 3.3058668971061707
+    },
+    "empty/hard": {
+      "maximum": 4.318238735198975,
+      "p50": 2.723182201385498,
+      "p95": 3.434614586830139
+    },
+    "empty/nominal": {
+      "maximum": 3.131014347076416,
+      "p50": 2.6553683280944824,
+      "p95": 3.101308727264404
+    },
+    "head_on/easy": {
+      "maximum": 11.5226469039917,
+      "p50": 3.1979846954345703,
+      "p95": 8.930569171905518
+    },
+    "head_on/hard": {
+      "maximum": 4.376788139343262,
+      "p50": 2.9576239585876465,
+      "p95": 4.170133948326111
+    },
+    "head_on/nominal": {
+      "maximum": 4.391022205352783,
+      "p50": 2.7500239610671997,
+      "p95": 4.273729705810546
+    },
+    "local_minimum_trap/easy": {
+      "maximum": 3.6813817024230957,
+      "p50": 2.6525464057922363,
+      "p95": 3.110332441329956
+    },
+    "local_minimum_trap/hard": {
+      "maximum": 3.9224038124084473,
+      "p50": 2.655850648880005,
+      "p95": 3.3224982738494857
+    },
+    "local_minimum_trap/nominal": {
+      "maximum": 4.097564220428467,
+      "p50": 2.6548006534576416,
+      "p95": 3.2156023025512694
+    },
+    "multi_dynamic/easy": {
+      "maximum": 10.423486709594727,
+      "p50": 3.060823678970337,
+      "p95": 9.119782257080077
+    },
+    "multi_dynamic/hard": {
+      "maximum": 6.459807872772217,
+      "p50": 4.085448265075684,
+      "p95": 6.130006980895995
+    },
+    "multi_dynamic/nominal": {
+      "maximum": 16.1028995513916,
+      "p50": 3.2903006076812744,
+      "p95": 14.252581977844239
+    },
+    "narrow_passage/easy": {
+      "maximum": 12.710748672485352,
+      "p50": 3.0876669883728027,
+      "p95": 10.544093990325928
+    },
+    "narrow_passage/hard": {
+      "maximum": 4.320127010345459,
+      "p50": 2.6490120887756348,
+      "p95": 4.308788919448853
+    },
+    "narrow_passage/nominal": {
+      "maximum": 4.29422664642334,
+      "p50": 2.6876516342163086,
+      "p95": 4.270012283325196
+    },
+    "static_dense/easy": {
+      "maximum": 10.059700012207031,
+      "p50": 7.005311965942383,
+      "p95": 8.398994064331054
+    },
+    "static_dense/hard": {
+      "maximum": 10.854769706726074,
+      "p50": 8.78779125213623,
+      "p95": 10.457893562316894
+    },
+    "static_dense/nominal": {
+      "maximum": 9.165902137756348,
+      "p50": 7.595981121063232,
+      "p95": 8.294881248474121
+    },
+    "static_sparse/easy": {
+      "maximum": 4.508633136749268,
+      "p50": 2.7834811210632324,
+      "p95": 4.403825855255127
+    },
+    "static_sparse/hard": {
+      "maximum": 7.934937953948975,
+      "p50": 6.205836772918701,
+      "p95": 7.680263805389404
+    },
+    "static_sparse/nominal": {
+      "maximum": 6.074544906616211,
+      "p50": 2.8669722080230713,
+      "p95": 5.796899795532227
+    }
+  },
+  "teacher_statuses_by_group": {
+    "crossing_pedestrian/easy": {
+      "Solve_Succeeded": 63
+    },
+    "crossing_pedestrian/hard": {
+      "Solve_Succeeded": 42
+    },
+    "crossing_pedestrian/nominal": {
+      "Solve_Succeeded": 63
+    },
+    "empty/easy": {
+      "Solve_Succeeded": 56
+    },
+    "empty/hard": {
+      "Solve_Succeeded": 63
+    },
+    "empty/nominal": {
+      "Solve_Succeeded": 49
+    },
+    "head_on/easy": {
+      "Infeasible_Problem_Detected": 7,
+      "Solve_Succeeded": 56
+    },
+    "head_on/hard": {
+      "Solve_Succeeded": 56
+    },
+    "head_on/nominal": {
+      "Solve_Succeeded": 42
+    },
+    "local_minimum_trap/easy": {
+      "Solve_Succeeded": 49
+    },
+    "local_minimum_trap/hard": {
+      "Solve_Succeeded": 49
+    },
+    "local_minimum_trap/nominal": {
+      "Solve_Succeeded": 63
+    },
+    "multi_dynamic/easy": {
+      "Infeasible_Problem_Detected": 7,
+      "Solve_Succeeded": 42
+    },
+    "multi_dynamic/hard": {
+      "Solve_Succeeded": 49
+    },
+    "multi_dynamic/nominal": {
+      "Infeasible_Problem_Detected": 7,
+      "Solve_Succeeded": 56
+    },
+    "narrow_passage/easy": {
+      "Infeasible_Problem_Detected": 14,
+      "Solve_Succeeded": 56
+    },
+    "narrow_passage/hard": {
+      "Solve_Succeeded": 63
+    },
+    "narrow_passage/nominal": {
+      "Solve_Succeeded": 49
+    },
+    "static_dense/easy": {
+      "Solve_Succeeded": 49
+    },
+    "static_dense/hard": {
+      "Solve_Succeeded": 63
+    },
+    "static_dense/nominal": {
+      "Solve_Succeeded": 49
+    },
+    "static_sparse/easy": {
+      "Solve_Succeeded": 49
+    },
+    "static_sparse/hard": {
+      "Solve_Succeeded": 49
+    },
+    "static_sparse/nominal": {
+      "Solve_Succeeded": 49
+    }
+  },
+  "valid_samples": 187
+}
