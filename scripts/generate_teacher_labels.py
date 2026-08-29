@@ -45,7 +45,16 @@ def main() -> int:
         action="store_true",
         help="Zero obstacle covariance before MPC solving and persist a versioned teacher ablation.",
     )
+    parser.add_argument(
+        "--candidate-count",
+        type=int,
+        choices=(3, 5, 7),
+        default=7,
+        help="Use the ordered first K candidate roles; 7 is the full candidate set.",
+    )
     args = parser.parse_args()
+    if args.zero_obstacle_covariance and args.candidate_count != 7:
+        parser.error("teacher ablations must be generated independently")
     root = Path(__file__).resolve().parents[1]
     manifest = args.manifest if args.manifest.is_absolute() else root / args.manifest
     source_root = manifest.parent
@@ -58,6 +67,10 @@ def main() -> int:
         source_timestamps = sample.candidate_timestamps_s.copy()
         candidate_states, candidate_controls, target_timestamps = resample_candidate_batch(
             sample.candidate_states, sample.candidate_controls, source_timestamps, vehicle.dt_s, model)
+        if candidate_states.shape[0] < args.candidate_count:
+            raise ValueError(f"sample has {candidate_states.shape[0]} candidates, expected {args.candidate_count}")
+        candidate_states = candidate_states[:args.candidate_count]
+        candidate_controls = candidate_controls[:args.candidate_count]
         candidate_states = np.stack([model.rollout(sample.ego_state.astype(np.float64), controls.astype(np.float64), vehicle.dt_s)
                                      for controls in candidate_controls]).astype(np.float32)
         source_obstacle_covariance = (
@@ -123,7 +136,12 @@ def main() -> int:
             ))
         else:
             selected = min(range(len(results)), key=lambda index: (results[index].slack_max, -results[index].h_min))
-        teacher_ablation = "zero_obstacle_covariance" if args.zero_obstacle_covariance else "none"
+        if args.zero_obstacle_covariance:
+            teacher_ablation = "zero_obstacle_covariance"
+        elif args.candidate_count != 7:
+            teacher_ablation = f"candidate_count_{args.candidate_count}"
+        else:
+            teacher_ablation = "none"
         labeled = replace(
             sample,
             teacher_outcome_codes=np.asarray([TEACHER_OUTCOME_TO_CODE[name] for name in outcomes], dtype=np.int8),
@@ -138,6 +156,7 @@ def main() -> int:
                       "teacher_vehicle_profile": vehicle.source.name, "teacher_vehicle_config_sha256": vehicle.sha256,
                       "teacher_profile_kind": vehicle.profile_kind, "teacher_dt_s": vehicle.dt_s,
                       "teacher_ablation": teacher_ablation,
+                      "teacher_candidate_count": args.candidate_count,
                       "legacy_resampling_rule": RESAMPLING_RULE,
                       "teacher_candidate_anchor": "ego_state_rerollout",
                       "teacher_solver_statuses": [result.status for result in results],
