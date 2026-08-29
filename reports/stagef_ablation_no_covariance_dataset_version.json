@@ -1,0 +1,29 @@
+{
+  "checkpoint_sha256_values": [
+    "9ba65cfead901ea08db3664108838d4c85bd6621592cc08cca0dfe61af4eb262"
+  ],
+  "dataset_version": "r680_staged_v1_no_covariance",
+  "format_version": 1,
+  "frozen_manifest_sha256": "81a31081475ca9d010856d5dc2b442dde38b2fde94f055fe918b7e07a90e8d8c",
+  "git_revision": "7994f199715cdf92f97eb402841ff7d0c49bbc02",
+  "run_group_count": 72,
+  "samples": 1929,
+  "source_manifest_sha256": "3c5bfa4c460a198859b912754ddc32a144c34f24a27306a1414e9072a633beed",
+  "split_config": {
+    "test_seeds": [
+      66
+    ],
+    "train_seeds": [
+      64
+    ],
+    "val_seeds": [
+      65
+    ]
+  },
+  "split_config_sha256": "8861f1ccaed302c166416e7f72eab79d18c60801e59ea4d5a5aa89df71b4ad4a",
+  "split_counts": {
+    "test": 643,
+    "train": 643,
+    "val": 643
+  }
+}

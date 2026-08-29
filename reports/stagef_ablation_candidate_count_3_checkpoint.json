@@ -1,0 +1,1698 @@
+{
+  "content": {
+    "code_revision": "5ee1fee66a7b64095922c15b78636be97f51f917",
+    "dataset_version_sha256": "1aee048657125a3f0af44adc7b1fca57b5a1de54cbf0f12d95baa1920773fda7",
+    "epoch": 18,
+    "format_version": 2,
+    "manifest_sha256": "8ac646f7855fe03f7f70f29a0164823d875c7c9f3f54a035fee17c881c964391",
+    "metrics": {
+      "control_mae": 0.11806344017270565,
+      "epoch": 18,
+      "feasible_accuracy": 0.9657853810264385,
+      "loss_control": 0.017590779499737415,
+      "loss_correction": 0.008959359875380483,
+      "loss_feasible": 0.16120752629651622,
+      "loss_h_min": 1.0059906465115829,
+      "loss_ranking": 0.45981713430449067,
+      "loss_risk": 0.16155995544289495,
+      "loss_slack": 0.33590001637830047,
+      "loss_total": 0.5477369148371101,
+      "ranking_accuracy": 0.8180404354587869
+    },
+    "model_config": {
+      "candidates": 3,
+      "ego_dim": 5,
+      "feature_channels": 384,
+      "hidden_dim": 128,
+      "intervals": 20
+    },
+    "model_state": {
+      "costmap.0.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          64
+        ]
+      },
+      "costmap.0.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          64,
+          3,
+          3,
+          3
+        ]
+      },
+      "costmap.2.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "costmap.2.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128,
+          64,
+          3,
+          3
+        ]
+      },
+      "feature.projection.0.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "feature.projection.0.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128,
+          384,
+          1,
+          1
+        ]
+      },
+      "feature.projection.1.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "feature.projection.1.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "head.control_head.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          40
+        ]
+      },
+      "head.control_head.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          40,
+          128
+        ]
+      },
+      "head.decoder.layers.0.linear1.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          2048
+        ]
+      },
+      "head.decoder.layers.0.linear1.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          2048,
+          128
+        ]
+      },
+      "head.decoder.layers.0.linear2.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "head.decoder.layers.0.linear2.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128,
+          2048
+        ]
+      },
+      "head.decoder.layers.0.multihead_attn.in_proj_bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          384
+        ]
+      },
+      "head.decoder.layers.0.multihead_attn.in_proj_weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          384,
+          128
+        ]
+      },
+      "head.decoder.layers.0.multihead_attn.out_proj.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "head.decoder.layers.0.multihead_attn.out_proj.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128,
+          128
+        ]
+      },
+      "head.decoder.layers.0.norm1.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "head.decoder.layers.0.norm1.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "head.decoder.layers.0.norm2.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "head.decoder.layers.0.norm2.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "head.decoder.layers.0.norm3.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "head.decoder.layers.0.norm3.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "head.decoder.layers.0.self_attn.in_proj_bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          384
+        ]
+      },
+      "head.decoder.layers.0.self_attn.in_proj_weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          384,
+          128
+        ]
+      },
+      "head.decoder.layers.0.self_attn.out_proj.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "head.decoder.layers.0.self_attn.out_proj.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128,
+          128
+        ]
+      },
+      "head.decoder.layers.1.linear1.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          2048
+        ]
+      },
+      "head.decoder.layers.1.linear1.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          2048,
+          128
+        ]
+      },
+      "head.decoder.layers.1.linear2.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "head.decoder.layers.1.linear2.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128,
+          2048
+        ]
+      },
+      "head.decoder.layers.1.multihead_attn.in_proj_bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          384
+        ]
+      },
+      "head.decoder.layers.1.multihead_attn.in_proj_weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          384,
+          128
+        ]
+      },
+      "head.decoder.layers.1.multihead_attn.out_proj.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "head.decoder.layers.1.multihead_attn.out_proj.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128,
+          128
+        ]
+      },
+      "head.decoder.layers.1.norm1.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "head.decoder.layers.1.norm1.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "head.decoder.layers.1.norm2.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "head.decoder.layers.1.norm2.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "head.decoder.layers.1.norm3.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "head.decoder.layers.1.norm3.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "head.decoder.layers.1.self_attn.in_proj_bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          384
+        ]
+      },
+      "head.decoder.layers.1.self_attn.in_proj_weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          384,
+          128
+        ]
+      },
+      "head.decoder.layers.1.self_attn.out_proj.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "head.decoder.layers.1.self_attn.out_proj.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128,
+          128
+        ]
+      },
+      "head.logit_head.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          1
+        ]
+      },
+      "head.logit_head.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          1,
+          128
+        ]
+      },
+      "head.queries": {
+        "dtype": "torch.float32",
+        "shape": [
+          3,
+          128
+        ]
+      },
+      "route_ego.ego.0.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "route_ego.ego.0.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128,
+          5
+        ]
+      },
+      "route_ego.ego.2.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "route_ego.ego.2.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128,
+          128
+        ]
+      },
+      "route_ego.route.0.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "route_ego.route.0.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128,
+          4
+        ]
+      },
+      "route_ego.route.2.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "route_ego.route.2.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128,
+          128
+        ]
+      },
+      "safety.output.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          5
+        ]
+      },
+      "safety.output.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          5,
+          128
+        ]
+      },
+      "safety.shared.0.bias": {
+        "dtype": "torch.float32",
+        "shape": [
+          128
+        ]
+      },
+      "safety.shared.0.weight": {
+        "dtype": "torch.float32",
+        "shape": [
+          128,
+          128
+        ]
+      }
+    },
+    "optimizer_state": {
+      "param_groups": [
+        {
+          "amsgrad": false,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "capturable": false,
+          "differentiable": false,
+          "eps": 1e-08,
+          "foreach": null,
+          "fused": null,
+          "lr": 0.0003,
+          "maximize": false,
+          "params": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60
+          ],
+          "weight_decay": 0.01
+        }
+      ],
+      "state": {
+        "0": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              384,
+              1,
+              1
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              384,
+              1,
+              1
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "1": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "10": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "11": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "12": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              5
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              5
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "13": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "14": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "15": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "16": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              3,
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              3,
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "17": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              384,
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              384,
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "18": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              384
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              384
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "19": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "2": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "20": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "21": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              384,
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              384,
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "22": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              384
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              384
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "23": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "24": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "25": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              2048,
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              2048,
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "26": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              2048
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              2048
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "27": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              2048
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              2048
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "28": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "29": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "3": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "30": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "31": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "32": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "33": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "34": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "35": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              384,
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              384,
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "36": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              384
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              384
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "37": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "38": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "39": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              384,
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              384,
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "4": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              64,
+              3,
+              3,
+              3
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              64,
+              3,
+              3,
+              3
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "40": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              384
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              384
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "41": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "42": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "43": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              2048,
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              2048,
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "44": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              2048
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              2048
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "45": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              2048
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              2048
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "46": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "47": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "48": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "49": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "5": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              64
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              64
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "50": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "51": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "52": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "53": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              40,
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              40,
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "54": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              40
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              40
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "55": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              1,
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              1,
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "56": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              1
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              1
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "57": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "58": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "59": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              5,
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              5,
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "6": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              64,
+              3,
+              3
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              64,
+              3,
+              3
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "60": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              5
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              5
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "7": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "8": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              4
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128,
+              4
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        },
+        "9": {
+          "exp_avg": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "exp_avg_sq": {
+            "dtype": "torch.float32",
+            "shape": [
+              128
+            ]
+          },
+          "step": {
+            "dtype": "torch.float32",
+            "shape": []
+          }
+        }
+      }
+    },
+    "seed": 680,
+    "training_config": {
+      "ablation": "candidate_count_3",
+      "batch_size": 8,
+      "epochs": 20,
+      "learning_rate": 0.0003,
+      "loss_weights": {
+        "control": 1.0,
+        "correction": 0.1,
+        "feasible": 0.2,
+        "h_min": 0.2,
+        "ranking": 0.5,
+        "risk": 0.2,
+        "slack": 0.1
+      },
+      "model": {
+        "candidates": 3,
+        "ego_dim": 5,
+        "feature_channels": 384,
+        "hidden_dim": 128,
+        "intervals": 20
+      },
+      "seed": 680
+    },
+    "training_config_sha256": "6318e7c37b522fa0d31fe648fe4d3958fff86e42adcd9f69d0d47ab16ad63176"
+  },
+  "path": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/training/r680_staged_v1_candidates_3/best.pt",
+  "sha256": "5567446f67790897c14e8180042cdf8532d19e70a08c0a8041ef845876210dc7",
+  "size_bytes": 18076194
+}

@@ -1,0 +1,23 @@
+{
+  "split": "test",
+  "samples": 643,
+  "checkpoint_epoch": 20,
+  "manifest_sha256": "37e14ea2005feaf289f00e762d5f38f19a6839628831fd4793a2bb2aaa5c747f",
+  "training_config_sha256": "ed8d8b531a37edccc5d2a8c819133f7defd3c3a9c93aec98c5c56c8bb597f88f",
+  "dataset_version_sha256": "35a33fba8397cc2d1e8a65db2953799abfaade70a40a40af09c8ef5abf11a2b4",
+  "code_revision": "1e134c0c7be4e10f6ed7480f6a730522a2db1d34",
+  "ablation": "no_dcbf",
+  "metrics": {
+    "loss_control": 0.009510374230783126,
+    "loss_ranking": 0.7814896319982702,
+    "loss_h_min": 1.2270665881607803,
+    "loss_feasible": 0.2969307176172038,
+    "loss_slack": 0.10352300943787622,
+    "loss_correction": 0.0053463540808333905,
+    "loss_risk": 0.2965747524070239,
+    "loss_total": 0.775256551674699,
+    "control_mae": 0.09133397567072886,
+    "ranking_accuracy": 0.8102643856920684,
+    "feasible_accuracy": 0.8951344252281574
+  }
+}

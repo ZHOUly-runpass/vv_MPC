@@ -1,0 +1,356 @@
+{
+  "checkpoint_sha256_counts": {
+    "9ba65cfead901ea08db3664108838d4c85bd6621592cc08cca0dfe61af4eb262": 1929
+  },
+  "errors": [],
+  "manifest": "/home/zhou/E2Eproject_MPC/github_pull/05/.tools/staged_full/labeled_no_dcbf/manifest.jsonl",
+  "obstacle_count_distribution": {
+    "0": 725,
+    "1": 570,
+    "12": 75,
+    "2": 79,
+    "3": 322,
+    "6": 78,
+    "9": 80
+  },
+  "samples": 1929,
+  "samples_by_group": {
+    "crossing_pedestrian/easy": 84,
+    "crossing_pedestrian/hard": 80,
+    "crossing_pedestrian/nominal": 82,
+    "empty/easy": 80,
+    "empty/hard": 81,
+    "empty/nominal": 80,
+    "head_on/easy": 80,
+    "head_on/hard": 81,
+    "head_on/nominal": 82,
+    "local_minimum_trap/easy": 83,
+    "local_minimum_trap/hard": 83,
+    "local_minimum_trap/nominal": 77,
+    "multi_dynamic/easy": 82,
+    "multi_dynamic/hard": 81,
+    "multi_dynamic/nominal": 78,
+    "narrow_passage/easy": 80,
+    "narrow_passage/hard": 80,
+    "narrow_passage/nominal": 81,
+    "static_dense/easy": 78,
+    "static_dense/hard": 75,
+    "static_dense/nominal": 80,
+    "static_sparse/easy": 81,
+    "static_sparse/hard": 81,
+    "static_sparse/nominal": 79
+  },
+  "schema_version": "1.0",
+  "shape_groups": {
+    "((6,), (384, 32, 32), (32, 4), (3, 60, 60), (7, 21, 5))": 1929
+  },
+  "status": "passed",
+  "teacher_outcomes": {
+    "infeasible": 1253,
+    "success": 12250
+  },
+  "teacher_outcomes_by_group": {
+    "crossing_pedestrian/easy": {
+      "success": 588
+    },
+    "crossing_pedestrian/hard": {
+      "success": 560
+    },
+    "crossing_pedestrian/nominal": {
+      "success": 574
+    },
+    "empty/easy": {
+      "success": 560
+    },
+    "empty/hard": {
+      "success": 567
+    },
+    "empty/nominal": {
+      "success": 560
+    },
+    "head_on/easy": {
+      "infeasible": 77,
+      "success": 483
+    },
+    "head_on/hard": {
+      "infeasible": 98,
+      "success": 469
+    },
+    "head_on/nominal": {
+      "infeasible": 141,
+      "success": 433
+    },
+    "local_minimum_trap/easy": {
+      "success": 581
+    },
+    "local_minimum_trap/hard": {
+      "success": 581
+    },
+    "local_minimum_trap/nominal": {
+      "success": 539
+    },
+    "multi_dynamic/easy": {
+      "infeasible": 42,
+      "success": 532
+    },
+    "multi_dynamic/hard": {
+      "infeasible": 133,
+      "success": 434
+    },
+    "multi_dynamic/nominal": {
+      "infeasible": 58,
+      "success": 488
+    },
+    "narrow_passage/easy": {
+      "infeasible": 42,
+      "success": 518
+    },
+    "narrow_passage/hard": {
+      "success": 560
+    },
+    "narrow_passage/nominal": {
+      "infeasible": 21,
+      "success": 546
+    },
+    "static_dense/easy": {
+      "infeasible": 40,
+      "success": 506
+    },
+    "static_dense/hard": {
+      "infeasible": 9,
+      "success": 516
+    },
+    "static_dense/nominal": {
+      "infeasible": 483,
+      "success": 77
+    },
+    "static_sparse/easy": {
+      "success": 567
+    },
+    "static_sparse/hard": {
+      "infeasible": 109,
+      "success": 458
+    },
+    "static_sparse/nominal": {
+      "success": 553
+    }
+  },
+  "teacher_solve_time_ms": {
+    "maximum": 14.470367431640625,
+    "p50": 2.8829212188720703,
+    "p95": 4.425207567214965
+  },
+  "teacher_solve_time_ms_by_group": {
+    "crossing_pedestrian/easy": {
+      "maximum": 4.610239028930664,
+      "p50": 2.966131091117859,
+      "p95": 4.209964489936828
+    },
+    "crossing_pedestrian/hard": {
+      "maximum": 4.5062360763549805,
+      "p50": 2.801101565361023,
+      "p95": 4.390773463249206
+    },
+    "crossing_pedestrian/nominal": {
+      "maximum": 4.445224761962891,
+      "p50": 2.9859633445739746,
+      "p95": 4.241202068328858
+    },
+    "empty/easy": {
+      "maximum": 4.428152084350586,
+      "p50": 2.691606044769287,
+      "p95": 4.314892697334289
+    },
+    "empty/hard": {
+      "maximum": 4.479718208312988,
+      "p50": 2.6908926963806152,
+      "p95": 4.323672246932984
+    },
+    "empty/nominal": {
+      "maximum": 5.2064104080200195,
+      "p50": 2.696493148803711,
+      "p95": 4.321730470657348
+    },
+    "head_on/easy": {
+      "maximum": 13.39173412322998,
+      "p50": 2.9827016592025757,
+      "p95": 9.207559633255004
+    },
+    "head_on/hard": {
+      "maximum": 9.340775489807129,
+      "p50": 2.8108432292938232,
+      "p95": 4.409423828125
+    },
+    "head_on/nominal": {
+      "maximum": 9.50344467163086,
+      "p50": 2.964978337287903,
+      "p95": 7.507414078712467
+    },
+    "local_minimum_trap/easy": {
+      "maximum": 4.368340015411377,
+      "p50": 2.6939609050750732,
+      "p95": 4.32142448425293
+    },
+    "local_minimum_trap/hard": {
+      "maximum": 4.375197887420654,
+      "p50": 2.6951701641082764,
+      "p95": 4.316732406616211
+    },
+    "local_minimum_trap/nominal": {
+      "maximum": 4.377255439758301,
+      "p50": 2.6947720050811768,
+      "p95": 4.326600790023804
+    },
+    "multi_dynamic/easy": {
+      "maximum": 9.723970413208008,
+      "p50": 2.8765770196914673,
+      "p95": 4.487838387489319
+    },
+    "multi_dynamic/hard": {
+      "maximum": 4.570428371429443,
+      "p50": 2.8727519512176514,
+      "p95": 4.483352422714233
+    },
+    "multi_dynamic/nominal": {
+      "maximum": 5.052220821380615,
+      "p50": 3.1913763284683228,
+      "p95": 4.621121883392334
+    },
+    "narrow_passage/easy": {
+      "maximum": 14.168501853942871,
+      "p50": 3.071867346763611,
+      "p95": 9.65251393318175
+    },
+    "narrow_passage/hard": {
+      "maximum": 4.370259761810303,
+      "p50": 2.6936906576156616,
+      "p95": 4.324317717552185
+    },
+    "narrow_passage/nominal": {
+      "maximum": 14.470367431640625,
+      "p50": 2.882678985595703,
+      "p95": 4.348744916915893
+    },
+    "static_dense/easy": {
+      "maximum": 4.655124664306641,
+      "p50": 3.1718868017196655,
+      "p95": 4.588871717453003
+    },
+    "static_dense/hard": {
+      "maximum": 4.848569869995117,
+      "p50": 3.1520752906799316,
+      "p95": 4.7844501495361325
+    },
+    "static_dense/nominal": {
+      "maximum": 4.834850788116455,
+      "p50": 3.120665431022644,
+      "p95": 4.637765884399413
+    },
+    "static_sparse/easy": {
+      "maximum": 4.454686641693115,
+      "p50": 2.7844998836517334,
+      "p95": 4.398478317260742
+    },
+    "static_sparse/hard": {
+      "maximum": 4.532128810882568,
+      "p50": 2.865885019302368,
+      "p95": 4.481296539306641
+    },
+    "static_sparse/nominal": {
+      "maximum": 4.6483001708984375,
+      "p50": 2.8344271183013916,
+      "p95": 4.445204448699951
+    }
+  },
+  "teacher_statuses_by_group": {
+    "crossing_pedestrian/easy": {
+      "unconstrained_mpc_posthoc_safe": 588
+    },
+    "crossing_pedestrian/hard": {
+      "unconstrained_mpc_posthoc_safe": 560
+    },
+    "crossing_pedestrian/nominal": {
+      "unconstrained_mpc_posthoc_safe": 574
+    },
+    "empty/easy": {
+      "unconstrained_mpc_posthoc_safe": 560
+    },
+    "empty/hard": {
+      "unconstrained_mpc_posthoc_safe": 567
+    },
+    "empty/nominal": {
+      "unconstrained_mpc_posthoc_safe": 560
+    },
+    "head_on/easy": {
+      "Infeasible_Problem_Detected": 56,
+      "unconstrained_mpc_posthoc_infeasible": 21,
+      "unconstrained_mpc_posthoc_safe": 483
+    },
+    "head_on/hard": {
+      "Infeasible_Problem_Detected": 21,
+      "unconstrained_mpc_posthoc_infeasible": 77,
+      "unconstrained_mpc_posthoc_safe": 469
+    },
+    "head_on/nominal": {
+      "Infeasible_Problem_Detected": 49,
+      "unconstrained_mpc_posthoc_infeasible": 92,
+      "unconstrained_mpc_posthoc_safe": 433
+    },
+    "local_minimum_trap/easy": {
+      "unconstrained_mpc_posthoc_safe": 581
+    },
+    "local_minimum_trap/hard": {
+      "unconstrained_mpc_posthoc_safe": 581
+    },
+    "local_minimum_trap/nominal": {
+      "unconstrained_mpc_posthoc_safe": 539
+    },
+    "multi_dynamic/easy": {
+      "Infeasible_Problem_Detected": 14,
+      "unconstrained_mpc_posthoc_infeasible": 28,
+      "unconstrained_mpc_posthoc_safe": 532
+    },
+    "multi_dynamic/hard": {
+      "unconstrained_mpc_posthoc_infeasible": 133,
+      "unconstrained_mpc_posthoc_safe": 434
+    },
+    "multi_dynamic/nominal": {
+      "unconstrained_mpc_posthoc_infeasible": 58,
+      "unconstrained_mpc_posthoc_safe": 488
+    },
+    "narrow_passage/easy": {
+      "Infeasible_Problem_Detected": 42,
+      "unconstrained_mpc_posthoc_safe": 518
+    },
+    "narrow_passage/hard": {
+      "unconstrained_mpc_posthoc_safe": 560
+    },
+    "narrow_passage/nominal": {
+      "Infeasible_Problem_Detected": 21,
+      "unconstrained_mpc_posthoc_safe": 546
+    },
+    "static_dense/easy": {
+      "unconstrained_mpc_posthoc_infeasible": 40,
+      "unconstrained_mpc_posthoc_safe": 506
+    },
+    "static_dense/hard": {
+      "unconstrained_mpc_posthoc_infeasible": 9,
+      "unconstrained_mpc_posthoc_safe": 516
+    },
+    "static_dense/nominal": {
+      "unconstrained_mpc_posthoc_infeasible": 483,
+      "unconstrained_mpc_posthoc_safe": 77
+    },
+    "static_sparse/easy": {
+      "unconstrained_mpc_posthoc_safe": 567
+    },
+    "static_sparse/hard": {
+      "unconstrained_mpc_posthoc_infeasible": 109,
+      "unconstrained_mpc_posthoc_safe": 458
+    },
+    "static_sparse/nominal": {
+      "unconstrained_mpc_posthoc_safe": 553
+    }
+  },
+  "valid_samples": 1929
+}

@@ -1,0 +1,23 @@
+{
+  "changed_samples_by_field": {
+    "teacher_controls": 41,
+    "teacher_feasible": 0,
+    "teacher_h_min": 0,
+    "teacher_outcome_codes": 0,
+    "teacher_selected_index": 0,
+    "teacher_slack_max": 0,
+    "teacher_solve_time_ms": 1929,
+    "teacher_states": 16
+  },
+  "maximum_absolute_difference_by_field": {
+    "teacher_controls": 4.547473508864641e-13,
+    "teacher_feasible": 0.0,
+    "teacher_h_min": 0.0,
+    "teacher_outcome_codes": 0.0,
+    "teacher_selected_index": 0.0,
+    "teacher_slack_max": 0.0,
+    "teacher_solve_time_ms": 3.678781509399414,
+    "teacher_states": 1.7763568394002505e-15
+  },
+  "samples": 1929
+}
