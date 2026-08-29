@@ -58,8 +58,17 @@ for required in /points /odom /simulation/reference_route /local_costmap/costmap
   if ! ros2 topic list | grep -qx "$required"; then echo "required topic missing: $required" >&2; exit 4; fi
 done
 preflight="$project_dir/.tools/preflight_${scenario}_${difficulty}_${seed}_${controller}.json"
-if ! timeout 30s ros2 run r680_sim_bringup collection_preflight --ros-args \
-  -p duration_s:=5.0 -p report_output:="$preflight" -p disk_path:="$project_dir" -p minimum_free_gib:=5.0; then
+preflight_ok=0
+for attempt in 1 2 3; do
+  if timeout 30s ros2 run r680_sim_bringup collection_preflight --ros-args \
+    -p duration_s:=5.0 -p report_output:="$preflight" -p disk_path:="$project_dir" -p minimum_free_gib:=5.0; then
+    preflight_ok=1
+    break
+  fi
+  echo "collection preflight attempt $attempt failed; waiting for fresh publishers" >&2
+  sleep 2
+done
+if [[ "$preflight_ok" -ne 1 ]]; then
   echo "collection preflight failed: $preflight" >&2; exit 5
 fi
 bag_log="$project_dir/.tools/record_bag_${scenario}_${difficulty}_${seed}_${controller}.log"
