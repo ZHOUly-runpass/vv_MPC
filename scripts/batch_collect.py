@@ -3,7 +3,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
+import signal
 import subprocess
 from time import time
 
@@ -45,7 +47,19 @@ def main() -> int:
         if args.dry_run:
             entry["status"] = "planned"
         else:
-            completed = subprocess.run(command, cwd=root, text=True, capture_output=True)
+            process = subprocess.Popen(command, cwd=root, text=True, stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE, start_new_session=True)
+            try:
+                stdout, stderr = process.communicate()
+            except KeyboardInterrupt:
+                os.killpg(process.pid, signal.SIGINT)
+                try:
+                    process.wait(timeout=20)
+                except subprocess.TimeoutExpired:
+                    os.killpg(process.pid, signal.SIGTERM)
+                    process.wait(timeout=10)
+                raise
+            completed = subprocess.CompletedProcess(command, process.returncode, stdout, stderr)
             entry.update(status="success" if completed.returncode == 0 else "failed", returncode=completed.returncode,
                          bag=completed.stdout.strip().splitlines()[-1] if completed.stdout.strip() else None,
                          stderr_tail=completed.stderr[-2000:])
