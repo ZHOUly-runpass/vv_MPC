@@ -64,6 +64,13 @@ def main() -> int:
     train_loader = DataLoader(train, args.batch_size, shuffle=True, generator=generator, collate_fn=collate_training_samples)
     val_loader = DataLoader(val, args.batch_size, shuffle=False, collate_fn=collate_training_samples)
     manifest_hash = sha256(manifest.read_bytes()).hexdigest()
+    training_config = {"epochs": args.epochs, "batch_size": args.batch_size,
+                       "learning_rate": args.learning_rate, "seed": args.seed,
+                       "model": config, "loss_weights": loss_fn.weights}
+    training_config_hash = sha256(json.dumps(training_config, sort_keys=True,
+                                             separators=(",", ":")).encode()).hexdigest()
+    dataset_version_path = manifest.parent / "dataset_version.json"
+    dataset_version_hash = sha256(dataset_version_path.read_bytes()).hexdigest() if dataset_version_path.is_file() else None
     try: code_hash = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
     except Exception: code_hash = "unknown"
     best = float("inf"); history = []
@@ -75,9 +82,10 @@ def main() -> int:
             loss, _ = loss_fn(prediction, batch); loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0); optimizer.step()
         metrics = evaluate(model, val_loader, loss_fn, args.device); metrics["epoch"] = epoch; history.append(metrics)
-        state = {"format_version": 1, "epoch": epoch, "model_config": config, "model_state": model.state_dict(),
+        state = {"format_version": 2, "epoch": epoch, "model_config": config, "model_state": model.state_dict(),
                  "optimizer_state": optimizer.state_dict(), "metrics": metrics, "manifest_sha256": manifest_hash,
-                 "code_revision": code_hash, "seed": args.seed}
+                 "training_config": training_config, "training_config_sha256": training_config_hash,
+                 "dataset_version_sha256": dataset_version_hash, "code_revision": code_hash, "seed": args.seed}
         torch.save(state, output / "last.pt")
         if metrics["loss_total"] < best:
             best = metrics["loss_total"]; torch.save(state, output / "best.pt")

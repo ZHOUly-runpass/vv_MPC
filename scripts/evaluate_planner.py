@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+from hashlib import sha256
 import json
 from pathlib import Path
 
@@ -24,6 +25,10 @@ def main() -> int:
     dataset = TrainingSampleDataset(resolve(args.manifest), args.split)
     loader = DataLoader(dataset, batch_size=8, collate_fn=collate_training_samples)
     checkpoint = torch.load(resolve(args.checkpoint), map_location=args.device, weights_only=False)
+    manifest_path = resolve(args.manifest)
+    manifest_hash = sha256(manifest_path.read_bytes()).hexdigest()
+    if checkpoint.get("manifest_sha256") != manifest_hash:
+        raise ValueError("checkpoint manifest hash does not match evaluation manifest")
     model = PlanningSafetyModel(**checkpoint["model_config"]).to(args.device); model.load_state_dict(checkpoint["model_state"]); model.eval()
     loss_fn = PlanningLoss(); totals = {}; count = 0
     with torch.no_grad():
@@ -35,6 +40,9 @@ def main() -> int:
             size = batch["features"].shape[0]; count += size
             for key, value in values.items(): totals[key] = totals.get(key, 0.0) + value * size
     report = {"split": args.split, "samples": count, "checkpoint_epoch": checkpoint["epoch"],
+              "manifest_sha256": manifest_hash, "training_config_sha256": checkpoint.get("training_config_sha256"),
+              "dataset_version_sha256": checkpoint.get("dataset_version_sha256"),
+              "code_revision": checkpoint.get("code_revision"),
               "metrics": {key: value / count for key, value in totals.items()}}
     output = resolve(args.output); output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, indent=2), encoding="utf-8"); print(json.dumps(report, indent=2)); return 0
