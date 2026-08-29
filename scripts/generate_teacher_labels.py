@@ -34,6 +34,35 @@ def numeric_failure(candidate: CandidateTrajectory, elapsed_ms: float, error: Ex
                      elapsed_ms, f"numeric_failure:{type(error).__name__}")
 
 
+def screen_obstacles(sample, maximum: int | None):
+    count = int(sample.obstacle_states.shape[0])
+    if maximum is None or count <= maximum:
+        return sample
+    scores = []
+    for index in range(count):
+        valid = sample.obstacle_valid_mask[index]
+        if not np.all(valid):
+            score = float("-inf")
+        else:
+            centers = sample.obstacle_states[index, :, :2]
+            center_distance = np.linalg.norm(centers - sample.ego_state[:2], axis=1)
+            radius = 0.5 * np.hypot(sample.obstacle_lengths[index], sample.obstacle_widths[index])
+            sigma = 3.0 * np.sqrt(np.maximum(
+                0.0, np.linalg.eigvalsh(sample.obstacle_covariance[index])[:, -1]
+            ))
+            score = float(np.min(center_distance - radius - sigma))
+        scores.append((score, index))
+    selected = np.asarray([index for _, index in sorted(scores)[:maximum]], dtype=np.int64)
+    return replace(
+        sample,
+        obstacle_states=sample.obstacle_states[selected],
+        obstacle_lengths=sample.obstacle_lengths[selected],
+        obstacle_widths=sample.obstacle_widths[selected],
+        obstacle_covariance=sample.obstacle_covariance[selected],
+        obstacle_valid_mask=sample.obstacle_valid_mask[selected],
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--manifest", type=Path, required=True)
@@ -52,8 +81,16 @@ def main() -> int:
         default=7,
         help="Use the ordered first K candidate roles; 7 is the full candidate set.",
     )
+    parser.add_argument(
+        "--max-obstacles",
+        type=int,
+        help="Keep at most K risk-ranked obstacles before MPC solving.",
+    )
     args = parser.parse_args()
-    if args.zero_obstacle_covariance and args.candidate_count != 7:
+    if args.max_obstacles is not None and args.max_obstacles <= 0:
+        parser.error("--max-obstacles must be positive")
+    enabled_ablation_count = int(args.zero_obstacle_covariance) + int(args.candidate_count != 7) + int(args.max_obstacles is not None)
+    if enabled_ablation_count > 1:
         parser.error("teacher ablations must be generated independently")
     root = Path(__file__).resolve().parents[1]
     manifest = args.manifest if args.manifest.is_absolute() else root / args.manifest
@@ -84,6 +121,8 @@ def main() -> int:
                          candidate_timestamps_s=target_timestamps, obstacle_states=obstacle_values[0],
                          obstacle_lengths=obstacle_values[1], obstacle_widths=obstacle_values[2],
                          obstacle_covariance=obstacle_values[3], obstacle_valid_mask=obstacle_values[4])
+        original_obstacle_count = int(sample.obstacle_states.shape[0])
+        sample = screen_obstacles(sample, args.max_obstacles)
         obstacles = obstacles_from_sample(sample)
         solver = CasadiDcbfSolver(
             model, vehicle.ego_radius_m, fixed_margin_m=float(vehicle.mpc.get("fixed_margin_m", 0.1)),
@@ -140,6 +179,8 @@ def main() -> int:
             teacher_ablation = "zero_obstacle_covariance"
         elif args.candidate_count != 7:
             teacher_ablation = f"candidate_count_{args.candidate_count}"
+        elif args.max_obstacles is not None:
+            teacher_ablation = f"max_obstacles_{args.max_obstacles}"
         else:
             teacher_ablation = "none"
         labeled = replace(
@@ -157,6 +198,9 @@ def main() -> int:
                       "teacher_profile_kind": vehicle.profile_kind, "teacher_dt_s": vehicle.dt_s,
                       "teacher_ablation": teacher_ablation,
                       "teacher_candidate_count": args.candidate_count,
+                      "teacher_max_obstacles": args.max_obstacles,
+                      "teacher_original_obstacle_count": original_obstacle_count,
+                      "teacher_screened_obstacle_count": int(sample.obstacle_states.shape[0]),
                       "legacy_resampling_rule": RESAMPLING_RULE,
                       "teacher_candidate_anchor": "ego_state_rerollout",
                       "teacher_solver_statuses": [result.status for result in results],

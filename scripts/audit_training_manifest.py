@@ -15,6 +15,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(); parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--output", type=Path); args = parser.parse_args(); manifest = args.manifest.resolve()
     entries = load_manifest(manifest); shapes = Counter(); outcomes = Counter(); checkpoints = Counter(); errors = []
+    obstacle_counts = Counter()
     outcomes_by_group = defaultdict(Counter); statuses_by_group = defaultdict(Counter); samples_by_group = Counter()
     solve_times_by_group = defaultdict(list); all_solve_times = []
     for entry in entries:
@@ -24,6 +25,7 @@ def main() -> int:
             shapes[str((sample.points.shape[1:], sample.features.shape, sample.route.shape, sample.costmap.shape,
                         sample.candidate_states.shape))] += 1
             checkpoints[str(sample.metadata["checkpoint_sha256"])] += 1
+            obstacle_counts[int(sample.obstacle_states.shape[0])] += 1
             group = f"{sample.metadata.get('scenario', 'unknown')}/{sample.metadata.get('difficulty', 'unknown')}"
             samples_by_group[group] += 1
             if sample.teacher_present:
@@ -36,6 +38,7 @@ def main() -> int:
     report = {"schema_version": "1.0", "manifest": str(manifest), "samples": len(entries),
               "valid_samples": len(entries)-len(errors), "errors": errors, "shape_groups": dict(shapes),
               "checkpoint_sha256_counts": dict(checkpoints), "teacher_outcomes": dict(outcomes),
+              "obstacle_count_distribution": {str(key): value for key, value in sorted(obstacle_counts.items())},
               "samples_by_group": dict(sorted(samples_by_group.items())),
               "teacher_outcomes_by_group": {key: dict(outcomes_by_group[key]) for key in sorted(outcomes_by_group)},
               "teacher_statuses_by_group": {key: dict(statuses_by_group[key]) for key in sorted(statuses_by_group)},
