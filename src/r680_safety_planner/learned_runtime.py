@@ -134,8 +134,9 @@ def ranked_candidate_indices(prediction: Mapping[str, np.ndarray]) -> list[int]:
     feasible = np.asarray(prediction["feasibility_logits"])[0] >= 0.0
     h_min = np.asarray(prediction["predicted_h_min"])[0]
     risk = np.asarray(prediction["predicted_risk"])[0] < 0.0
-    preferred = [index for index in np.argsort(-logits) if feasible[index] and h_min[index] >= 0.0 and risk[index]]
-    fallback = [index for index in np.argsort(-logits) if index not in preferred]
+    preferred = [int(index) for index in np.argsort(-logits)
+                 if feasible[index] and h_min[index] >= 0.0 and risk[index]]
+    fallback = [int(index) for index in np.argsort(-logits) if int(index) not in preferred]
     return preferred + fallback
 
 
