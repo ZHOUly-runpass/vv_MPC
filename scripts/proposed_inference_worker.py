@@ -76,6 +76,10 @@ def main() -> int:
         model = PlanningSafetyModel(**checkpoint["model_config"]).to(args.device)
         model.load_state_dict(checkpoint["model_state"], strict=True); model.eval()
         runtime = LearnedPlannerRuntime(model, args.device, args.deadline_ms)
+        warmup_ms = runtime.warmup(
+            np.zeros((384, 32, 32), np.float32), np.zeros((32, 4), np.float32),
+            np.zeros(5, np.float32), np.zeros((3, 60, 60), np.float32),
+        )
         vehicle = load_teacher_vehicle_config(args.vehicle_config); timestamps = np.arange(21) * vehicle.dt_s
         solver = CasadiDcbfSolver(
             vehicle.model, vehicle.ego_radius_m,
@@ -85,7 +89,8 @@ def main() -> int:
             maximum_slack=float(vehicle.mpc.get("maximum_slack", 1.0)),
             hard_deadline_ms=args.deadline_ms, max_iterations=int(vehicle.mpc.get("max_iterations", 100)),
         )
-        atomic_json(ready_path, {"ready": True, "contract": asdict(contract), "pid": os.getpid()})
+        atomic_json(ready_path, {"ready": True, "contract": asdict(contract), "pid": os.getpid(),
+                                 "cuda_warmup_ms": warmup_ms})
     except Exception as error:
         atomic_json(ready_path, {"ready": False, "error": f"{type(error).__name__}:{error}"})
         return 2

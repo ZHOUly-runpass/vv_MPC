@@ -37,8 +37,9 @@ def main() -> int:
     validate_inference_inputs(sample.features, sample.route, sample.ego_state, sample.costmap, 0.0, 0.30)
     model = PlanningSafetyModel(**checkpoint["model_config"]).to(args.device)
     model.load_state_dict(checkpoint["model_state"], strict=True); model.eval()
-    prediction, elapsed_ms = LearnedPlannerRuntime(model, args.device, args.deadline_ms).infer(
-        sample.features, sample.route, sample.ego_state, sample.costmap)
+    runtime = LearnedPlannerRuntime(model, args.device, args.deadline_ms)
+    warmup_ms = runtime.warmup(sample.features, sample.route, sample.ego_state, sample.costmap)
+    prediction, elapsed_ms = runtime.infer(sample.features, sample.route, sample.ego_state, sample.costmap)
     faults = [
         expected_failure("model_missing", lambda: validate_checkpoint_contract(
             checkpoint, args.checkpoint.with_name("missing.pt"), args.manifest, args.dataset_version, args.unilion_checkpoint)),
@@ -52,7 +53,8 @@ def main() -> int:
     ]
     report = {"status": "passed" if all(item["safe_stop"] for item in faults) else "failed",
               "learned_checkpoint_active": True, "contract": contract.__dict__, "sample_id": entry["sample_id"],
-              "inference_ms": elapsed_ms, "selected_index": ranked_candidate_indices(prediction)[0], "faults": faults}
+              "cuda_warmup_ms": warmup_ms, "inference_ms": elapsed_ms,
+              "selected_index": ranked_candidate_indices(prediction)[0], "faults": faults}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2, sort_keys=True)); return 0 if report["status"] == "passed" else 1

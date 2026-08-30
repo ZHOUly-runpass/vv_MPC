@@ -145,9 +145,8 @@ class LearnedPlannerRuntime:
         self.device = device
         self.deadline_ms = float(deadline_ms)
 
-    def infer(self, features: np.ndarray, route: np.ndarray, ego: np.ndarray, costmap: np.ndarray) -> tuple[dict[str, np.ndarray], float]:
+    def _forward(self, features: np.ndarray, route: np.ndarray, ego: np.ndarray, costmap: np.ndarray):
         import torch
-        started = perf_counter()
         with torch.no_grad():
             output = self.model(
                 torch.from_numpy(features[None].astype(np.float32)).to(self.device),
@@ -157,7 +156,16 @@ class LearnedPlannerRuntime:
             )
             if self.device.startswith("cuda"):
                 torch.cuda.synchronize()
+        return {name: value.detach().cpu().numpy() for name, value in output.items()}
+
+    def warmup(self, features: np.ndarray, route: np.ndarray, ego: np.ndarray, costmap: np.ndarray) -> float:
+        started = perf_counter(); prediction = self._forward(features, route, ego, costmap)
         elapsed_ms = (perf_counter() - started) * 1000.0
-        prediction = {name: value.detach().cpu().numpy() for name, value in output.items()}
+        validate_prediction(prediction, 0.0, self.deadline_ms)
+        return elapsed_ms
+
+    def infer(self, features: np.ndarray, route: np.ndarray, ego: np.ndarray, costmap: np.ndarray) -> tuple[dict[str, np.ndarray], float]:
+        started = perf_counter(); prediction = self._forward(features, route, ego, costmap)
+        elapsed_ms = (perf_counter() - started) * 1000.0
         validate_prediction(prediction, elapsed_ms, self.deadline_ms)
         return prediction, elapsed_ms
