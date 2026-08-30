@@ -81,6 +81,8 @@ def setup(context):
         unilion_repository = project_root / "third_party" / "UniLION"
         unilion_config = unilion_repository / "projects" / "configs" / "unilion_swin_384_seq_e2e.py"
         isolated_python = project_root / ".tools" / "envs" / "unilion" / "bin" / "python3"
+        isolated_environment = {"PYTHONPATH": str(project_root / "src"),
+                                "PATH": str(isolated_python.parent) + os.pathsep + os.environ.get("PATH", "")}
         common.extend([
             Node(package="r680_sim_bringup", executable="pointcloud_file_bridge",
                  parameters=[{"output": str(runtime / "latest_points.npz"), "use_sim_time": True}], output="screen"),
@@ -88,7 +90,7 @@ def setup(context):
                                 "--input", str(runtime / "latest_points.npz"), "--output-dir", str(feature_dir),
                                 "--repository", str(unilion_repository), "--model-config", str(unilion_config),
                                 "--checkpoint", str(unilion_checkpoint)],
-                           additional_env={"PYTHONPATH": str(project_root / "src")}, output="screen"),
+                           additional_env=isolated_environment, output="screen"),
             Node(package="r680_sim_bringup", executable="feature_health_bridge",
                  parameters=[{"health_file": str(feature_dir / "health.json"), "timeout_s": 0.30,
                               "use_sim_time": True}], output="screen"),
@@ -99,7 +101,7 @@ def setup(context):
                                 "--unilion-checkpoint", str(unilion_checkpoint),
                                 "--vehicle-config", str(project_root / "configs" / "robot" / "r680_sim.yaml"),
                                 "--expected-checkpoint-sha256", expected_checkpoint_sha256],
-                           additional_env={"PYTHONPATH": str(project_root / "src")}, output="screen"),
+                           additional_env=isolated_environment, output="screen"),
             Node(package="r680_sim_bringup", executable="baseline_controller",
                  parameters=[{"baseline": controller, "runtime_dir": str(runtime), "feature_timeout_s": 0.30,
                               "inference_timeout_s": 0.12, "use_sim_time": True}], output="screen"),
