@@ -35,7 +35,7 @@ def main() -> int:
     parser.add_argument("--repository", type=Path, required=True); parser.add_argument("--model-config", type=Path, required=True)
     parser.add_argument("--checkpoint", type=Path, required=True); parser.add_argument("--feature-grid", type=int, default=32)
     parser.add_argument("--poll-ms", type=float, default=5.0); args = parser.parse_args()
-    args.output_dir.mkdir(parents=True, exist_ok=True); cache = args.output_dir / "latest_frozen_scene_features.npz"
+    args.output_dir.mkdir(parents=True, exist_ok=True)
     health = args.output_dir / "health.json"; checkpoint_hash = digest(args.checkpoint); config_hash = digest(args.model_config)
     running = True
     def stop(*_):
@@ -45,7 +45,7 @@ def main() -> int:
     except Exception as error:
         atomic_json(health, {"schema_version": FEATURE_BRIDGE_SCHEMA_VERSION, "healthy": False,
                              "reason": f"startup:{type(error).__name__}:{error}", "updated_wall_time_s": time.time()}); return 2
-    last_wall = -1.0
+    last_wall = -1.0; frame_index = 0
     try:
         while running:
             if not args.input.is_file(): time.sleep(args.poll_ms / 1000.0); continue
@@ -60,9 +60,11 @@ def main() -> int:
                 if feature.shape[-2:] != (args.feature_grid, args.feature_grid):
                     feature = torch.nn.functional.adaptive_avg_pool2d(torch.from_numpy(feature),
                                                                       (args.feature_grid, args.feature_grid)).numpy()
-                temporary = args.output_dir / "latest_frozen_scene_features.tmp.npz"
+                cache = args.output_dir / f"frozen_scene_features_slot_{frame_index % 16:02d}.npz"
+                temporary = args.output_dir / f"frozen_scene_features_slot_{frame_index % 16:02d}.tmp.npz"
                 save_feature_cache(temporary, FeatureCacheRecord(feature[0], stamp, frame_id, checkpoint_hash, config_hash))
                 os.replace(temporary, cache)
+                frame_index += 1
                 runtime = backend.healthcheck().get("last_inference", {})
                 atomic_json(health, {"schema_version": FEATURE_BRIDGE_SCHEMA_VERSION, "healthy": True, "reason": "ok",
                                      "updated_wall_time_s": time.time(), "cache_path": str(cache),
