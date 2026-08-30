@@ -136,7 +136,7 @@ def main() -> int:
             if selected is None or result is None:
                 raise RuntimeError("no learned candidate passed D-CBF and deadline checks")
             command = vehicle.model.command(ego.astype(np.float64), result.controls[0], float(metadata["stamp_s"]))
-            values = np.asarray([command.longitudinal_velocity, command.lateral_velocity, command.yaw_rate])
+            values = command.as_array()
             if not np.all(np.isfinite(values)):
                 raise ValueError("final command contains NaN or Inf")
             atomic_json(result_path, {
