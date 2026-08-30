@@ -1,16 +1,24 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 import tempfile
 
 import yaml
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription, OpaqueFunction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+
+
+def default_project_root() -> str:
+    for parent in Path(__file__).resolve().parents:
+        if (parent / "src" / "r680_safety_planner").is_dir():
+            return str(parent)
+    return os.environ.get("R680_PROJECT_ROOT", "")
 
 
 def setup(context):
@@ -20,6 +28,8 @@ def setup(context):
         raise RuntimeError("controller must be dwb, mppi, vanilla_dcbf, or proposed")
     seed = LaunchConfiguration("seed").perform(context)
     difficulty = LaunchConfiguration("difficulty").perform(context)
+    project_root = Path(LaunchConfiguration("project_root").perform(context)).resolve()
+    expected_checkpoint_sha256 = LaunchConfiguration("expected_checkpoint_sha256").perform(context)
     bringup = get_package_share_directory("r680_sim_bringup")
     description = get_package_share_directory("r680_sim_description")
     nav2 = get_package_share_directory("nav2_bringup")
@@ -59,9 +69,39 @@ def setup(context):
                            parameters=[{"scenario_file": os.path.join(bringup, "config", "scenarios.yaml"),
                                         "scenario": scenario, "difficulty": difficulty,
                                         "baseline": controller, "use_sim_time": True}], output="screen"))
-    else:
+    elif controller == "vanilla_dcbf":
         common.append(Node(package="r680_sim_bringup", executable="baseline_controller",
                            parameters=[{"baseline": controller, "use_sim_time": True}], output="screen"))
+    else:
+        runtime = project_root / ".tools" / "runtime" / "proposed"
+        feature_dir = runtime / "features"
+        checkpoint = project_root / ".tools" / "training" / "r680_staged_v1_main" / "best.pt"
+        dataset = project_root / ".tools" / "datasets" / "r680_staged_v1"
+        unilion_checkpoint = project_root / "artifacts" / "checkpoints" / "unilion_lidar_backbone_init.safetensors"
+        unilion_repository = project_root / "third_party" / "UniLION"
+        unilion_config = unilion_repository / "projects" / "configs" / "unilion_swin_384_seq_e2e.py"
+        isolated_python = project_root / ".tools" / "envs" / "unilion" / "bin" / "python3"
+        common.extend([
+            Node(package="r680_sim_bringup", executable="pointcloud_file_bridge",
+                 parameters=[{"output": str(runtime / "latest_points.npz"), "use_sim_time": True}], output="screen"),
+            ExecuteProcess(cmd=[str(isolated_python), str(project_root / "scripts" / "live_unilion_feature_worker.py"),
+                                "--input", str(runtime / "latest_points.npz"), "--output-dir", str(feature_dir),
+                                "--repository", str(unilion_repository), "--model-config", str(unilion_config),
+                                "--checkpoint", str(unilion_checkpoint)], output="screen"),
+            Node(package="r680_sim_bringup", executable="feature_health_bridge",
+                 parameters=[{"health_file": str(feature_dir / "health.json"), "timeout_s": 0.30,
+                              "use_sim_time": True}], output="screen"),
+            ExecuteProcess(cmd=[str(isolated_python), str(project_root / "scripts" / "proposed_inference_worker.py"),
+                                "--request-dir", str(runtime), "--checkpoint", str(checkpoint),
+                                "--manifest", str(dataset / "manifest.jsonl"),
+                                "--dataset-version", str(dataset / "dataset_version.json"),
+                                "--unilion-checkpoint", str(unilion_checkpoint),
+                                "--vehicle-config", str(project_root / "configs" / "robot" / "r680_sim.yaml"),
+                                "--expected-checkpoint-sha256", expected_checkpoint_sha256], output="screen"),
+            Node(package="r680_sim_bringup", executable="baseline_controller",
+                 parameters=[{"baseline": controller, "runtime_dir": str(runtime), "feature_timeout_s": 0.30,
+                              "inference_timeout_s": 0.12, "use_sim_time": True}], output="screen"),
+        ])
     return common
 
 
@@ -71,5 +111,7 @@ def generate_launch_description():
         DeclareLaunchArgument("controller", default_value="dwb"),
         DeclareLaunchArgument("seed", default_value="42"),
         DeclareLaunchArgument("difficulty", default_value="nominal"),
+        DeclareLaunchArgument("project_root", default_value=default_project_root()),
+        DeclareLaunchArgument("expected_checkpoint_sha256", default_value="54cf9c73c73f3353199047746875637c48b97ac623d267ef776380744d7a7ee9"),
         OpaqueFunction(function=setup),
     ])

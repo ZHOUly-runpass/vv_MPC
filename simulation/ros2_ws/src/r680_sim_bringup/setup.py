@@ -34,5 +34,6 @@ setup(
         "planning_trace_publisher = r680_sim_bringup.planning_trace_publisher:main",
         "scenario_difficulty_controller = r680_sim_bringup.scenario_difficulty_controller:main",
         "collection_preflight = r680_sim_bringup.collection_preflight:main",
+        "pointcloud_file_bridge = r680_sim_bringup.pointcloud_file_bridge:main",
     ]},
 )

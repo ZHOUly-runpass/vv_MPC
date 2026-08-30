@@ -98,12 +98,20 @@ class PlanningTracePublisher(Node):
                                 "valid_mask": [True]*len(timestamps)})
         self.publish("candidates", {"timestamps_s": timestamps.tolist(), "items": candidates})
         self.publish("obstacle_predictions", {"timestamps_s": timestamps.tolist(), "items": predictions})
+        online = self.get_parameter("baseline").value == "proposed"
         self.publish("mpc_request", {"initial_state": initial.tolist(), "candidate_count": len(candidates),
-                                     "obstacle_count": len(predictions), "online_solver_requested": False})
+                                     "obstacle_count": len(predictions), "online_solver_requested": online,
+                                     "learned_checkpoint_active": self.controller_status.get("learned_checkpoint_active", False)})
         h_min = self.controller_status.get("h_min")
-        self.publish("mpc_result", {"status": "offline_teacher_pending", "solver_kind": "none",
-                                    "feasible": None, "h_min": h_min, "slack_max": None,
-                                    "solve_time_ms": None, "selected_index": None})
+        self.publish("mpc_result", {
+            "status": self.controller_status.get("reason", "controller_pending"),
+            "solver_kind": "learned_initial_guess_casadi_dcbf" if online else "deterministic_baseline",
+            "feasible": self.controller_status.get("learned_checkpoint_active") if online else None,
+            "h_min": h_min, "slack_max": None,
+            "solve_time_ms": self.controller_status.get("mpc_solve_time_ms"),
+            "inference_ms": self.controller_status.get("inference_ms"),
+            "selected_index": self.controller_status.get("selected_index"),
+        })
 
 
 def main(args=None) -> None:
