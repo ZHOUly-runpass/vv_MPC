@@ -1,0 +1,49 @@
+{
+  "contract": {
+    "checkpoint_sha256": "54cf9c73c73f3353199047746875637c48b97ac623d267ef776380744d7a7ee9",
+    "code_revision": "f59c1e746f4ce68b87edd6ca3c61ff0c7b85a3d7",
+    "dataset_version_sha256": "06ced7cdb0c20fadbf400dc1c4966ea895dd5192c9242422fff35f99b222142c",
+    "manifest_sha256": "c9cef0ebc1f6fc5d6499542e8293ed9166135077c654a73a534b6b7605bd4d7d",
+    "model_config": {
+      "candidates": 7,
+      "ego_dim": 5,
+      "feature_channels": 384,
+      "hidden_dim": 128,
+      "intervals": 20
+    },
+    "unilion_checkpoint_sha256": "9ba65cfead901ea08db3664108838d4c85bd6621592cc08cca0dfe61af4eb262"
+  },
+  "cuda_warmup_ms": 123.37516155093908,
+  "faults": [
+    {
+      "error": "FileNotFoundError:/home/zhou/E2Eproject_MPC/github_pull/05/.tools/training/r680_staged_v1_main/missing.pt",
+      "name": "model_missing",
+      "safe_stop": true
+    },
+    {
+      "error": "ValueError:planner checkpoint SHA-256 mismatch",
+      "name": "checkpoint_hash_mismatch",
+      "safe_stop": true
+    },
+    {
+      "error": "ValueError:prediction controls contains NaN or Inf",
+      "name": "output_nan",
+      "safe_stop": true
+    },
+    {
+      "error": "TimeoutError:learned inference exceeded 80.000 ms",
+      "name": "inference_timeout",
+      "safe_stop": true
+    },
+    {
+      "error": "TimeoutError:frozen UniLION feature is stale",
+      "name": "feature_timeout",
+      "safe_stop": true
+    }
+  ],
+  "inference_ms": 1.670188270509243,
+  "learned_checkpoint_active": true,
+  "sample_id": "crossing_pedestrian_easy_seed66_1787986076505445128",
+  "selected_index": 0,
+  "status": "passed"
+}

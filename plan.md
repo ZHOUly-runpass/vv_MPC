@@ -6,7 +6,7 @@
 2. `[已完成：代码]` 8 场景 × 3 种子 × 3 难度批量采集矩阵；完整 72 次真实采集尚未执行。
 3. `[已完成：代码]` CasADi MPC teacher 离线生成，严格区分成功、不可行、数值失败和超时。
 4. `[已完成：代码]` Dataset、DataLoader、联合损失、训练、checkpoint 和评测程序。
-5. `[已完成：统一入口]` DWB、MPPI、Vanilla D-CBF、Proposed 四组闭环启动接口；真实数据训练 checkpoint 和完整公平批量评测仍待执行。
+5. `[已完成：统一入口与Proposed模型接入]` DWB、MPPI、Vanilla D-CBF、Proposed 四组闭环启动接口已具备；Proposed已加载阶段F主checkpoint并通过真实CUDA推理闭环审计，完整公平批量评测仍待执行。
 6. `[已完成：代码与开发机实测]` rosbag → 同步原始帧 → UniLION离线特征 → schema 1.0 NPZ → CasADi teacher流水线。
 7. `[已完成：代码]` 录制入口支持四控制器，并记录控制器状态、候选轨迹、障碍预测、MPC request/result。
 8. `[已完成：代码与开发机实测]` 静态难度会改变障碍数量、通道宽度、起终点或安全间距；`static_sparse` easy/hard 实测分别得到 1/3 个有效障碍。
@@ -17,10 +17,10 @@
 13. `[已完成：阶段A/B静态问题修复与开发机验收]` 已定位候选/里程计不同步、静态障碍包围盒重复放大、静态GT协方差随时间错误增长、结构性不可行误报和不良warm-start；修复后使用seed62、8秒重新采集静态稀疏/稠密六组合，35/35样本、245/245候选全部 `Solve_Succeeded`，P95 10.45 ms、最大11.93 ms；随后已由阶段C完整矩阵复验。
 14. `[已完成：阶段C完整24-run门禁]` seed63、8场景×3难度、10秒采集24/24成功，得到187个有效样本且每组6–10个；1309条teacher候选为1274 success、35 infeasible、0 numeric failure、0 timeout，P95 8.61 ms、最大16.10 ms，批准进入多种子采集。
 15. `[已完成：阶段D多种子正式采集与标签]` 已完成8场景×3难度×seed64/65/66共72/72个30秒bag，抽取1929个有效样本并生成同数量UniLION特征；13503条teacher候选为13202 success、215 infeasible、78 numeric failure（0.58%）、8 timeout（0.06%），通过5%/1%门禁。
-16. `[部分完成：阶段E四基线]` DWB、MPPI、Vanilla D-CBF、Proposed四入口短闭环均通过topic、TF、非零控制、实际位移和无碰撞审计；但Proposed当前仍明确上报`learned_checkpoint_active=false`，只是预测裕量安全回退，正式Proposed公平评测保持blocked。
-17. `[已完成：阶段F离线训练与消融；闭环评测转阶段E]` 已冻结`r680_staged_v1`，seed64/65/66严格对应train/val/test，各643样本；主模型及无UniLION、无D-CBF、无协方差、候选数3/5/7均完成版本化标签、20 epoch训练与独立test。障碍筛选4/8/全量也已冻结并逐字段比较，K=4后teacher安全标签已饱和，仅有`4.55e-13`级控制数值噪声，故不重复无信息增益训练。离线阶段F已完成；四控制器正式闭环公平评测仍属于阶段E，Proposed需加载训练checkpoint后执行。
+16. `[部分完成：阶段E四基线，Proposed阻塞已解除]` DWB、MPPI、Vanilla D-CBF、Proposed四入口短闭环均已通过基础审计；Proposed现已加载阶段F主checkpoint，76/76个在线审计样本均为`learned_dcbf_mpc`且`learned_checkpoint_active=true`。四控制器正式公平批量评测仍待执行。
+17. `[已完成：阶段F离线训练与消融；闭环评测转阶段E]` 已冻结`r680_staged_v1`，seed64/65/66严格对应train/val/test，各643样本；主模型及无UniLION、无D-CBF、无协方差、候选数3/5/7均完成版本化标签、20 epoch训练与独立test。障碍筛选4/8/全量也已冻结并逐字段比较，K=4后teacher安全标签已饱和，仅有`4.55e-13`级控制数值噪声，故不重复无信息增益训练。离线阶段F已完成，主checkpoint在线接入亦已完成；下一项是四控制器正式闭环公平评测。
 
-更新日期：2026-08-25  
+更新日期：2026-08-30
 本地目录：`D:\E2Eproject_MPC\05`  
 开发机目录：`/home/zhou/E2Eproject_MPC/github_pull/05`
 
@@ -173,7 +173,7 @@ C16 / 仿真16线点云
 0. `[已完成]` 建立项目内独立 Python 3.10 planner 环境，固定 CasADi 3.8.0；完成 0/8/16/32 个近场障碍的 11 次求解基准。四档均 11/11 `Solve_Succeeded`，热启动中位数分别为 1.92/13.87/23.00/40.53 ms，32 障碍热启动最大 40.65 ms，求解器单项满足 80 ms 时限。完整感知到控制链路仍需单独验收。
 1. `[已完成]` 采集仿真 rosbag、feature cache、MPC teacher label 和安全事件标签。
 2. `[已完成：离线部分]` 训练候选头与安全头，完成主模型及五类消融；四组正式闭环基线评测转入下一阶段。
-3. `[待执行]` 将主checkpoint接入Proposed闭环，验证实际加载、哈希校验、推理超时和异常输出安全降级。
+3. `[已完成]` 阶段F主checkpoint已接入Proposed闭环：严格校验模型配置、checkpoint SHA-256、Git提交号、数据manifest/版本哈希和UniLION checkpoint哈希；网络输出参与候选排序、安全头筛选和MPC初值，D-CBF、watchdog超时门与障碍安全监督位于最终控制边界。开发机实测`learned_checkpoint_active=true`；模型缺失、哈希错误、NaN、推理超时和特征超时均被拒绝并停车，其中UniLION进程退出的在线审计为56/56个`feature_timeout_stop`状态样本、101个全零控制样本。
 4. `[待执行]` 按统一场景、难度、随机种子和停止条件执行DWB、MPPI、Vanilla D-CBF、Proposed四组正式仿真评测。
 5. `[待执行]` 汇总成功率、碰撞率、最小间距、控制平滑度和计算延迟，并生成配对统计与置信区间。
 6. `[待执行]` 测量仿真点云到最终`/cmd_vel`的完整延迟分解，统计P50、P95、P99、最大值和超过80 ms的比例。

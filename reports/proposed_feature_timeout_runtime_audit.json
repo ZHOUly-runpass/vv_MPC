@@ -1,0 +1,42 @@
+{
+  "status": "passed",
+  "expectation": "safe-stop",
+  "expected_stop_reason": "feature_timeout_stop",
+  "status_samples": 56,
+  "command_samples": 101,
+  "active_samples": 0,
+  "matching_stop_samples": 56,
+  "reasons": {
+    "feature_timeout_stop": 56
+  },
+  "commands_finite": true,
+  "max_abs_command": 0.0,
+  "latest": {
+    "baseline": "proposed",
+    "checkpoint_validation": {
+      "contract": {
+        "checkpoint_sha256": "54cf9c73c73f3353199047746875637c48b97ac623d267ef776380744d7a7ee9",
+        "code_revision": "f59c1e746f4ce68b87edd6ca3c61ff0c7b85a3d7",
+        "dataset_version_sha256": "06ced7cdb0c20fadbf400dc1c4966ea895dd5192c9242422fff35f99b222142c",
+        "manifest_sha256": "c9cef0ebc1f6fc5d6499542e8293ed9166135077c654a73a534b6b7605bd4d7d",
+        "model_config": {
+          "candidates": 7,
+          "ego_dim": 5,
+          "feature_channels": 384,
+          "hidden_dim": 128,
+          "intervals": 20
+        },
+        "unilion_checkpoint_sha256": "9ba65cfead901ea08db3664108838d4c85bd6621592cc08cca0dfe61af4eb262"
+      },
+      "cuda_warmup_ms": 133.54217587038875,
+      "pid": 1207366,
+      "ready": true
+    },
+    "h_min": null,
+    "inference_ms": 2.01973132789135,
+    "learned_checkpoint_active": false,
+    "mpc_solve_time_ms": 5.2282982505857944,
+    "reason": "feature_timeout_stop",
+    "selected_index": 0
+  }
+}

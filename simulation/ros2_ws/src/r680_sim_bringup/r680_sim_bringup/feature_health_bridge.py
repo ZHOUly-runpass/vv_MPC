@@ -55,6 +55,7 @@ def main(args=None) -> None:
     except KeyboardInterrupt:
         pass
     finally:
-        node.zero_pub.publish(Twist())
+        if rclpy.ok():
+            node.zero_pub.publish(Twist())
         node.destroy_node()
         if rclpy.ok(): rclpy.shutdown()
