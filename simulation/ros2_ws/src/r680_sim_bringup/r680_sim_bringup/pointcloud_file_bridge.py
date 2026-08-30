@@ -28,7 +28,8 @@ class PointCloudFileBridge(Node):
         names = {field.name for field in message.fields}; required = ("x", "y", "z", "intensity", "ring", "time")
         if not set(required).issubset(names):
             self.status.publish(String(data=json.dumps({"healthy": False, "reason": "missing_point_fields"}))); return
-        points = np.asarray(list(point_cloud2.read_points(message, field_names=required, skip_nans=True)), dtype=np.float32)
+        structured = point_cloud2.read_points(message, field_names=required, skip_nans=True)
+        points = np.column_stack([structured[name] for name in required]).astype(np.float32, copy=False)
         temporary = self.output.with_name(self.output.stem + ".tmp.npz")
         np.savez(temporary, points=points, stamp_s=np.asarray(message.header.stamp.sec + message.header.stamp.nanosec * 1e-9),
                  frame_id=np.asarray(message.header.frame_id), wall_time_s=np.asarray(time.time()))
